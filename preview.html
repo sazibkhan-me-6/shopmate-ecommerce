@@ -1,0 +1,1445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="description" content="ShopMate modern responsive e-commerce store with bKash, Nagad, Card and COD">
+<title>ShopMate — E-commerce Store</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{--bg:#fff;--text:#142033;--muted:#667085;--line:#e8ebf2;--soft:#f5f6fb;--primary:#5d46f6;--primary2:#6d52ff;--dark:#111c2d;--shadow:0 8px 30px rgba(22,30,55,.08);--radius:10px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,Arial,sans-serif;color:var(--text);background:var(--bg);padding-bottom:60px}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font-size:16px} /* Prevents iOS auto-zoom */
+img{max-width:100%;height:auto;display:block}
+.app{min-height:100vh}
+
+/* Announcements */
+.announcement{background:#111c2d;color:#fff;padding:8px 12px;text-align:center;font-size:11px;line-height:1.4}
+
+/* Header */
+.header{height:70px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 4%;position:sticky;top:0;background:color-mix(in srgb,var(--bg) 95%,transparent);backdrop-filter:blur(16px);z-index:40}
+.brand{font-size:20px;font-weight:800;display:flex;align-items:center;gap:7px}
+.brandIcon{background:var(--primary);color:#fff;border-radius:8px;padding:5px 8px;font-size:16px}
+nav.desktopNav{display:flex;gap:18px;align-items:center}
+nav.desktopNav button{font-size:13px;padding:24px 0;border-bottom:2px solid transparent;font-weight:500}
+nav.desktopNav button.active,nav.desktopNav button:hover{color:var(--primary);border-bottom-color:var(--primary)}
+
+.headActions{display:flex;align-items:center;gap:10px}
+.searchBox{width:220px;height:38px;border:1px solid var(--line);border-radius:8px;background:var(--soft);display:flex;align-items:center;padding:0 10px}
+.searchBox input{border:0;outline:0;background:transparent;width:100%;font-size:13px}
+.iconBtn{position:relative;font-size:20px;padding:6px;display:flex;align-items:center;justify-content:center}
+.iconBtn i{position:absolute;right:0;top:0;background:var(--primary);color:#fff;border-radius:50%;font-size:9px;font-style:normal;min-width:16px;height:16px;display:grid;place-items:center;font-weight:700}
+.loginBtn{font-size:12px;font-weight:600;white-space:nowrap;padding:7px 12px;border-radius:6px;background:var(--soft)}
+.themeBtn{font-size:18px;padding:6px}
+.menuBtn{display:none;font-size:22px;padding:6px}
+
+/* Mobile Slide-out Menu */
+.mobileMenuOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;display:none}
+.mobileMenuOverlay.open{display:block}
+.mobileDrawer{position:fixed;top:0;left:0;bottom:0;width:min(320px,85%);background:var(--bg);z-index:100;box-shadow:0 0 40px rgba(0,0,0,.2);display:flex;flex-direction:column;padding:20px;transform:translateX(-100%);transition:transform .25s ease}
+.mobileMenuOverlay.open .mobileDrawer{transform:translateX(0)}
+.mobileDrawerHead{display:flex;justify-content:space-between;align-items:center;padding-bottom:15px;border-bottom:1px solid var(--line)}
+.mobileDrawerNav{display:flex;flex-direction:column;gap:5px;margin-top:15px;flex:1;overflow-y:auto}
+.mobileDrawerNav button{text-align:left;padding:12px;border-radius:8px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px}
+.mobileDrawerNav button.active{background:var(--soft);color:var(--primary)}
+
+/* Mobile Bottom Navigation Bar */
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--bg);border-top:1px solid var(--line);display:none;grid-template-columns:repeat(5,1fr);z-index:50}
+.bottomNav button{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--muted);position:relative}
+.bottomNav button span.bIcon{font-size:18px;margin-bottom:2px}
+.bottomNav button.active{color:var(--primary)}
+.bottomNav button i{position:absolute;top:4px;right:calc(50% - 14px);background:var(--primary);color:#fff;border-radius:50%;font-size:9px;font-style:normal;min-width:14px;height:14px;display:grid;place-items:center;font-weight:700}
+
+/* Hero Section */
+.hero{margin:18px 4%;border-radius:14px;background:linear-gradient(120deg,#f4f2ff,#f2f0ff 55%,#eef3ff);min-height:300px;display:grid;grid-template-columns:1.2fr 1fr;overflow:hidden}
+.heroCopy{padding:35px 5%;display:flex;flex-direction:column;justify-content:center}
+.heroCopy small{color:var(--primary);font-weight:700;letter-spacing:.5px;font-size:11px}
+.heroCopy h1{font-size:clamp(24px,3.5vw,36px);line-height:1.2;margin:10px 0}
+.heroCopy em{font-style:normal;color:var(--primary)}
+.heroCopy p{max-width:480px;color:#566176;font-size:clamp(12px,1.5vw,14px);line-height:1.6;margin:0 0 18px}
+.primary{background:linear-gradient(135deg,var(--primary),#7c5cff);color:#fff;padding:12px 22px;border-radius:8px;font-weight:700;box-shadow:0 6px 18px rgba(93,70,246,.25);display:inline-block;text-align:center}
+.secondary{background:var(--soft);padding:11px 18px;border-radius:8px;font-weight:600;text-align:center}
+.heroVisual{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.heroVisual img{width:88%;height:88%;object-fit:cover;border-radius:14px;mix-blend-mode:multiply;opacity:.9}
+.blob{position:absolute;width:280px;height:200px;background:#d8ceff;border-radius:45% 55% 60% 40%;filter:blur(2px)}
+.scribble{position:absolute;right:8%;top:20px;color:#6545e8;font-weight:700;font-style:italic;transform:rotate(-8deg);font-size:14px}
+.benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px;padding-top:16px;border-top:1px solid rgba(0,0,0,.06)}
+.benefits span{font-size:12px;display:flex;align-items:center;gap:6px}
+.benefits b{font-size:10px;display:block}
+.benefits small{color:#778094;font-size:8px;display:block}
+
+/* Section Header */
+.sectionTitle{display:flex;justify-content:space-between;align-items:end;margin:24px 4% 14px}
+.sectionTitle h2{font-size:clamp(16px,2.2vw,20px);margin:0 0 3px}
+.sectionTitle p{font-size:11px;color:var(--muted);margin:0}
+.sectionTitle button{color:var(--primary);font-size:12px;font-weight:700}
+
+/* Categories Grid */
+.catGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:0 4% 25px}
+.catCard{background:var(--soft);border-radius:10px;padding:12px 8px;min-height:105px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1px solid transparent;transition:transform .2s}
+.catCard:hover{transform:translateY(-3px);border-color:#dcd7ff}
+.catCard img{width:56px;height:52px;object-fit:cover;border-radius:8px}
+.catCard b,.catCard h3{font-size:11px;margin:0;text-align:center}
+
+/* Products Grid */
+.productGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin:0 4% 28px}
+.productCard{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+.productCard:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.productImg{height:180px;background:#f7f8fb;position:relative;overflow:hidden}
+.productImg img{width:100%;height:100%;object-fit:cover;cursor:pointer}
+.sale{position:absolute;z-index:2;left:7px;top:7px;background:#ff4455;color:#fff;border-radius:8px;padding:3px 6px;font-size:9px;font-weight:800}
+.wish{position:absolute;z-index:2;right:7px;top:7px;background:#fff;border:1px solid var(--line);width:28px;height:28px;border-radius:50%;font-size:15px;display:grid;place-items:center}
+.productInfo{padding:10px;display:flex;flex-direction:column;flex-grow:1}
+.productInfo h3{font-size:12px;font-weight:700;margin:0 0 5px;cursor:pointer;line-height:1.3}
+.stars{color:#ffad0a;font-size:11px;letter-spacing:1px}
+.stars small{color:#7c8798;letter-spacing:0;font-size:9px}
+.price{color:#e73545;font-weight:800;font-size:14px;margin:6px 0}
+.price del{color:#98a0ad;font-size:10px;font-weight:500;margin-left:5px}
+.add{width:100%;margin-top:auto;background:#142033;color:#fff;border-radius:6px;padding:9px;font-size:11px;font-weight:600}
+.add:active{background:var(--primary)}
+
+/* Promo & Reviews */
+.promoGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:0 4% 28px}
+.promo{min-height:145px;border-radius:10px;padding:22px;display:flex;justify-content:space-between;align-items:center;overflow:hidden}
+.promo h2{font-size:12px;margin:0}
+.promo h3{font-size:20px;margin:4px 0}
+.promo p{margin:0 0 10px;font-size:11px}
+.darkPromo{background:linear-gradient(120deg,#101621,#1d2534);color:#fff}
+.greenPromo{background:linear-gradient(120deg,#dff2d8,#f1f9e9);color:#21452a}
+.greenPromo button{background:#fff;padding:8px 16px;border-radius:20px;font-size:11px}
+.discountBubble{width:54px;height:54px;border-radius:50%;background:#6d52ff;display:grid;place-items:center;text-align:center;font-weight:800;font-size:10px;color:#fff}
+
+.reviews{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:0 4% 28px}
+.review{border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;background:#eee8ff;color:var(--primary);display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.review b{font-size:11px;display:block}
+.review small{font-size:8px;color:#6c7889;display:block;margin-top:2px}
+.review p{font-size:10px;color:#5d6675;line-height:1.5;margin:6px 0 0}
+
+/* Newsletter */
+.newsletter{margin:0 4% 20px;background:#f0f2ff;border-radius:10px;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.newsletter>div{display:flex;gap:12px;align-items:center}
+.newsletter span{font-size:26px;color:var(--primary)}
+.newsletter h3{margin:0;font-size:13px}
+.newsletter p{font-size:10px;color:#69748a;margin:3px 0 0}
+.newsletter form{display:flex;flex:1;min-width:240px}
+.newsletter input{flex:1;border:1px solid var(--line);padding:9px 12px;border-radius:6px 0 0 6px;font-size:12px}
+.newsletter button{background:var(--primary);color:#fff;padding:0 18px;border-radius:0 6px 6px 0;font-size:12px;font-weight:600}
+
+/* Footer */
+.footer{background:#111c2d;color:#dfe5ee;padding:32px 4% 20px}
+.footerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px}
+.footer h3,.footer h4{margin:0 0 10px;color:#fff}
+.footer p,.footer button{display:block;color:#aeb8c8;font-size:10px;line-height:1.8;text-align:left}
+.payments{background:#fff;color:#152033;padding:6px 10px;border-radius:6px;font-size:10px;display:inline-block;font-weight:700}
+.copyright{border-top:1px solid #2d3747;margin-top:20px;padding-top:12px;font-size:10px;color:#8f9aac;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* Container & Pages */
+.container{padding:24px 4%;min-height:65vh}
+.pageHead{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.pageHead h1{font-size:clamp(22px,3vw,28px);margin:4px 0}
+.pageHead p{color:var(--muted);font-size:12px;margin:0}
+
+/* Shop Layout with Mobile Toggle */
+.shopLayout{display:grid;grid-template-columns:230px 1fr;gap:20px}
+.filters{border:1px solid var(--line);border-radius:10px;padding:16px;height:max-content;position:sticky;top:85px;background:var(--bg)}
+.filters h3{margin-top:0;font-size:15px}
+.filters label{display:block;font-size:11px;font-weight:700;margin:14px 0}
+.filters select,.filters input[type=range]{display:block;width:100%;margin-top:6px}
+.filters select,.shopToolbar select{padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg)}
+.reset{background:var(--soft);padding:10px;width:100%;border-radius:7px;font-weight:600;margin-top:10px}
+.filterToggleBtn{display:none;width:100%;background:var(--soft);border:1px solid var(--line);padding:10px;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:12px}
+
+.shopToolbar{display:flex;justify-content:space-between;margin-bottom:15px;gap:10px;flex-wrap:wrap}
+.shopToolbar input{flex:1;min-width:180px;padding:9px 12px;border:1px solid var(--line);border-radius:7px;font-size:13px}
+.shopToolbar select{width:160px}
+.empty{min-height:200px;display:grid;place-items:center;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:25px}
+
+/* Product Detail */
+.productDetail{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;margin-bottom:35px}
+.detailImage{height:clamp(280px,45vw,480px);background:var(--soft);border-radius:12px;overflow:hidden;display:grid;place-items:center}
+.detailImage img{width:100%;height:100%;object-fit:cover}
+.detailCopy h1{font-size:clamp(22px,3vw,30px);margin:6px 0}
+.bigPrice{font-size:22px;color:#e73545;font-weight:800;margin:10px 0}
+.bigPrice del{font-size:13px;color:#98a0ad;font-weight:500;margin-left:6px}
+.bigPrice mark{font-size:10px;background:#ffe8eb;color:#e73545;padding:4px 6px;border-radius:4px;vertical-align:2px}
+.option{font-size:11px;font-weight:700;display:block;margin:14px 0}
+.option button{padding:7px 12px;border:1px solid var(--line);border-radius:6px;margin:6px 6px 0 0;font-size:11px}
+.option button.selected{border-color:var(--primary);background:#f0edff;color:var(--primary)}
+.buyRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:16px 0}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:7px;height:40px}
+.qty button{width:34px;height:100%;font-size:16px}
+.qty b{min-width:28px;text-align:center;font-size:13px}
+.trust{margin-top:16px;padding:12px;background:var(--soft);border-radius:8px;font-size:10px;color:#657084;line-height:1.6}
+
+/* Cart & Checkout */
+.cartLayout,.checkout{display:grid;grid-template-columns:1fr 330px;gap:20px}
+.cartItem{display:grid;grid-template-columns:70px 1fr auto auto auto;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.cartItem img{width:70px;height:70px;object-fit:cover;border-radius:8px}
+.cartItem h3{font-size:12px;margin:0 0 4px}
+.summary{border:1px solid var(--line);border-radius:10px;padding:18px;height:max-content;position:sticky;top:85px;background:var(--bg)}
+.summary h2{font-size:16px;margin:0 0 12px}
+.summary>div{display:flex;justify-content:space-between;margin:10px 0;font-size:11px}
+.summary hr{border:0;border-top:1px solid var(--line);margin:12px 0}
+.summary .grand{font-size:16px;font-weight:800;color:#e73545}
+.coupon{display:flex!important;border:1px solid var(--line);border-radius:7px;overflow:hidden;margin:12px 0}
+.coupon input{flex:1;border:0;padding:8px 10px;outline:0;font-size:12px}
+.coupon button{background:var(--primary);color:#fff;padding:0 12px;font-size:11px;font-weight:700}
+.full{width:100%;display:block;margin-top:12px}
+
+.formCard{border:1px solid var(--line);border-radius:10px;padding:18px;background:var(--bg);margin-bottom:15px}
+.formCard h2{font-size:15px;margin:0 0 14px}
+.formGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.formGrid label{font-size:10px;font-weight:700;display:block}
+.formGrid input,.formCard input{display:block;width:100%;margin-top:5px;border:1px solid var(--line);padding:9px 11px;border-radius:7px;background:var(--bg);font-size:13px}
+
+/* Payment choices */
+.paymentChoices{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}
+.pay{border:1px solid var(--line);padding:10px 8px;border-radius:8px;font-size:11px;display:flex;align-items:center;gap:6px;cursor:pointer}
+.pay.selected{border-color:var(--primary);background:#f2efff}
+.pay-instruction{padding:12px;border-radius:8px;margin:10px 0;font-size:11px;line-height:1.6}
+.bkash-box{background:#fdf2f8;border:1px solid #fbcfe8;color:#9d174d}
+.nagad-box{background:#fff7ed;border:1px solid #fed7aa;color:#c2410c}
+.ssl-box{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+
+/* Toast */
+.toast{position:fixed;right:18px;bottom:70px;background:#111c2d;color:#fff;padding:11px 16px;border-radius:8px;box-shadow:var(--shadow);z-index:90;font-size:12px}
+
+/* Dark Mode */
+.dark{--bg:#0c1320;--text:#edf2fa;--muted:#98a4b6;--line:#253145;--soft:#151f30;--shadow:0 8px 30px rgba(0,0,0,.35)}
+.dark .hero{background:linear-gradient(120deg,#17152d,#1a1d38)}
+.dark .productImg{background:#111a29}
+.dark .wish{background:#172033}
+.dark .darkPromo{background:#080d16}
+.dark .greenPromo{background:#18271d}
+.dark .newsletter{background:#151b31}
+.dark .announcement{background:#070c14}
+.dark .bottomNav,.dark .mobileDrawer{background:#0c1320}
+
+/* Social Media & Contact Layout */
+.socialLinks{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.socialBtn{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;transition:transform .2s,opacity .2s;color:#fff!important;cursor:pointer}
+.socialBtn:hover{transform:translateY(-2px);opacity:.92}
+.social-fb{background:#1877f2}
+.social-wa{background:#25d366}
+.social-ig{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+.social-yt{background:#ff0000}
+.social-x{background:#111}
+.social-in{background:#0a66c2}
+.contactGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:16px}
+.contactCard{border:1px solid var(--line);border-radius:12px;padding:22px;background:var(--bg)}
+.contactItem{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.contactIcon{width:40px;height:40px;border-radius:10px;background:var(--soft);color:var(--primary);display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.contactItem b{display:block;font-size:13px;margin-bottom:2px}
+.contactItem span{display:block;font-size:12px;color:var(--muted)}
+.footerSocials{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.footerSocialBtn{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:#fff!important;font-size:13px;text-decoration:none;transition:transform .2s}
+.footerSocialBtn:hover{transform:scale(1.1)}
+
+/* ==========================================
+   SSLCOMMERZ EASY CHECKOUT MODAL (As per screenshot)
+   ========================================== */
+.sslModalBackdrop{position:fixed;inset:0;background:rgba(15,23,42,0.72);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:12px;overflow-y:auto}
+.sslModalBox{background:#fff;border-radius:12px;max-width:870px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,0.35);display:grid;grid-template-columns:340px 1fr;overflow:hidden;position:relative;color:#1e293b;animation:sslPop .2s ease-out}
+@keyframes sslPop{from{opacity:0;transform:scale(0.97)}to{opacity:1;transform:scale(1)}}
+.sslLeftCol{background:#fff;border-right:1px solid #eef2f6;padding:24px 22px;display:flex;flex-direction:column;justify-content:space-between}
+.sslRightCol{background:#fff;padding:24px 26px;display:flex;flex-direction:column}
+.sslHeader{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.sslBrand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.sslBrandBadge{background:#ea580c;color:#fff;border-radius:4px;padding:3px 6px;font-size:10px;font-weight:800}
+.sslTimer{font-size:13px;font-weight:700;color:#64748b;display:flex;align-items:center;gap:4px}
+.sslAmountCard{background:#f0f7ff;border:1px solid #dbeafe;border-radius:10px;padding:16px 18px;margin-bottom:18px}
+.sslAmountCard small{color:#64748b;font-size:11px;font-weight:600;display:block}
+.sslAmountCard h2{font-size:26px;font-weight:800;color:#0f172a;margin:4px 0 0}
+.sslSummaryRow{display:flex;justify-content:space-between;font-size:12px;padding:8px 0;border-bottom:1px dashed #e2e8f0;color:#475569}
+.sslSummaryRow.total{font-weight:700;border-bottom:0;color:#0f172a;font-size:13px;padding-top:10px}
+.sslOffersBox{margin-top:20px;padding:14px;border-radius:8px;border:1px solid #f1f5f9;background:#fafafa;text-align:center;font-size:11px;color:#94a3b8}
+.sslFooterLinks{font-size:10px;color:#94a3b8;display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:14px;border-top:1px solid #f1f5f9}
+.sslTopBar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sslGPayBar{background:#000;color:#fff;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:14px}
+.sslDivider{display:flex;align-items:center;gap:12px;margin:10px 0 14px;color:#94a3b8;font-size:11px}
+.sslDivider::before,.sslDivider::after{content:"";flex:1;height:1px;background:#e2e8f0}
+.sslTabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.sslTabBtn{border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:10px 6px;font-size:11px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:#475569;transition:.15s}
+.sslTabBtn.active{background:#0072f5;color:#fff;border-color:#0072f5}
+.sslTabBtn span.tabIcon{font-size:16px}
+.sslMfsGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-height:230px;overflow-y:auto;padding:4px}
+.sslMfsItem{border:1px solid #e2e8f0;border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;background:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:700;transition:.15s}
+.sslMfsItem:hover,.sslMfsItem.selected{border-color:#0072f5;background:#f0f7ff}
+.sslMfsIcon{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff}
+.mfs-bkash{background:#e2136e}
+.mfs-nagad{background:#f7941d}
+.mfs-rocket{background:#8c2986}
+.mfs-cellfin{background:#008542}
+.mfs-upay{background:#004b97}
+.mfs-tap{background:#ed1c24}
+.mfs-okwallet{background:#00a651}
+.mfs-gpay{background:#4285f4}
+.mfs-bank{background:#0f766e}
+.sslCardForm{display:flex;flex-direction:column;gap:10px}
+.sslCardRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sslCardForm input{border:1px solid #e2e8f0;border-radius:7px;padding:9px 12px;font-size:12px;width:100%;background:#fff}
+.sslPayBtn{background:#0072f5;color:#fff;font-weight:700;padding:12px;border-radius:8px;border:0;width:100%;font-size:14px;cursor:pointer;margin-top:14px;box-shadow:0 4px 14px rgba(0,114,245,0.35);transition:background .2s}
+.sslPayBtn:hover{background:#005ecc}
+.sslTerms{font-size:9px;color:#94a3b8;line-height:1.4;margin-top:8px;text-align:center}
+.sslCloseBtn{position:absolute;top:14px;right:16px;background:#f1f5f9;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;cursor:pointer;font-weight:bold;color:#64748b}
+@media(max-width:768px){.sslModalBox{grid-template-columns:1fr;max-height:92vh;overflow-y:auto}.sslLeftCol{border-right:0;border-bottom:1px solid #eef2f6}}
+
+/* ========================================================
+   RESPONSIVE MEDIA QUERIES (Phone, Tablet, Laptop, Desktop)
+   ======================================================== */
+
+/* TABLET & SMALL LAPTOP (<= 1024px) */
+@media(max-width:1024px){
+  nav.desktopNav{display:none}
+  .menuBtn{display:block}
+  .searchBox{width:180px}
+  .productGrid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+  .catGrid{grid-template-columns:repeat(4,1fr)}
+  .shopLayout{grid-template-columns:200px 1fr;gap:15px}
+}
+
+/* MOBILE & TABLET PORTRAIT (<= 768px) */
+@media(max-width:768px){
+  body{padding-bottom:70px}
+  .bottomNav{display:grid}
+  .header{height:60px;padding:0 3%}
+  .searchBox{display:none}
+  .loginBtn{display:none}
+  .hero{grid-template-columns:1fr;margin:12px 3%;border-radius:12px}
+  .heroVisual{height:200px}
+  .heroVisual img{width:70%;height:100%}
+  .heroCopy{padding:24px 18px;text-align:left}
+  .benefits{grid-template-columns:1fr;gap:8px}
+  .catGrid{grid-template-columns:repeat(4,1fr);gap:8px;margin:0 3% 20px}
+  .productGrid{grid-template-columns:repeat(2,1fr);gap:10px;margin:0 3% 20px}
+  .productImg{height:150px}
+  .promoGrid,.reviews{margin:0 3% 20px}
+  .newsletter{margin:0 3% 20px;padding:15px}
+  .container{padding:18px 3%}
+  .shopLayout{grid-template-columns:1fr}
+  .filters{display:none;position:static;margin-bottom:15px}
+  .filters.open{display:block}
+  .filterToggleBtn{display:block}
+  .cartLayout,.checkout{grid-template-columns:1fr}
+  .summary{position:static;margin-top:15px}
+  .cartItem{grid-template-columns:60px 1fr auto}
+  .cartItem img{width:60px;height:60px}
+  .cartItem .qty{grid-column:2;margin-top:6px}
+}
+
+/* SMALL MOBILE (<= 480px) */
+@media(max-width:480px){
+  .announcement{font-size:10px;padding:6px}
+  .brand{font-size:18px}
+  .brandIcon{padding:4px 6px;font-size:14px}
+  .catGrid{grid-template-columns:repeat(4,1fr);gap:6px}
+  .catCard{min-height:90px;padding:8px 4%}
+  .catCard img{width:44px;height:40px}
+  .catCard b{font-size:9px}
+  .productGrid{gap:8px}
+  .productImg{height:135px}
+  .productInfo{padding:8px}
+  .productInfo h3{font-size:11px}
+  .price{font-size:12px}
+  .add{padding:8px 6px;font-size:10px}
+  .promo{padding:16px}
+  .footerGrid{grid-template-columns:1fr;gap:20px}
+}
+</style>
+</head>
+<body>
+<div id="root">
+  <div style="font-family:sans-serif;padding:50px 20px;text-align:center">
+    <div style="font-size:30px">🛍️</div>
+    <p>Loading ShopMate...</p>
+  </div>
+</div>
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useEffect, useMemo, useState } = React;
+
+const products = [
+  {id:1,name:"iPhone 15 Pro Max",category:"Electronics",brand:"Apple",price:1099,oldPrice:1299,rating:4.8,reviews:124,stock:12,img:"https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=900&q=85",colors:["Natural Titanium","Black Titanium","Blue Titanium"],sizes:[]},
+  {id:2,name:"Modern Lounge Sofa",category:"Home & Living",brand:"Casa",price:549,oldPrice:699,rating:4.8,reviews:38,stock:7,img:"https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=85",colors:["Gray","Cream"],sizes:[]},
+  {id:3,name:"Kindle Paperwhite",category:"Electronics",brand:"Amazon",price:139,oldPrice:169,rating:4.8,reviews:81,stock:16,img:"https://images.unsplash.com/photo-1592496001020-d31bd830651f?auto=format&fit=crop&w=900&q=85",colors:["Black"],sizes:[]},
+  {id:4,name:"Sony WH-1000XM5",category:"Electronics",brand:"Sony",price:319,oldPrice:399,rating:4.7,reviews:98,stock:18,img:"https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=900&q=85",colors:["Black","Silver"],sizes:[]},
+  {id:5,name:"Apple Watch Series 9",category:"Electronics",brand:"Apple",price:409,oldPrice:499,rating:4.7,reviews:63,stock:9,img:"https://images.unsplash.com/photo-1546868871-7041f2a55e47?auto=format&fit=crop&w=900&q=85",colors:["Black","Silver"],sizes:[]},
+  {id:6,name:"Nike Air Force 1",category:"Fashion",brand:"Nike",price:89,oldPrice:119,rating:4.6,reviews:76,stock:25,img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=85",colors:["White","Black"],sizes:["39","40","41","42","43","44"]},
+  {id:7,name:"Under Armour Backpack",category:"Accessories",brand:"Under Armour",price:45,oldPrice:58,rating:4.5,reviews:42,stock:31,img:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=900&q=85",colors:["Black"],sizes:[]},
+  {id:8,name:"Minimal Beige Hoodie",category:"Fashion",brand:"Urban",price:64,oldPrice:79,rating:4.5,reviews:51,stock:20,img:"https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=900&q=85",colors:["Beige","Black"],sizes:["S","M","L","XL"]},
+  {id:9,name:"Smart Fitness Dumbbells",category:"Sports & Fitness",brand:"FitPro",price:129,oldPrice:159,rating:4.6,reviews:29,stock:14,img:"https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=900&q=85",colors:["Black"],sizes:[]},
+  {id:10,name:"Classic Leather Wallet",category:"Accessories",brand:"Urban",price:39,oldPrice:49,rating:4.4,reviews:33,stock:40,img:"https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=900&q=85",colors:["Brown","Black"],sizes:[]},
+  {id:11,name:"Everyday Cotton Tee",category:"Fashion",brand:"Urban",price:29,oldPrice:39,rating:4.5,reviews:61,stock:45,img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85",colors:["White","Black","Blue"],sizes:["S","M","L","XL"]},
+  {id:12,name:"Premium Teddy Bear",category:"Toys & Games",brand:"PlayCo",price:34,oldPrice:45,rating:4.7,reviews:27,stock:22,img:"https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=900&q=85",colors:["Brown"],sizes:[]}
+];
+
+const categories = [
+  ["Electronics","https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=500&q=80"],
+  ["Fashion","https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=500&q=80"],
+  ["Home & Living","https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=500&q=80"],
+  ["Beauty & Health","https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=500&q=80"],
+  ["Sports & Fitness","https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=500&q=80"],
+  ["Books","https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=500&q=80"],
+  ["Toys & Games","https://images.unsplash.com/photo-1560961911-ba7ef651a56c?auto=format&fit=crop&w=500&q=80"],
+  ["Accessories","https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=80"]
+];
+
+const money = n => `$${n.toFixed(2)}`;
+
+// Official Social Media SVG Logos
+const FbSvg = ({size=16}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={{display:"inline-block",verticalAlign:"middle"}}>
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  </svg>
+);
+const WaSvg = ({size=16}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={{display:"inline-block",verticalAlign:"middle"}}>
+    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+  </svg>
+);
+const IgSvg = ({size=16}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={{display:"inline-block",verticalAlign:"middle"}}>
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </svg>
+);
+const YtSvg = ({size=16}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={{display:"inline-block",verticalAlign:"middle"}}>
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+);
+const XSvg = ({size=16}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={{display:"inline-block",verticalAlign:"middle"}}>
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+);
+const InSvg = ({size=16}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={{display:"inline-block",verticalAlign:"middle"}}>
+    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+  </svg>
+);
+
+// Payment Method Logo SVGs
+const CodSvg = ({size=28}) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" style={{display:"inline-block",verticalAlign:"middle",flexShrink:0}}>
+    <rect width="64" height="64" rx="12" fill="#ecfdf5"/>
+    <path d="M12 24h24v18H12z" fill="#059669"/>
+    <path d="M36 28h10l6 7v7H36z" fill="#047857"/>
+    <path d="M38 30h7l4 5h-11z" fill="#a7f3d0"/>
+    <circle cx="20" cy="44" r="5" fill="#0f172a"/>
+    <circle cx="20" cy="44" r="2" fill="#94a3b8"/>
+    <circle cx="44" cy="44" r="5" fill="#0f172a"/>
+    <circle cx="44" cy="44" r="2" fill="#94a3b8"/>
+    <circle cx="24" cy="20" r="10" fill="#10b981" stroke="#ffffff" strokeWidth="2"/>
+    <text x="24" y="24" fontFamily="Arial, sans-serif" fontSize="12" fontWeight="bold" fill="#ffffff" textAnchor="middle">৳</text>
+  </svg>
+);
+
+const SslSvg = ({size=28}) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" style={{display:"inline-block",verticalAlign:"middle",flexShrink:0}}>
+    <rect width="64" height="64" rx="12" fill="#eff6ff"/>
+    <rect x="10" y="18" width="44" height="28" rx="5" fill="#0284c7"/>
+    <rect x="10" y="24" width="44" height="6" fill="#0369a1"/>
+    <rect x="16" y="36" width="10" height="4" rx="1" fill="#fed7aa"/>
+    <circle cx="42" cy="38" r="4" fill="#ef4444" opacity="0.9"/>
+    <circle cx="48" cy="38" r="4" fill="#f59e0b" opacity="0.9"/>
+  </svg>
+);
+
+const BkashSvg = ({size=28}) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" style={{display:"inline-block",verticalAlign:"middle",flexShrink:0}}>
+    <rect width="64" height="64" rx="12" fill="#fdf2f8"/>
+    <path d="M32 14l13 18-13 18-13-18z" fill="#e2136e"/>
+    <circle cx="32" cy="32" r="5" fill="#ffffff"/>
+  </svg>
+);
+
+function App(){
+  const [page,setPage]=useState("home");
+  const [selected,setSelected]=useState(null);
+  const [cart,setCart]=useState(()=>JSON.parse(localStorage.getItem("shopmate-cart")||"[]"));
+  const [wishlist,setWishlist]=useState(()=>JSON.parse(localStorage.getItem("shopmate-wishlist")||"[]"));
+  const [dark,setDark]=useState(()=>localStorage.getItem("shopmate-dark")==="1");
+  const [query,setQuery]=useState("");
+  const [toast,setToast]=useState("");
+  const [user,setUser]=useState(()=>JSON.parse(localStorage.getItem("shopmate-user")||"null"));
+  const [orders,setOrders]=useState(()=>JSON.parse(localStorage.getItem("shopmate-orders")||"[]"));
+  const [coupon,setCoupon]=useState("");
+  const [couponApplied,setCouponApplied]=useState(false);
+  const [mobileMenuOpen,setMobileMenuOpen]=useState(false);
+
+  useEffect(()=>localStorage.setItem("shopmate-cart",JSON.stringify(cart)),[cart]);
+  useEffect(()=>localStorage.setItem("shopmate-wishlist",JSON.stringify(wishlist)),[wishlist]);
+  useEffect(()=>{document.documentElement.classList.toggle("dark",dark);localStorage.setItem("shopmate-dark",dark?"1":"0")},[dark]);
+  useEffect(()=>localStorage.setItem("shopmate-user",JSON.stringify(user)),[user]);
+  useEffect(()=>localStorage.setItem("shopmate-orders",JSON.stringify(orders)),[orders]);
+
+  const notify=(m)=>{setToast(m);setTimeout(()=>setToast(""),2200)};
+  const openProduct=(p)=>{setSelected(p);setPage("product");window.scrollTo({top:0,behavior:"smooth"})};
+  const addToCart=(p,qty=1)=>{setCart(c=>{const old=c.find(x=>x.id===p.id);return old?c.map(x=>x.id===p.id?{...x,qty:x.qty+qty}:x):[...c,{...p,qty}]});notify(`${p.name} added to cart`)};
+  const toggleWish=(p)=>setWishlist(w=>w.includes(p.id)?w.filter(id=>id!==p.id):[...w,p.id]);
+  const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  const discount=couponApplied?Math.min(total*.1,100):0;
+  const shipping=total>=50||total===0?0:6.99;
+  const grand=Math.max(0,total-discount+shipping);
+
+  const nav=(p)=>{setPage(p);setSelected(null);setMobileMenuOpen(false);window.scrollTo({top:0,behavior:"smooth"})};
+
+  return <div className="app">
+    <div className="announcement">🚚 Free shipping over $50 | 30% Off on Electronics — <b>ShopMate</b></div>
+    
+    <header className="header">
+      <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
+        <button className="menuBtn" onClick={()=>setMobileMenuOpen(true)} aria-label="Open menu">☰</button>
+        <button className="brand" onClick={()=>nav("home")}><span className="brandIcon">♜</span> ShopMate</button>
+      </div>
+
+      <nav className="desktopNav">
+        {["Home","Shop","Categories","Offers","About","Contact"].map(x=>(
+          <button key={x} className={page===x.toLowerCase()||(x==="Home"&&page==="home")?"active":""} onClick={()=>nav(x.toLowerCase())}>{x}</button>
+        ))}
+      </nav>
+
+      <div className="headActions">
+        <div className="searchBox">
+          <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search..." onKeyDown={e=>e.key==="Enter"&&nav("shop")}/>
+          <span>⌕</span>
+        </div>
+        <button className="iconBtn" onClick={()=>nav("wishlist")} aria-label="Wishlist">♡<i>{wishlist.length}</i></button>
+        <button className="iconBtn" onClick={()=>nav("cart")} aria-label="Cart">🛒<i>{cart.reduce((s,x)=>s+x.qty,0)}</i></button>
+        <button className="loginBtn" onClick={()=>nav(user?"profile":"login")}>♙ {user?user.name.split(" ")[0]:"Login"}</button>
+        <button className="themeBtn" onClick={()=>setDark(!dark)} aria-label="Toggle theme">{dark?"☀":"☾"}</button>
+      </div>
+    </header>
+
+    {/* Mobile Slide-out Drawer */}
+    <div className={`mobileMenuOverlay ${mobileMenuOpen?"open":""}`} onClick={()=>setMobileMenuOpen(false)}>
+      <div className="mobileDrawer" onClick={e=>e.stopPropagation()}>
+        <div className="mobileDrawerHead">
+          <button className="brand" onClick={()=>nav("home")}><span className="brandIcon">♜</span> ShopMate</button>
+          <button style={{fontSize:"22px",padding:"4px"}} onClick={()=>setMobileMenuOpen(false)}>✕</button>
+        </div>
+
+        <div style={{marginTop:"15px",position:"relative"}}>
+          <input 
+            style={{width:"100%",padding:"10px 32px 10px 12px",borderRadius:"8px",border:"1px solid var(--line)",background:"var(--soft)",fontSize:"14px"}} 
+            value={query} 
+            onChange={e=>setQuery(e.target.value)} 
+            placeholder="Search products..." 
+            onKeyDown={e=>{if(e.key==="Enter"){nav("shop");setMobileMenuOpen(false)}}}
+          />
+          <span style={{position:"absolute",right:"10px",top:"10px",color:"var(--muted)"}}>⌕</span>
+        </div>
+
+        <div className="mobileDrawerNav">
+          <button className={page==="home"?"active":""} onClick={()=>nav("home")}>🏠 Home</button>
+          <button className={page==="shop"?"active":""} onClick={()=>nav("shop")}>🛍️ All Products</button>
+          <button className={page==="categories"?"active":""} onClick={()=>nav("categories")}>🏷️ Categories</button>
+          <button className={page==="offers"?"active":""} onClick={()=>nav("offers")}>🔥 Today's Offers</button>
+          <button className={page==="wishlist"?"active":""} onClick={()=>nav("wishlist")}>🤍 Wishlist ({wishlist.length})</button>
+          <button className={page==="cart"?"active":""} onClick={()=>nav("cart")}>🛒 Cart ({cart.reduce((s,x)=>s+x.qty,0)})</button>
+          <button className={page==="profile"||page==="login"?"active":""} onClick={()=>nav(user?"profile":"login")}>👤 {user?user.name:"Login / Register"}</button>
+          <button className={page==="about"?"active":""} onClick={()=>nav("about")}>ℹ️ About Us</button>
+          <button className={page==="contact"?"active":""} onClick={()=>nav("contact")}>📞 Contact</button>
+          <button onClick={()=>nav("admin")}>⚙️ Admin Dashboard</button>
+        </div>
+      </div>
+    </div>
+
+    {/* Main Content Router */}
+    {page==="home" && <Home openProduct={openProduct} addToCart={addToCart} toggleWish={toggleWish} wishlist={wishlist} nav={nav}/>}
+    {page==="shop" && <Shop products={products} query={query} setQuery={setQuery} openProduct={openProduct} addToCart={addToCart} toggleWish={toggleWish} wishlist={wishlist}/>}
+    {page==="categories" && <Categories nav={nav}/>}
+    {page==="offers" && <Shop products={products.filter(p=>p.oldPrice)} query={query} setQuery={setQuery} openProduct={openProduct} addToCart={addToCart} toggleWish={toggleWish} wishlist={wishlist} offerMode/>}
+    {page==="product" && selected && <Product p={selected} addToCart={addToCart} toggleWish={toggleWish} wished={wishlist.includes(selected.id)} nav={nav}/>}
+    {page==="cart" && <Cart cart={cart} setCart={setCart} total={total} discount={discount} shipping={shipping} grand={grand} coupon={coupon} setCoupon={setCoupon} couponApplied={couponApplied} setCouponApplied={setCouponApplied} nav={nav}/>}
+    {page==="checkout" && <Checkout cart={cart} total={total} discount={discount} shipping={shipping} grand={grand} user={user} setOrders={setOrders} setCart={setCart} nav={nav} notify={notify}/>}
+    {page==="login" && <Auth mode="login" setUser={setUser} nav={nav}/>}
+    {page==="register" && <Auth mode="register" setUser={setUser} nav={nav}/>}
+    {page==="profile" && <Profile user={user} orders={orders} setUser={setUser} nav={nav}/>}
+    {page==="wishlist" && <Wishlist items={products.filter(p=>wishlist.includes(p.id))} openProduct={openProduct} addToCart={addToCart} toggleWish={toggleWish}/>}
+    {page==="contact" && <Contact notify={notify}/>}
+    {page==="about" && <About/>}
+    {page==="admin" && <Admin orders={orders} setOrders={setOrders} notify={notify}/>}
+
+    {/* Mobile Bottom Navigation */}
+    <div className="bottomNav">
+      <button className={page==="home"?"active":""} onClick={()=>nav("home")}>
+        <span className="bIcon">🏠</span>
+        <span>Home</span>
+      </button>
+      <button className={page==="shop"?"active":""} onClick={()=>nav("shop")}>
+        <span className="bIcon">🛍️</span>
+        <span>Shop</span>
+      </button>
+      <button className={page==="wishlist"?"active":""} onClick={()=>nav("wishlist")}>
+        <span className="bIcon">♡</span>
+        {wishlist.length>0&&<i>{wishlist.length}</i>}
+        <span>Wishlist</span>
+      </button>
+      <button className={page==="cart"?"active":""} onClick={()=>nav("cart")}>
+        <span className="bIcon">🛒</span>
+        {cart.length>0&&<i>{cart.reduce((s,x)=>s+x.qty,0)}</i>}
+        <span>Cart</span>
+      </button>
+      <button className={page==="profile"||page==="login"?"active":""} onClick={()=>nav(user?"profile":"login")}>
+        <span className="bIcon">👤</span>
+        <span>Account</span>
+      </button>
+    </div>
+
+    <footer className="footer">
+      <div className="footerGrid">
+        <div>
+          <h3>♜ ShopMate</h3>
+          <p>Your one-stop shop for the best products at the best prices. Shop smart, live better.</p>
+          <div className="footerSocials">
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="footerSocialBtn social-fb" title="Facebook"><FbSvg size={15}/></a>
+            <a href="https://wa.me/8801614703406" target="_blank" rel="noreferrer" className="footerSocialBtn social-wa" title="WhatsApp"><WaSvg size={15}/></a>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="footerSocialBtn social-ig" title="Instagram"><IgSvg size={15}/></a>
+            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="footerSocialBtn social-yt" title="YouTube"><YtSvg size={15}/></a>
+            <a href="https://x.com" target="_blank" rel="noreferrer" className="footerSocialBtn social-x" title="X (Twitter)"><XSvg size={14}/></a>
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="footerSocialBtn social-in" title="LinkedIn"><InSvg size={15}/></a>
+          </div>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <button onClick={()=>nav("home")}>Home</button>
+          <button onClick={()=>nav("shop")}>Shop</button>
+          <button onClick={()=>nav("categories")}>Categories</button>
+          <button onClick={()=>nav("offers")}>Offers</button>
+          <button onClick={()=>nav("contact")}>Contact Us</button>
+        </div>
+        <div>
+          <h4>Contact & Payment</h4>
+          <p>☎ +880 1614703406 (Call & WhatsApp)</p>
+          <p>✉ support@shopmate.com</p>
+          <p>📍 Banani, Dhaka - 1213, Bangladesh</p>
+          <div className="payments">bKash &nbsp; Nagad &nbsp; VISA &nbsp; Mastercard</div>
+        </div>
+      </div>
+      <div className="copyright">
+        <span>© 2026 ShopMate. All rights reserved.</span>
+        <span>Secure shopping • Fast delivery • Easy returns</span>
+      </div>
+    </footer>
+
+    {toast&&<div className="toast">✓ {toast}</div>}
+  </div>
+}
+
+function Home({openProduct,addToCart,toggleWish,wishlist,nav}){
+  return <main>
+    <section className="hero">
+      <div className="heroCopy">
+        <small>NEW ARRIVALS</small>
+        <h1>Upgrade Your Style<br/><em>With the Latest Trends</em></h1>
+        <p>Discover premium quality products at unbeatable prices. Shop the best deals, only at <b>ShopMate.</b></p>
+        <div>
+          <button className="primary" onClick={()=>nav("shop")}>Shop Now →</button>
+        </div>
+        <div className="benefits">
+          <span>🚚 <div><b>Free Shipping</b><small>Orders over $50</small></div></span>
+          <span>▣ <div><b>Secure Payment</b><small>bKash, Nagad, Card</small></div></span>
+          <span>◉ <div><b>24/7 Support</b><small>01614703406</small></div></span>
+        </div>
+      </div>
+      <div className="heroVisual">
+        <div className="blob"></div>
+        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1000&q=85" alt="Store"/>
+        <div className="scribble">Better<br/>Lifestyle</div>
+      </div>
+    </section>
+
+    <SectionTitle title="Featured Categories" sub="Shop by category and find exactly what you need." action="View All →" onClick={()=>nav("categories")}/>
+    <div className="catGrid">
+      {categories.map(([name,img])=>(
+        <button className="catCard" key={name} onClick={()=>nav("shop")}>
+          <img src={img} alt={name}/>
+          <b>{name}</b>
+        </button>
+      ))}
+    </div>
+
+    <SectionTitle title="Best Selling Products" sub="Our most popular products, loved by customers." action="View All →" onClick={()=>nav("shop")}/>
+    <div className="productGrid">
+      {products.slice(0,6).map(p=>(
+        <ProductCard key={p.id} p={p} openProduct={openProduct} addToCart={addToCart} toggleWish={toggleWish} wished={wishlist.includes(p.id)}/>
+      ))}
+    </div>
+
+    <div className="promoGrid">
+      <div className="promo darkPromo">
+        <div>
+          <h2>BIG SALE</h2>
+          <h3>Up to 50% OFF</h3>
+          <p>On Selected Items</p>
+          <button className="primary" onClick={()=>nav("offers")}>Shop Now →</button>
+        </div>
+        <span className="discountBubble">50%<br/>OFF</span>
+      </div>
+      <div className="promo greenPromo">
+        <div>
+          <h2>Fresh Looks<br/>For Every Season</h2>
+          <p>Fashion Collection 2026</p>
+          <button onClick={()=>nav("shop")}>Shop Now →</button>
+        </div>
+      </div>
+    </div>
+
+    <SectionTitle title="What Our Customers Say" sub="Real reviews from real customers."/>
+    <div className="reviews">
+      {[["Rahul Ahmed","Amazing products and fast delivery! Highly recommended.","2 days ago"],
+        ["Sarah Khan","Great customer service and easy bKash payment. Will shop again!","4 days ago"],
+        ["Imran Hossain","The mobile website is very smooth and user-friendly. Love it!","1 week ago"]
+      ].map(([name,text,time],i)=>(
+        <div className="review" key={name}>
+          <div className="avatar">{name[0]}</div>
+          <div>
+            <b>{name}</b>
+            <small>🟢 Verified Buyer</small>
+            <div className="stars">★★★★★</div>
+            <p>“{text}”</p>
+            <small>{time}</small>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <Newsletter/>
+  </main>
+}
+
+function SectionTitle({title,sub,action,onClick}){
+  return <div className="sectionTitle">
+    <div><h2>{title}</h2><p>{sub}</p></div>
+    {action&&<button onClick={onClick}>{action}</button>}
+  </div>
+}
+
+function ProductCard({p,openProduct,addToCart,toggleWish,wished}){
+  return <article className="productCard">
+    <div className="productImg">
+      <span className="sale">-{Math.round((1-p.price/p.oldPrice)*100)}%</span>
+      <button className="wish" onClick={()=>toggleWish(p)} aria-label="Add to wishlist">{wished?"♥":"♡"}</button>
+      <img src={p.img} alt={p.name} onClick={()=>openProduct(p)}/>
+    </div>
+    <div className="productInfo">
+      <h3 onClick={()=>openProduct(p)}>{p.name}</h3>
+      <div className="stars">★★★★★ <small>({p.reviews})</small></div>
+      <div className="price">{money(p.price)} <del>{money(p.oldPrice)}</del></div>
+      <button className="add" onClick={()=>addToCart(p)}>🛒 Add to Cart</button>
+    </div>
+  </article>
+}
+
+function Shop({products:all,query,setQuery,openProduct,addToCart,toggleWish,wishlist,offerMode=false}){
+  const [cat,setCat]=useState("All"),[brand,setBrand]=useState("All"),[sort,setSort]=useState("popular"),[max,setMax]=useState(1200);
+  const [filterOpen,setFilterOpen]=useState(false);
+
+  const brands=["All",...new Set(all.map(p=>p.brand))], cats=["All",...new Set(all.map(p=>p.category))];
+  const list=useMemo(()=>all.filter(p=>(cat==="All"||p.category===cat)&&(brand==="All"||p.brand===brand)&&p.price<=max&&p.name.toLowerCase().includes((query||"").toLowerCase())).sort((a,b)=>sort==="low"?a.price-b.price:sort==="high"?b.price-a.price:sort==="new"?b.id-a.id:b.rating-a.rating),[all,cat,brand,max,sort,query]);
+
+  return <main className="container">
+    <div className="pageHead">
+      <div>
+        <small style={{color:"var(--primary)",fontWeight:700}}>SHOP</small>
+        <h1>{offerMode?"Today's Offers":"All Products"}</h1>
+        <p>{list.length} products found</p>
+      </div>
+    </div>
+
+    <button className="filterToggleBtn" onClick={()=>setFilterOpen(!filterOpen)}>
+      ⚙️ {filterOpen?"Hide Filters":"Filter Products (Category, Price, Brand)"}
+    </button>
+
+    <div className="shopLayout">
+      <aside className={`filters ${filterOpen?"open":""}`}>
+        <h3>Filters</h3>
+        <label>Category
+          <select value={cat} onChange={e=>setCat(e.target.value)}>
+            {cats.map(x=><option key={x}>{x}</option>)}
+          </select>
+        </label>
+        <label>Brand
+          <select value={brand} onChange={e=>setBrand(e.target.value)}>
+            {brands.map(x=><option key={x}>{x}</option>)}
+          </select>
+        </label>
+        <label>Max Price: <b>${max}</b>
+          <input type="range" min="20" max="1200" step="10" value={max} onChange={e=>setMax(+e.target.value)}/>
+        </label>
+        <button className="reset" onClick={()=>{setCat("All");setBrand("All");setMax(1200);if(setQuery)setQuery("");setFilterOpen(false)}}>Reset Filters</button>
+      </aside>
+
+      <section>
+        <div className="shopToolbar">
+          <input value={query||""} onChange={e=>setQuery&&setQuery(e.target.value)} placeholder="Search products..."/>
+          <select value={sort} onChange={e=>setSort(e.target.value)}>
+            <option value="popular">Most Popular</option>
+            <option value="low">Price: Low to High</option>
+            <option value="high">Price: High to Low</option>
+            <option value="new">Newest</option>
+          </select>
+        </div>
+        <div className="productGrid">
+          {list.map(p=><ProductCard key={p.id} p={p} openProduct={openProduct} addToCart={addToCart} toggleWish={toggleWish} wished={wishlist.includes(p.id)}/>)}
+        </div>
+        {!list.length&&<div className="empty">No products match your filters.</div>}
+      </section>
+    </div>
+  </main>
+}
+
+function Product({p,addToCart,toggleWish,wished,nav}){
+  const [qty,setQty]=useState(1),[size,setSize]=useState(p.sizes[0]||""),[color,setColor]=useState(p.colors[0]||"");
+  return <main className="container">
+    <button style={{color:"var(--primary)",fontWeight:700,marginBottom:"16px",display:"inline-block"}} onClick={()=>nav("shop")}>← Back to Shop</button>
+    <div className="productDetail">
+      <div className="detailImage"><img src={p.img} alt={p.name}/></div>
+      <div className="detailCopy">
+        <small style={{color:"var(--primary)",fontWeight:700}}>{p.category}</small>
+        <h1>{p.name}</h1>
+        <div className="stars">★★★★★ <span>({p.reviews} reviews)</span></div>
+        <div className="bigPrice">{money(p.price)} <del>{money(p.oldPrice)}</del> <mark>{Math.round((1-p.price/p.oldPrice)*100)}% OFF</mark></div>
+        <p style={{color:"var(--muted)",lineHeight:1.6,fontSize:"13px"}}>Premium quality product with sleek modern styling, durable build, and maximum comfort. Verified by ShopMate.</p>
+        
+        {p.sizes.length>0&&<div className="option">Size<div>{p.sizes.map(x=><button className={size===x?"selected":""} onClick={()=>setSize(x)} key={x}>{x}</button>)}</div></div>}
+        {p.colors.length>0&&<div className="option">Color<div>{p.colors.map(x=><button className={color===x?"selected":""} onClick={()=>setColor(x)} key={x}>{x}</button>)}</div></div>}
+        
+        <div className="buyRow">
+          <div className="qty">
+            <button onClick={()=>setQty(Math.max(1,qty-1))}>−</button>
+            <b>{qty}</b>
+            <button onClick={()=>setQty(qty+1)}>+</button>
+          </div>
+          <button className="primary" style={{flex:"1",minWidth:"140px"}} onClick={()=>addToCart(p,qty)}>Add to Cart</button>
+          <button className="secondary" onClick={()=>{addToCart(p,qty);nav("checkout")}}>Buy Now</button>
+          <button className="wish" style={{position:"static",width:"42px",height:"42px",borderRadius:"8px"}} onClick={()=>toggleWish(p)}>{wished?"♥":"♡"}</button>
+        </div>
+        <div className="trust">🚚 Free delivery over $50 • 🔒 Secure Payment (bKash/Nagad/Card) • ↩ 30-Day Easy Returns</div>
+      </div>
+    </div>
+  </main>
+}
+
+function Cart({cart,setCart,total,discount,shipping,grand,coupon,setCoupon,couponApplied,setCouponApplied,nav}){
+  return <main className="container">
+    <div className="pageHead"><div><small style={{color:"var(--primary)",fontWeight:700}}>SHOPPING BAG</small><h1>Your Cart</h1></div></div>
+    {!cart.length?<div className="empty"><h2>Your cart is empty</h2><p>Add some products to your cart.</p><button className="primary" style={{marginTop:"12px"}} onClick={()=>nav("shop")}>Continue Shopping</button></div>:
+    <div className="cartLayout">
+      <section>
+        {cart.map(x=>(
+          <div className="cartItem" key={x.id}>
+            <img src={x.img} alt={x.name}/>
+            <div>
+              <h3>{x.name}</h3>
+              <small style={{color:"var(--muted)"}}>{x.category}</small>
+              <div style={{color:"#e73545",fontWeight:700,fontSize:"13px"}}>{money(x.price)}</div>
+            </div>
+            <div className="qty">
+              <button onClick={()=>setCart(c=>c.map(i=>i.id===x.id?{...i,qty:Math.max(1,i.qty-1)}:i))}>−</button>
+              <b>{x.qty}</b>
+              <button onClick={()=>setCart(c=>c.map(i=>i.id===x.id?{...i,qty:i.qty+1}:i))}>+</button>
+            </div>
+            <b style={{fontSize:"13px"}}>{money(x.price*x.qty)}</b>
+            <button style={{fontSize:"20px",color:"#e73545",padding:"4px"}} onClick={()=>setCart(c=>c.filter(i=>i.id!==x.id))}>×</button>
+          </div>
+        ))}
+        <button className="secondary" style={{marginTop:"15px"}} onClick={()=>nav("shop")}>← Continue Shopping</button>
+      </section>
+      <aside className="summary">
+        <h2>Order Summary</h2>
+        <div><span>Subtotal</span><b>{money(total)}</b></div>
+        <div><span>Discount</span><b>-{money(discount)}</b></div>
+        <div><span>Shipping</span><b>{shipping?money(shipping):"FREE"}</b></div>
+        <hr/>
+        <div className="grand"><span>Total</span><b>{money(grand)}</b></div>
+        <div className="coupon">
+          <input value={coupon} onChange={e=>setCoupon(e.target.value.toUpperCase())} placeholder="SAVE10"/>
+          <button onClick={()=>setCouponApplied(coupon==="SAVE10")}>{couponApplied?"Applied":"Apply"}</button>
+        </div>
+        <button className="primary full" onClick={()=>nav("checkout")}>Proceed to Checkout →</button>
+      </aside>
+    </div>}
+  </main>
+}
+
+function SSLCommerzModal({amount,bdtTotal,onSuccess,onClose}){
+  const [tab,setTab]=useState("card"); // 'card' | 'mfs' | 'bank'
+  const [timer,setTimer]=useState(224); // 03:44 countdown
+  const [selectedMfs,setSelectedMfs]=useState("bKash");
+  const [selectedBank,setSelectedBank]=useState("City Touch");
+  const [cardData,setCardData]=useState({num:"",exp:"",cvc:"",name:""});
+  const [busy,setBusy]=useState(false);
+
+  useEffect(()=>{
+    const iv=setInterval(()=>setTimer(t=>t>0?t-1:0),1000);
+    return ()=>clearInterval(iv);
+  },[]);
+
+  const formatTimer=(s)=>{
+    const m=Math.floor(s/60);
+    const sec=s%60;
+    return `${m<10?"0"+m:m}:${sec<10?"0"+sec:sec}`;
+  };
+
+  const trxId="17913"+Math.floor(1000000+Math.random()*9000000)+"xKhy";
+
+  const handlePay=()=>{
+    setBusy(true);
+    setTimeout(()=>{
+      setBusy(false);
+      onSuccess({method:tab==="card"?"Card (VISA/MC)":tab==="mfs"?selectedMfs:selectedBank,trxId});
+    },1100);
+  };
+
+  const mfsList=[
+    {name:"bKash",cls:"mfs-bkash",badge:"bKash"},
+    {name:"Rocket",cls:"mfs-rocket",badge:"rocket"},
+    {name:"Nagad",cls:"mfs-nagad",badge:"নগদ"},
+    {name:"CellFin",cls:"mfs-cellfin",badge:"CellFin"},
+    {name:"MCash",cls:"mfs-bkash",badge:"MCash"},
+    {name:"Cashbaba",cls:"mfs-upay",badge:"CB"},
+    {name:"Rainbow",cls:"mfs-bank",badge:"RB"},
+    {name:"Tap",cls:"mfs-tap",badge:"tap"},
+    {name:"OK Wallet",cls:"mfs-okwallet",badge:"OK"},
+    {name:"GPay",cls:"mfs-gpay",badge:"G"},
+    {name:"Rupali Cash",cls:"mfs-bkash",badge:"RC"},
+    {name:"Pathao Pay",cls:"mfs-upay",badge:"P"},
+  ];
+
+  const bankList=[
+    {name:"AB Bank",code:"AB"},
+    {name:"Sonali Bank",code:"SB"},
+    {name:"City Touch",code:"City"},
+    {name:"MTB",code:"MTB"},
+    {name:"Dhaka Bank",code:"DBL"},
+    {name:"MyPrime",code:"Prime"},
+    {name:"Islami Bank",code:"IBBL"},
+    {name:"EBL SKY",code:"EBL"},
+    {name:"iPay",code:"iPay"},
+    {name:"FSIBL",code:"FSIBL"},
+    {name:"Midland Bank",code:"MDB"},
+    {name:"BRAC Bank",code:"BRAC"},
+  ];
+
+  return <div className="sslModalBackdrop" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+    <div className="sslModalBox">
+      <button className="sslCloseBtn" onClick={onClose} title="Cancel">✕</button>
+      
+      {/* Left Column: Summary */}
+      <div className="sslLeftCol">
+        <div>
+          <div className="sslHeader">
+            <div className="sslBrand">
+              <span className="sslBrandBadge">SHOPMATE</span>
+              <div>
+                <b style={{display:"block",fontSize:"13px"}}>ShopMate Store</b>
+                <small style={{color:"#64748b",fontSize:"10px"}}>Trx ID: {trxId}</small>
+              </div>
+            </div>
+            <div className="sslTimer">⏱ {formatTimer(timer)}</div>
+          </div>
+
+          <div className="sslAmountCard">
+            <small>You are paying</small>
+            <h2>৳{bdtTotal.toLocaleString()}.00</h2>
+          </div>
+
+          <div className="sslSummaryRow">
+            <span>Subtotal</span>
+            <b>৳{bdtTotal.toLocaleString()}.00</b>
+          </div>
+          <div className="sslSummaryRow">
+            <span>Convenience Charge</span>
+            <b>৳0.00</b>
+          </div>
+          <div className="sslSummaryRow total">
+            <span>Total amount</span>
+            <b>৳{bdtTotal.toLocaleString()}.00</b>
+          </div>
+
+          <div className="sslOffersBox">
+            <div style={{fontSize:"18px",marginBottom:"4px"}}>🎁</div>
+            <b style={{color:"#334155"}}>Special Offers and Savings</b>
+            <p style={{margin:"2px 0 0",fontSize:"10px"}}>Automatically applied with eligible payments</p>
+          </div>
+        </div>
+
+        <div className="sslFooterLinks">
+          <span>Support &bull; FAQ</span>
+          <span>Powered by <b>SSLCOMMERZ</b> &bull; PCI-DSS</span>
+        </div>
+      </div>
+
+      {/* Right Column: Payment Tabs */}
+      <div className="sslRightCol">
+        <div className="sslTopBar">
+          <small style={{color:"#64748b"}}>Welcome!</small>
+          <span style={{fontSize:"11px",color:"#0072f5",fontWeight:600}}>👤 Login</span>
+        </div>
+
+        <div className="sslGPayBar" onClick={handlePay}>
+          <span style={{fontSize:"14px"}}>G Pay</span> &bull;&bull;&bull;&bull; 7443
+        </div>
+
+        <div className="sslDivider">Or</div>
+
+        {/* 3 Tabs: Card, Mobile Banking, Net Banking */}
+        <div className="sslTabs">
+          <button className={`sslTabBtn ${tab==="card"?"active":""}`} onClick={()=>setTab("card")}>
+            <span className="tabIcon">💳</span>
+            <span>Card</span>
+          </button>
+          <button className={`sslTabBtn ${tab==="mfs"?"active":""}`} onClick={()=>setTab("mfs")}>
+            <span className="tabIcon">📱</span>
+            <span>Mobile Banking</span>
+          </button>
+          <button className={`sslTabBtn ${tab==="bank"?"active":""}`} onClick={()=>setTab("bank")}>
+            <span className="tabIcon">🏛️</span>
+            <span>Net Banking</span>
+          </button>
+        </div>
+
+        {/* Tab 1: Cards */}
+        {tab==="card" && (
+          <div className="sslCardForm">
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"4px"}}>
+              <span style={{fontSize:"11px",fontWeight:700,color:"#334155"}}>Pay with New Cards</span>
+              <span style={{fontSize:"10px",color:"#0072f5",cursor:"pointer"}}>Other Cards</span>
+            </div>
+            <div>
+              <div style={{position:"relative"}}>
+                <input placeholder="Card Number" value={cardData.num} onChange={e=>setCardData({...cardData,num:e.target.value})} maxLength={19}/>
+                <span style={{position:"absolute",right:"8px",top:"8px",fontSize:"10px",fontWeight:800,color:"#0284c7"}}>VISA / MC</span>
+              </div>
+            </div>
+            <div className="sslCardRow">
+              <input placeholder="MM/YY" value={cardData.exp} onChange={e=>setCardData({...cardData,exp:e.target.value})} maxLength={5}/>
+              <input placeholder="CVC/CVV" type="password" value={cardData.cvc} onChange={e=>setCardData({...cardData,cvc:e.target.value})} maxLength={4}/>
+            </div>
+            <input placeholder="Card Holder Name" value={cardData.name} onChange={e=>setCardData({...cardData,name:e.target.value})}/>
+            <label style={{display:"flex",alignItems:"center",gap:"6px",fontSize:"11px",color:"#64748b",cursor:"pointer"}}>
+              <input type="checkbox" defaultChecked/> Remember this Card ⓘ
+            </label>
+          </div>
+        )}
+
+        {/* Tab 2: Mobile Banking */}
+        {tab==="mfs" && (
+          <div>
+            <span style={{fontSize:"11px",fontWeight:700,display:"block",marginBottom:"8px",color:"#334155"}}>Pay with Mobile Banking:</span>
+            <div className="sslMfsGrid">
+              {mfsList.map(m=>(
+                <div key={m.name} className={`sslMfsItem ${selectedMfs===m.name?"selected":""}`} onClick={()=>setSelectedMfs(m.name)}>
+                  <div className={`sslMfsIcon ${m.cls}`}>{m.badge}</div>
+                  <span>{m.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Tab 3: Net Banking */}
+        {tab==="bank" && (
+          <div>
+            <span style={{fontSize:"11px",fontWeight:700,display:"block",marginBottom:"8px",color:"#334155"}}>Pay with Net Banking:</span>
+            <div className="sslMfsGrid">
+              {bankList.map(b=>(
+                <div key={b.name} className={`sslMfsItem ${selectedBank===b.name?"selected":""}`} onClick={()=>setSelectedBank(b.name)}>
+                  <div className="sslMfsIcon mfs-bank">{b.code}</div>
+                  <span>{b.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button className="sslPayBtn" onClick={handlePay} disabled={busy}>
+          {busy ? "Processing Secure Payment..." : `Pay ৳${bdtTotal.toLocaleString()}.00`}
+        </button>
+
+        <p className="sslTerms">
+          By clicking the "Pay" button you agree to our Terms of Service which is limited to facilitating your payment to ShopMate.
+        </p>
+      </div>
+    </div>
+  </div>;
+}
+
+function Checkout({cart,total,discount,shipping,grand,user,setOrders,setCart,nav,notify}){
+  const [form,setForm]=useState({name:user?.name||"",email:user?.email||"",phone:"",address:"",city:"Dhaka",country:"Bangladesh",postal:""});
+  const [payment,setPayment]=useState("ssl"); // Default to Card / SSLCommerz
+  const [trxId,setTrxId]=useState("");
+  const [senderNum,setSenderNum]=useState("");
+  const [showSSLModal,setShowSSLModal]=useState(false);
+  const bdtTotal=Math.round(grand*120);
+
+  const placeOrder=(paymentDetails)=>{
+    const isCod = payment==="cod";
+    const order={
+      id:"SM-"+Date.now().toString().slice(-6),
+      date:new Date().toLocaleDateString(),
+      total:grand,
+      status:isCod ? "Pending (Cash on Delivery)" : (paymentDetails?"Paid (SSLCOMMERZ)":"Paid (Verification)"),
+      paymentMethod:isCod ? "Cash on Delivery" : (paymentDetails?.method || (payment==="ssl"?"Card / SSLCOMMERZ":"bKash")),
+      trxId:paymentDetails?.trxId || trxId || (isCod?"COD-"+Date.now().toString().slice(-6):"N/A"),
+      senderNum:senderNum||"N/A",
+      items:cart.map(x=>({name:x.name,qty:x.qty,img:x.img}))
+    };
+    setOrders(o=>[order,...o]);
+    setCart([]);
+    setShowSSLModal(false);
+    notify(isCod ? "অর্ডার সফলভাবে গ্রহণ করা হয়েছে (Cash on Delivery)!" : "পেমেন্ট সফলভাবে গ্রহণ করা হয়েছে!");
+    nav("profile");
+  };
+
+  const submit=e=>{
+    e.preventDefault();
+    if(!cart.length) return;
+    if(payment==="ssl"){
+      setShowSSLModal(true);
+      return;
+    }
+    if(payment==="bkash"&&(!trxId||!senderNum)){alert("দয়া করে আপনার বিকাশ নম্বর এবং TrxID দিন");return;}
+    if(payment==="nagad"&&(!trxId||!senderNum)){alert("দয়া করে আপনার নগদ নম্বর এবং TrxID দিন");return;}
+    placeOrder();
+  };
+
+  return <main className="container">
+    <div className="pageHead"><div><small style={{color:"var(--primary)",fontWeight:700}}>CHECKOUT</small><h1>Secure Checkout</h1></div></div>
+    
+    {showSSLModal && (
+      <SSLCommerzModal
+        amount={grand}
+        bdtTotal={bdtTotal}
+        onSuccess={(details)=>placeOrder(details)}
+        onClose={()=>setShowSSLModal(false)}
+      />
+    )}
+
+    <form className="checkout" onSubmit={submit}>
+      <section className="formCard">
+        <h2>Customer Information</h2>
+        <div className="formGrid">
+          <label>Full Name<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Your full name"/></label>
+          <label>Phone Number<input required value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} placeholder="017XXXXXXXX"/></label>
+          <label>Email Address<input required type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="you@example.com"/></label>
+          <label>Delivery Address<input required value={form.address} onChange={e=>setForm({...form,address:e.target.value})} placeholder="Street address"/></label>
+          <label>City<input required value={form.city} onChange={e=>setForm({...form,city:e.target.value})}/></label>
+          <label>Postal Code<input required value={form.postal} onChange={e=>setForm({...form,postal:e.target.value})} placeholder="1205"/></label>
+        </div>
+
+        <h2 style={{marginTop:"20px"}}>Payment Method</h2>
+        <div className="paymentChoices" style={{gridTemplateColumns:"repeat(auto-fit,minmax(210px,1fr))"}}>
+          <label className={payment==="ssl"?"pay selected":"pay"} style={{padding:"12px 14px",display:"flex",alignItems:"center",gap:"10px"}}>
+            <input type="radio" checked={payment==="ssl"} onChange={()=>setPayment("ssl")}/>
+            <SslSvg size={28}/>
+            <div>
+              <b style={{color:"#0284c7",display:"block"}}>Card / SSLCOMMERZ</b>
+              <small style={{color:"var(--muted)",fontSize:"10px"}}>Cards, bKash, Nagad, Net Banking</small>
+            </div>
+          </label>
+          <label className={payment==="cod"?"pay selected":"pay"} style={{padding:"12px 14px",display:"flex",alignItems:"center",gap:"10px"}}>
+            <input type="radio" checked={payment==="cod"} onChange={()=>setPayment("cod")}/>
+            <CodSvg size={28}/>
+            <div>
+              <b style={{color:"#059669",display:"block"}}>Cash on Delivery</b>
+              <small style={{color:"var(--muted)",fontSize:"10px"}}>Pay cash at your doorstep</small>
+            </div>
+          </label>
+          <label className={payment==="bkash"?"pay selected":"pay"} style={{padding:"12px 14px",display:"flex",alignItems:"center",gap:"10px"}}>
+            <input type="radio" checked={payment==="bkash"} onChange={()=>setPayment("bkash")}/>
+            <BkashSvg size={28}/>
+            <div>
+              <b style={{color:"#e2136e",display:"block"}}>Direct bKash TrxID</b>
+              <small style={{color:"var(--muted)",fontSize:"10px"}}>Manual Send Money</small>
+            </div>
+          </label>
+        </div>
+
+        {payment==="ssl"&&<div className="pay-instruction ssl-box" style={{marginTop:"14px",padding:"14px",borderRadius:"8px",background:"#eff6ff",border:"1px solid #bfdbfe",color:"#1e40af"}}>
+          <b>💳 SSLCOMMERZ Easy Checkout Gateway:</b>
+          <p style={{margin:"4px 0 0",fontSize:"12px"}}>
+            অর্ডার কনফার্ম করার পর সরাসরি <b>SSLCOMMERZ পপআপ গেটওয়ে</b> ওপেন হবে। আপনি <b>Visa, Mastercard, bKash, Nagad, Rocket, CellFin</b> অথবা যেকোনো ব্যাংক কার্ড দিয়ে সিকিউর পেমেন্ট সম্পন্ন করতে পারবেন।
+          </p>
+        </div>}
+
+        {payment==="cod"&&<div className="pay-instruction" style={{marginTop:"14px",padding:"14px",borderRadius:"8px",background:"#ecfdf5",border:"1px solid #a7f3d0",color:"#065f46",display:"flex",alignItems:"flex-start",gap:"12px"}}>
+          <CodSvg size={36}/>
+          <div>
+            <b style={{display:"block",marginBottom:"3px"}}>Cash on Delivery (ক্যাশ অন ডেলিভারি):</b>
+            <p style={{margin:0,fontSize:"12px",lineHeight:1.6}}>
+              পণ্য হাতে পেয়ে ডেলিভারি পার্সন-কে মোট <b>৳{bdtTotal.toLocaleString()} BDT</b> ক্যাশ টাকা পরিশোধ করুন। কোনো অগ্রিম পেমেন্টের প্রয়োজন নেই।
+            </p>
+          </div>
+        </div>}
+
+        {payment==="bkash"&&<div className="pay-instruction bkash-box" style={{marginTop:"14px"}}>
+          <b>bKash পেমেন্ট নির্দেশিকা:</b>
+          <p>বিকাশ নম্বর: <b>01614703406</b> (Personal / Merchant)</p>
+          <p>টাকার পরিমাণ: <b>৳{bdtTotal.toLocaleString()} BDT</b> ({money(grand)})</p>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:"10px",marginTop:"8px"}}>
+            <input placeholder="আপনার বিকাশ নম্বর" value={senderNum} onChange={e=>setSenderNum(e.target.value)}/>
+            <input placeholder="TrxID (Transaction ID)" value={trxId} onChange={e=>setTrxId(e.target.value)}/>
+          </div>
+        </div>}
+      </section>
+
+      <aside className="summary">
+        <h2>Order Summary</h2>
+        {cart.map(x=><div key={x.id}><span>{x.name} × {x.qty}</span><b>{money(x.price*x.qty)}</b></div>)}
+        <hr/>
+        <div><span>Subtotal</span><b>{money(total)}</b></div>
+        <div><span>Shipping</span><b>{shipping?money(shipping):"FREE"}</b></div>
+        <div className="grand"><span>Total</span><b>{money(grand)}</b></div>
+        <div style={{color:"var(--muted)",fontSize:"12px",textAlign:"right"}}>Approx: <b>৳{bdtTotal.toLocaleString()} BDT</b></div>
+        <button className="primary full" type="submit">
+          {payment==="ssl"?`Proceed to SSLCOMMERZ (৳${bdtTotal.toLocaleString()})`:`Confirm Order (${money(grand)})`}
+        </button>
+      </aside>
+    </form>
+  </main>;
+}
+
+function Auth({mode,setUser,nav}){
+  const [name,setName]=useState(""),[email,setEmail]=useState(""),[pass,setPass]=useState("");
+  return <main className="container" style={{maxWidth:"420px",margin:"auto"}}>
+    <form className="formCard" onSubmit={e=>{e.preventDefault();setUser({name:name||email.split("@")[0],email});nav("profile")}}>
+      <h1 style={{fontSize:"22px",margin:"0 0 8px"}}>{mode==="login"?"Welcome Back":"Create Account"}</h1>
+      <p style={{color:"var(--muted)",fontSize:"12px",margin:"0 0 16px"}}>Sign in to manage your orders</p>
+      {mode==="register"&&<input required placeholder="Full Name" value={name} onChange={e=>setName(e.target.value)} style={{marginBottom:"10px"}}/>}
+      <input required type="email" placeholder="Email Address" value={email} onChange={e=>setEmail(e.target.value)} style={{marginBottom:"10px"}}/>
+      <input required type="password" placeholder="Password" value={pass} onChange={e=>setPass(e.target.value)} style={{marginBottom:"16px"}}/>
+      <button className="primary full">Continue</button>
+      <button type="button" style={{color:"var(--primary)",fontSize:"12px",marginTop:"12px",display:"block",width:"100%",textAlign:"center"}} onClick={()=>nav(mode==="login"?"register":"login")}>
+        {mode==="login"?"Create an account":"Already have an account? Login"}
+      </button>
+    </form>
+  </main>
+}
+
+function Profile({user,orders,setUser,nav}){
+  if(!user) return <Auth mode="login" setUser={setUser} nav={nav}/>;
+  return <main className="container">
+    <div className="pageHead">
+      <div><small style={{color:"var(--primary)",fontWeight:700}}>MY ACCOUNT</small><h1>Hello, {user.name}</h1><p>{user.email}</p></div>
+      <button className="secondary" onClick={()=>{setUser(null);nav("home")}}>Logout</button>
+    </div>
+    <div className="formCard">
+      <h2>My Orders</h2>
+      {!orders.length?<div className="empty">No orders placed yet.</div>:orders.map(o=>(
+        <div key={o.id} style={{padding:"12px 0",borderBottom:"1px solid var(--line)",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"8px"}}>
+          <div>
+            <b>{o.id} ({o.paymentMethod})</b>
+            <small style={{display:"block",color:"var(--muted)",fontSize:"10px"}}>{o.date} · {o.items.length} items {o.trxId&&o.trxId!=="N/A"?`· TrxID: ${o.trxId}`:""}</small>
+          </div>
+          <div><b style={{color:"#e73545"}}>{money(o.total)}</b></div>
+        </div>
+      ))}
+    </div>
+  </main>
+}
+
+function Wishlist({items,openProduct,addToCart,toggleWish}){
+  return <main className="container">
+    <div className="pageHead"><div><small style={{color:"var(--primary)",fontWeight:700}}>SAVED</small><h1>Wishlist</h1><p>{items.length} saved products</p></div></div>
+    {!items.length?<div className="empty">Your wishlist is empty.</div>:
+    <div className="productGrid">{items.map(p=><ProductCard key={p.id} p={p} openProduct={openProduct} addToCart={addToCart} toggleWish={toggleWish} wished/>)}</div>}
+  </main>
+}
+
+function Categories({nav}){
+  return <main className="container">
+    <div className="pageHead"><div><small style={{color:"var(--primary)",fontWeight:700}}>EXPLORE</small><h1>Categories</h1></div></div>
+    <div className="catGrid" style={{gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))"}}>
+      {categories.map(([name,img])=>(
+        <button className="catCard" style={{padding:"20px 10px"}} key={name} onClick={()=>nav("shop")}>
+          <img style={{width:"80px",height:"70px"}} src={img} alt={name}/>
+          <h3 style={{fontSize:"13px",marginTop:"6px"}}>{name}</h3>
+        </button>
+      ))}
+    </div>
+  </main>
+}
+
+function About(){
+  return <main className="container" style={{maxWidth:"800px",margin:"auto"}}>
+    <small style={{color:"var(--primary)",fontWeight:700}}>ABOUT US</small>
+    <h1>Shopping Made Smarter</h1>
+    <p style={{color:"var(--muted)",lineHeight:1.8}}>ShopMate provides premium curated products across electronics, fashion, home essentials and accessories. Built for mobile, tablet, and desktop shoppers.</p>
+  </main>
+}
+
+function Contact({notify}){
+  const [cform,setCform]=useState({name:"",email:"",phone:"",subject:"",msg:""});
+  const [sent,setSent]=useState(false);
+
+  const sendMsg=(e)=>{
+    e.preventDefault();
+    if(!cform.name||!cform.email||!cform.msg) return;
+    setSent(true);
+    if(notify) notify("Message sent successfully! We will contact you shortly.");
+    setCform({name:"",email:"",phone:"",subject:"",msg:""});
+  };
+
+  return <main className="container" style={{maxWidth:"900px",margin:"auto",paddingBottom:"40px"}}>
+    <div className="pageHead" style={{textAlign:"center",marginBottom:"25px"}}>
+      <div>
+        <small style={{color:"var(--primary)",fontWeight:700,letterSpacing:"1px"}}>GET IN TOUCH</small>
+        <h1 style={{fontSize:"clamp(24px,3vw,32px)",margin:"6px 0"}}>Contact Us & Social Media</h1>
+        <p style={{color:"var(--muted)",maxWidth:"520px",margin:"auto"}}>Have questions about products, delivery or payment? Reach out to us through any channel or send us a message below.</p>
+      </div>
+    </div>
+
+    {/* Social Media Links Banner */}
+    <div className="formCard" style={{textAlign:"center",padding:"20px",marginBottom:"24px"}}>
+      <h3 style={{margin:"0 0 8px",fontSize:"15px"}}>Connect With Us on Social Media</h3>
+      <p style={{color:"var(--muted)",fontSize:"12px",margin:"0 0 14px"}}>Follow our official channels for offers, product launches and live customer support.</p>
+      <div className="socialLinks" style={{justifyContent:"center"}}>
+        <a href="https://facebook.com" target="_blank" rel="noreferrer" className="socialBtn social-fb">
+          <FbSvg size={18}/> Facebook
+        </a>
+        <a href="https://wa.me/8801614703406" target="_blank" rel="noreferrer" className="socialBtn social-wa">
+          <WaSvg size={18}/> WhatsApp
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noreferrer" className="socialBtn social-ig">
+          <IgSvg size={18}/> Instagram
+        </a>
+        <a href="https://youtube.com" target="_blank" rel="noreferrer" className="socialBtn social-yt">
+          <YtSvg size={18}/> YouTube
+        </a>
+        <a href="https://x.com" target="_blank" rel="noreferrer" className="socialBtn social-x">
+          <XSvg size={16}/> Twitter / 𝕏
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="socialBtn social-in">
+          <InSvg size={18}/> LinkedIn
+        </a>
+      </div>
+    </div>
+
+    <div className="contactGrid">
+      {/* Contact Information */}
+      <div className="contactCard">
+        <h2 style={{fontSize:"16px",margin:"0 0 16px"}}>Contact Information</h2>
+        
+        <div className="contactItem">
+          <div className="contactIcon">📞</div>
+          <div>
+            <b>Phone / Mobile Banking</b>
+            <span>+880 1614703406 (bKash & Nagad)</span>
+            <span>+880 1800000000 (Customer Care)</span>
+          </div>
+        </div>
+
+        <div className="contactItem">
+          <div className="contactIcon">💬</div>
+          <div>
+            <b>WhatsApp Support</b>
+            <span>+880 1614703406 (24/7 Chat Support)</span>
+          </div>
+        </div>
+
+        <div className="contactItem">
+          <div className="contactIcon">✉️</div>
+          <div>
+            <b>Email Address</b>
+            <span>support@shopmate.com</span>
+            <span>sales@shopmate.com</span>
+          </div>
+        </div>
+
+        <div className="contactItem">
+          <div className="contactIcon">📍</div>
+          <div>
+            <b>Office & Store Location</b>
+            <span>House 42, Road 11, Block D</span>
+            <span>Banani, Dhaka - 1213, Bangladesh</span>
+          </div>
+        </div>
+
+        <div className="contactItem">
+          <div className="contactIcon">⏰</div>
+          <div>
+            <b>Business Hours</b>
+            <span>Saturday – Thursday: 9:00 AM – 10:00 PM</span>
+            <span>Friday: 2:00 PM – 10:00 PM</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Send a Message Form */}
+      <div className="contactCard">
+        <h2 style={{fontSize:"16px",margin:"0 0 16px"}}>Send Us a Message</h2>
+        {sent && <div style={{background:"#ecfdf5",color:"#065f46",padding:"10px 14px",borderRadius:"8px",marginBottom:"14px",fontSize:"12px"}}>
+          ✓ Thank you! Your message has been sent successfully. We will respond within 2 hours.
+        </div>}
+        <form onSubmit={sendMsg}>
+          <div style={{marginBottom:"10px"}}>
+            <label style={{fontSize:"11px",fontWeight:600,display:"block",marginBottom:"4px"}}>Your Name *</label>
+            <input required style={{width:"100%",border:"1px solid var(--line)",padding:"9px 12px",borderRadius:"7px",background:"var(--bg)",fontSize:"13px"}} value={cform.name} onChange={e=>setCform({...cform,name:e.target.value})} placeholder="e.g. Tanvir Ahmed"/>
+          </div>
+          <div style={{marginBottom:"10px"}}>
+            <label style={{fontSize:"11px",fontWeight:600,display:"block",marginBottom:"4px"}}>Email Address *</label>
+            <input required type="email" style={{width:"100%",border:"1px solid var(--line)",padding:"9px 12px",borderRadius:"7px",background:"var(--bg)",fontSize:"13px"}} value={cform.email} onChange={e=>setCform({...cform,email:e.target.value})} placeholder="e.g. tanvir@example.com"/>
+          </div>
+          <div style={{marginBottom:"10px"}}>
+            <label style={{fontSize:"11px",fontWeight:600,display:"block",marginBottom:"4px"}}>Phone Number</label>
+            <input style={{width:"100%",border:"1px solid var(--line)",padding:"9px 12px",borderRadius:"7px",background:"var(--bg)",fontSize:"13px"}} value={cform.phone} onChange={e=>setCform({...cform,phone:e.target.value})} placeholder="017XXXXXXXX"/>
+          </div>
+          <div style={{marginBottom:"10px"}}>
+            <label style={{fontSize:"11px",fontWeight:600,display:"block",marginBottom:"4px"}}>Subject</label>
+            <input style={{width:"100%",border:"1px solid var(--line)",padding:"9px 12px",borderRadius:"7px",background:"var(--bg)",fontSize:"13px"}} value={cform.subject} onChange={e=>setCform({...cform,subject:e.target.value})} placeholder="Order inquiry / Feedback"/>
+          </div>
+          <div style={{marginBottom:"14px"}}>
+            <label style={{fontSize:"11px",fontWeight:600,display:"block",marginBottom:"4px"}}>Message *</label>
+            <textarea required rows={4} style={{width:"100%",border:"1px solid var(--line)",padding:"9px 12px",borderRadius:"7px",background:"var(--bg)",fontSize:"13px",fontFamily:"inherit"}} value={cform.msg} onChange={e=>setCform({...cform,msg:e.target.value})} placeholder="How can we help you today?"></textarea>
+          </div>
+          <button type="submit" className="primary" style={{width:"100%"}}>Send Message ✉</button>
+        </form>
+      </div>
+    </div>
+  </main>
+}
+
+function Admin({orders,setOrders,notify}){
+  return <main className="container">
+    <div className="pageHead"><div><small style={{color:"var(--primary)",fontWeight:700}}>ADMIN</small><h1>Store Dashboard</h1></div></div>
+    <div className="formCard">
+      <h2>Recent Orders & TrxID Verification</h2>
+      {!orders.length?<div className="empty">No orders to verify yet.</div>:orders.map(o=>(
+        <div key={o.id} style={{padding:"12px 0",borderBottom:"1px solid var(--line)",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"8px"}}>
+          <div>
+            <b>{o.id} — {o.paymentMethod}</b>
+            <small style={{display:"block",color:"var(--muted)",fontSize:"11px"}}>Date: {o.date} | TrxID: <code>{o.trxId}</code> | Sender: {o.senderNum}</small>
+          </div>
+          <div><b style={{color:"#e73545"}}>{money(o.total)}</b></div>
+        </div>
+      ))}
+    </div>
+  </main>
+}
+
+function Newsletter(){
+  const [email,setEmail]=useState("");
+  return <div className="newsletter">
+    <div><span>✉</span><div><h3>Subscribe to Our Newsletter</h3><p>Get instant discounts and updates on new trends.</p></div></div>
+    <form onSubmit={e=>{e.preventDefault();alert("Subscribed: "+email);setEmail("")}}>
+      <input required type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Enter email..."/>
+      <button>Subscribe</button>
+    </form>
+  </div>
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
