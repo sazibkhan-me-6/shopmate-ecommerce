@@ -1,0 +1,5 @@
+import { Heart } from "lucide-react";
+import { products } from "../data";
+import ProductCard from "../components/ProductCard";
+import type { Product } from "../types";
+export default function Wishlist({wishlist,onWish,onCart}:{wishlist:string[];onWish:(id:string)=>void;onCart:(p:Product)=>void}){const list=products.filter(p=>wishlist.includes(p.id));return <main className="page"><div className="container"><div className="page-heading"><div><span className="eyebrow">SAVED FOR LATER</span><h1>My Wishlist</h1></div></div>{list.length?<div className="products-grid">{list.map(p=><ProductCard key={p.id} product={p} wished onWish={()=>onWish(p.id)} onCart={()=>onCart(p)}/>)}</div>:<div className="empty card"><Heart/><h2>Your wishlist is empty</h2><p>Tap the heart on a product to save it here.</p></div>}</div></main>}

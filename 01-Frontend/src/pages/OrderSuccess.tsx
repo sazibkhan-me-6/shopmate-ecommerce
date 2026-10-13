@@ -1,0 +1,4 @@
+import { CheckCircle2, Package, ArrowRight } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+import { getOrders } from "../services/storage";
+export default function OrderSuccess(){const {id}=useParams();const order=getOrders().find(o=>o.id===id);return <main className="page"><div className="container success card"><CheckCircle2 className="success-icon"/><span className="eyebrow">ORDER CONFIRMED</span><h1>Thank you for your order!</h1><p>Your order <b>{id}</b> has been placed successfully.</p>{order&&<div className="success-box"><span><Package/> Status</span><b>{order.status}</b><span>Total</span><b>${order.total.toFixed(2)}</b></div>}<div><Link className="btn btn-primary" to="/orders">Track Order <ArrowRight/></Link> <Link className="btn btn-outline" to="/shop">Continue Shopping</Link></div></div></main>}

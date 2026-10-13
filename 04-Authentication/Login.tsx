@@ -1,0 +1,10 @@
+import { LockKeyhole, Mail, UserRound } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { saveUser } from "../services/storage";
+
+export default function Login({onLogin}:{onLogin:(u:{name:string;email:string;role?:string})=>void}){
+ const [register,setRegister]=useState(false); const [email,setEmail]=useState(""); const [password,setPassword]=useState(""); const [name,setName]=useState(""); const nav=useNavigate();
+ const submit=(e:React.FormEvent)=>{e.preventDefault(); const admin=email==="admin@shopmate.com"; if(register||email){const u={name:name||email.split("@")[0],email,role:admin?"admin":"customer"};saveUser(u);onLogin(u);nav(admin?"/admin":"/account");}};
+ return <main className="page auth-page"><div className="auth-card card"><div className="auth-logo">🛍</div><span className="eyebrow">{register?"CREATE ACCOUNT":"WELCOME BACK"}</span><h1>{register?"Create your ShopMate account":"Sign in to ShopMate"}</h1><p className="muted">{register?"Join thousands of happy shoppers.":"Access your orders, wishlist and account."}</p><form onSubmit={submit}>{register&&<label><UserRound/> Full Name<input required value={name} onChange={e=>setName(e.target.value)} placeholder="Your name"/></label>}<label><Mail/> Email<input required type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com"/></label><label><LockKeyhole/> Password<input required minLength={6} type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••"/></label><button className="btn btn-primary auth-submit">{register?"Create Account":"Sign In"}</button></form><button className="switch-auth" onClick={()=>setRegister(!register)}>{register?"Already have an account? Sign in":"Don't have an account? Create one"}</button>{!register&&<p className="demo-hint">Demo admin: <b>admin@shopmate.com</b> / <b>admin123</b></p>}<Link to="/" className="back">← Back to store</Link></div></main>
+}

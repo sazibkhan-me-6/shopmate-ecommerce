@@ -1,0 +1,4 @@
+import { Link } from "react-router-dom";
+import { getOrders } from "../services/storage";
+import { Package, ArrowRight } from "lucide-react";
+export default function Orders(){const orders=getOrders(); return <main className="page"><div className="container"><div className="page-heading"><div><span className="eyebrow">MY ORDERS</span><h1>Order History</h1></div></div>{!orders.length?<div className="empty card"><Package/><h2>No orders yet</h2><Link className="btn btn-primary" to="/shop">Start Shopping</Link></div>:<div className="orders">{orders.map(o=><div className="order card" key={o.id}><div><b>{o.id}</b><small>{new Date(o.date).toLocaleString()}</small></div><span className={`status ${o.status.toLowerCase()}`}>{o.status}</span><strong>${o.total.toFixed(2)}</strong><Link to={`/order-success/${o.id}`}><ArrowRight/></Link></div>)}</div>}</div></main>}

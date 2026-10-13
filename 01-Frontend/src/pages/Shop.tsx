@@ -1,0 +1,18 @@
+import { SlidersHorizontal, Star, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { products } from "../data";
+import ProductCard from "../components/ProductCard";
+import type { Product } from "../types";
+
+export default function Shop({wishlist,onWish,onCart}:{wishlist:string[];onWish:(id:string)=>void;onCart:(p:Product)=>void}){
+ const [params,setParams]=useSearchParams();
+ const [query,setQuery]=useState(params.get("search")||"");
+ const [category,setCategory]=useState(params.get("category")||"All");
+ const [brand,setBrand]=useState("All");
+ const [min,setMin]=useState(0),[max,setMax]=useState(1500),[rating,setRating]=useState(0),[sort,setSort]=useState("popular");
+ const cats=["All",...Array.from(new Set(products.map(p=>p.category)))],brands=["All",...Array.from(new Set(products.map(p=>p.brand)))];
+ const result=useMemo(()=>products.filter(p=>(!query||p.name.toLowerCase().includes(query.toLowerCase()))&&(category==="All"||p.category===category)&&(brand==="All"||p.brand===brand)&&p.price>=min&&p.price<=max&&p.rating>=rating).sort((a,b)=>sort==="priceLow"?a.price-b.price:sort==="priceHigh"?b.price-a.price:sort==="new"?Number(b.id.slice(1))-Number(a.id.slice(1)):b.reviews-a.reviews),[query,category,brand,min,max,rating,sort]);
+ const clear=()=>{setQuery("");setCategory("All");setBrand("All");setMin(0);setMax(1500);setRating(0);setParams({});};
+ return <main className="page"><div className="container"><div className="page-heading"><div><span className="eyebrow">SHOP</span><h1>Find Your Favorites</h1><p>Explore our collection of quality products at great prices.</p></div><div className="mobile-filter"><SlidersHorizontal/> Filters</div></div><div className="shop-layout"><aside className="filters card"><div className="filter-title"><b>Filters</b><button onClick={clear}>Clear All</button></div><label>Search<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Product name..."/></label><label>Category<select value={category} onChange={e=>setCategory(e.target.value)}>{cats.map(c=><option key={c}>{c}</option>)}</select></label><label>Brand<select value={brand} onChange={e=>setBrand(e.target.value)}>{brands.map(b=><option key={b}>{b}</option>)}</select></label><label>Price Range<div className="range-row"><input type="number" value={min} min={0} onChange={e=>setMin(+e.target.value)}/><span>—</span><input type="number" value={max} min={0} onChange={e=>setMax(+e.target.value)}/></div></label><label>Rating{[4,3,2,1].map(r=><button className={rating===r?"rating-filter active":"rating-filter"} key={r} onClick={()=>setRating(r)}><span>{Array.from({length:5}).map((_,i)=><Star key={i} size={13} fill={i<r?"#ffb000":"none"}/>)}</span> & up</button>)}</label></aside><section className="shop-results"><div className="results-head"><b>{result.length} products</b><select value={sort} onChange={e=>setSort(e.target.value)}><option value="popular">Sort by popularity</option><option value="new">Newest</option><option value="priceLow">Price: Low to High</option><option value="priceHigh">Price: High to Low</option></select></div>{result.length?<div className="products-grid">{result.map(p=><ProductCard key={p.id} product={p} wished={wishlist.includes(p.id)} onWish={()=>onWish(p.id)} onCart={()=>onCart(p)}/>)}</div>:<div className="empty card"><X size={38}/><h2>No products found</h2><p>Try changing your filters or search.</p><button className="btn btn-primary" onClick={clear}>Clear Filters</button></div>}</section></div></div></main>
+}
