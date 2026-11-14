@@ -514,7 +514,7 @@ function App(){
         </div>
         <button className="iconBtn" onClick={()=>nav("wishlist")} aria-label="Wishlist">♡<i>{wishlist.length}</i></button>
         <button className="iconBtn" onClick={()=>nav("cart")} aria-label="Cart">🛒<i>{cart.reduce((s,x)=>s+x.qty,0)}</i></button>
-        <button className="loginBtn" onClick={()=>nav(user?"profile":"login")}>♙ {user?user.name.split(" ")[0]:"Login"}</button>
+        <button className="loginBtn" onClick={()=>nav(user?"profile":"login")}>♙ {user?user.name.split(" ")[0]:""}</button>
         <button className="themeBtn" onClick={()=>setDark(!dark)} aria-label="Toggle theme">{dark?"☀":"☾"}</button>
       </div>
     </header>
@@ -545,7 +545,7 @@ function App(){
           <button className={page==="offers"?"active":""} onClick={()=>nav("offers")}>🔥 Today's Offers</button>
           <button className={page==="wishlist"?"active":""} onClick={()=>nav("wishlist")}>🤍 Wishlist ({wishlist.length})</button>
           <button className={page==="cart"?"active":""} onClick={()=>nav("cart")}>🛒 Cart ({cart.reduce((s,x)=>s+x.qty,0)})</button>
-          <button className={page==="profile"||page==="login"?"active":""} onClick={()=>nav(user?"profile":"login")}>👤 {user?user.name:"Login / Register"}</button>
+          <button className={page==="profile"||page==="login"?"active":""} onClick={()=>nav(user?"profile":"login")}>👤 {user?user.name:"Account"}</button>
           <button className={page==="about"?"active":""} onClick={()=>nav("about")}>ℹ️ About Us</button>
           <button className={page==="contact"?"active":""} onClick={()=>nav("contact")}>📞 Contact</button>
           <button onClick={()=>nav("admin")}>⚙️ Admin Dashboard</button>

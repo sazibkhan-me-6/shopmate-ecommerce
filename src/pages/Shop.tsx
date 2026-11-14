@@ -1,4 +1,4 @@
-import { SlidersHorizontal, Star, X } from "lucide-react";
+import { SlidersHorizontal, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { products } from "../data";
@@ -21,7 +21,6 @@ export default function Shop({
   const [onlyOffers, setOnlyOffers] = useState(params.get("offer") === "true");
   const [min, setMin] = useState(0);
   const [max, setMax] = useState(1500);
-  const [rating, setRating] = useState(0);
   const [sort, setSort] = useState("popular");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
@@ -45,9 +44,8 @@ export default function Shop({
         const matchesCat = category === "All" || p.category.toLowerCase() === category.toLowerCase();
         const matchesBrand = brand === "All" || p.brand.toLowerCase() === brand.toLowerCase();
         const matchesPrice = p.price >= min && p.price <= max;
-        const matchesRating = p.rating >= rating;
         const matchesOffer = !onlyOffers || (p.oldPrice && p.oldPrice > p.price);
-        return matchesSearch && matchesCat && matchesBrand && matchesPrice && matchesRating && matchesOffer;
+        return matchesSearch && matchesCat && matchesBrand && matchesPrice && matchesOffer;
       })
       .sort((a, b) =>
         sort === "priceLow"
@@ -58,7 +56,7 @@ export default function Shop({
           ? Number(b.id.slice(1)) - Number(a.id.slice(1))
           : b.reviews - a.reviews
       );
-  }, [query, category, brand, min, max, rating, sort, onlyOffers]);
+  }, [query, category, brand, min, max, sort, onlyOffers]);
 
   const clear = () => {
     setQuery("");
@@ -67,7 +65,6 @@ export default function Shop({
     setOnlyOffers(false);
     setMin(0);
     setMax(1500);
-    setRating(0);
     setParams({});
     setMobileFilterOpen(false);
   };
@@ -109,15 +106,6 @@ export default function Shop({
                 )}
               </div>
             </div>
-
-            <label>
-              Search
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Product name..."
-              />
-            </label>
 
             <label style={{ display: "flex", alignItems: "center", gap: "8px", margin: "14px 0", cursor: "pointer" }}>
               <input
@@ -170,22 +158,36 @@ export default function Shop({
               </div>
             </label>
 
+            {/* Search Box placed below Price Range */}
             <label>
-              Rating
-              {[4, 3, 2, 1].map((r) => (
+              Search
+              <div style={{ position: "relative", marginTop: "6px" }}>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search product name..."
+                  style={{ paddingRight: "34px", margin: 0 }}
+                />
                 <button
-                  className={rating === r ? "rating-filter active" : "rating-filter"}
-                  key={r}
-                  onClick={() => setRating(rating === r ? 0 : r)}
+                  type="button"
+                  aria-label="Search"
+                  style={{
+                    position: "absolute",
+                    right: "6px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: 0,
+                    padding: "4px",
+                    display: "grid",
+                    placeItems: "center",
+                    color: "#6246e8",
+                    cursor: "pointer",
+                  }}
                 >
-                  <span>
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} size={13} fill={i < r ? "#ffb000" : "none"} stroke="#ffb000" />
-                    ))}
-                  </span>
-                  & up {rating === r ? "(active)" : ""}
+                  <Search size={16} />
                 </button>
-              ))}
+              </div>
             </label>
 
             {mobileFilterOpen && (

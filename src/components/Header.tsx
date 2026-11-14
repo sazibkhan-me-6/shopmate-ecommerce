@@ -89,7 +89,7 @@ export default function Header({
                 onClick={handleAccountClick}
               >
                 <UserRound size={16} />
-                {user ? `Account (${user.name})` : "Login / Register"}
+                {user ? `Account (${user.name})` : "Account"}
               </button>
             )}
           </nav>
@@ -115,10 +115,10 @@ export default function Header({
             <button
               className="icon-action login-btn"
               onClick={handleAccountClick}
-              title={user ? `Signed in as ${user.name}` : "Login or Register"}
+              title={user ? `Signed in as ${user.name}` : "Account"}
             >
               <UserRound />
-              <em>{user ? user.name.split(" ")[0] : "Login / Register"}</em>
+              {user && <em>{user.name.split(" ")[0]}</em>}
             </button>
             <button className="theme-btn" onClick={() => setDark(!dark)} title="Toggle dark mode">
               {dark ? <Sun /> : <Moon />}
