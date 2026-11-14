@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Youtube, Twitter, Linkedin, Phone, Mail, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -20,20 +21,20 @@ export default function Footer() {
         </div>
         <div>
           <h4>Quick Links</h4>
-          <a href="/">Home</a>
-          <a href="/shop">Shop</a>
-          <a href="/shop">Categories</a>
-          <a href="/shop?offer=true">Offers</a>
-          <a href="/about">About Us</a>
-          <a href="/contact">Contact</a>
+          <Link to="/">Home</Link>
+          <Link to="/shop">Shop</Link>
+          <Link to="/shop?category=Electronics">Categories</Link>
+          <Link to="/shop?offer=true">Offers & Discounts</Link>
+          <Link to="/about">About Us</Link>
+          <Link to="/contact">Contact</Link>
         </div>
         <div>
           <h4>Customer Service</h4>
-          <a href="#">Help Center</a>
-          <a href="#">Shipping Info</a>
-          <a href="#">Returns & Refunds</a>
-          <a href="#">Terms & Conditions</a>
-          <a href="#">Privacy Policy</a>
+          <Link to="/contact">Help Center & Support</Link>
+          <Link to="/about">Shipping Info</Link>
+          <Link to="/about">Returns & Refunds</Link>
+          <Link to="/about">Terms & Conditions</Link>
+          <Link to="/about">Privacy Policy</Link>
         </div>
         <div>
           <h4>Contact Us</h4>

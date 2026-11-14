@@ -1,11 +1,30 @@
-import { BarChart3, Box, ClipboardList, DollarSign, Plus, Users, CheckCircle, Smartphone, CreditCard } from "lucide-react";
+import { BarChart3, Box, ClipboardList, DollarSign, Plus, Smartphone, X, Check } from "lucide-react";
 import { useState } from "react";
 import { getOrders, saveOrders } from "../services/storage";
-import { products } from "../data";
+import { products as initialProducts } from "../data";
+import type { Product } from "../types";
 
-export default function Admin() {
+export default function Admin({ notify }: { notify?: (msg: string) => void }) {
   const [orders, setOrdersState] = useState(getOrders());
   const [status, setStatus] = useState<Record<string, string>>({});
+  const [productList, setProductList] = useState<Product[]>(() => {
+    const saved = localStorage.getItem("shopmate_custom_products");
+    return saved ? JSON.parse(saved) : initialProducts;
+  });
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  const [newProd, setNewProd] = useState({
+    name: "",
+    category: "Electronics",
+    price: "",
+    oldPrice: "",
+    brand: "ShopMate",
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
+    stock: "25",
+  });
+
   const sales = orders.reduce((s, o) => s + o.total, 0);
 
   const updateStatus = (orderId: string, newStatus: string) => {
@@ -15,6 +34,52 @@ export default function Admin() {
     );
     setOrdersState(updated);
     saveOrders(updated);
+    if (notify) notify(`✅ Order ${orderId} status updated to "${newStatus}"`);
+  };
+
+  const handleAddProduct = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newProd.name || !newProd.price) return;
+    const created: Product = {
+      id: "p" + Date.now().toString().slice(-5),
+      name: newProd.name,
+      category: newProd.category,
+      price: parseFloat(newProd.price),
+      oldPrice: newProd.oldPrice ? parseFloat(newProd.oldPrice) : undefined,
+      brand: newProd.brand || "ShopMate",
+      image: newProd.image || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
+      rating: 4.8,
+      reviews: 1,
+      stock: parseInt(newProd.stock) || 10,
+      description: `${newProd.name} - high quality item from ${newProd.brand}.`,
+    };
+
+    const updated = [created, ...productList];
+    setProductList(updated);
+    localStorage.setItem("shopmate_custom_products", JSON.stringify(updated));
+    setShowAddModal(false);
+    setNewProd({
+      name: "",
+      category: "Electronics",
+      price: "",
+      oldPrice: "",
+      brand: "ShopMate",
+      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
+      stock: "25",
+    });
+    if (notify) notify(`✅ Product "${created.name}" added to catalog!`);
+  };
+
+  const handleEditProduct = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+    const updated = productList.map((p) =>
+      p.id === editingProduct.id ? editingProduct : p
+    );
+    setProductList(updated);
+    localStorage.setItem("shopmate_custom_products", JSON.stringify(updated));
+    setEditingProduct(null);
+    if (notify) notify(`✅ Product "${editingProduct.name}" updated!`);
   };
 
   return (
@@ -26,7 +91,10 @@ export default function Admin() {
             <h1>Store Dashboard & Payment Verification</h1>
             <p>Manage store orders, view customer bKash/Nagad/Card payments and status.</p>
           </div>
-          <button className="btn btn-primary">
+          <button
+            className="btn btn-primary"
+            onClick={() => setShowAddModal(true)}
+          >
             <Plus size={16} style={{ marginRight: "4px" }} /> Add Product
           </button>
         </div>
@@ -60,10 +128,181 @@ export default function Admin() {
           <div className="stat card">
             <Box />
             <small>Products</small>
-            <b>{products.length}</b>
+            <b>{productList.length}</b>
             <span>Active catalog</span>
           </div>
         </div>
+
+        {/* Add Product Modal */}
+        {showAddModal && (
+          <div className="sslModalBackdrop" onClick={() => setShowAddModal(false)}>
+            <div
+              className="card"
+              style={{
+                maxWidth: "500px",
+                width: "100%",
+                padding: "24px",
+                position: "relative",
+                background: "#fff",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="sslCloseBtn"
+                onClick={() => setShowAddModal(false)}
+              >
+                ✕
+              </button>
+              <h2 style={{ fontSize: "18px", margin: "0 0 16px" }}>Add New Product</h2>
+              <form onSubmit={handleAddProduct} className="checkout-form">
+                <label>
+                  Product Name
+                  <input
+                    required
+                    value={newProd.name}
+                    onChange={(e) => setNewProd({ ...newProd, name: e.target.value })}
+                    placeholder="e.g. Wireless Smart Watch"
+                  />
+                </label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <label>
+                    Category
+                    <select
+                      value={newProd.category}
+                      onChange={(e) => setNewProd({ ...newProd, category: e.target.value })}
+                    >
+                      <option>Electronics</option>
+                      <option>Audio</option>
+                      <option>Wearables</option>
+                      <option>Fashion</option>
+                      <option>Footwear</option>
+                      <option>Home</option>
+                    </select>
+                  </label>
+                  <label>
+                    Brand
+                    <input
+                      value={newProd.brand}
+                      onChange={(e) => setNewProd({ ...newProd, brand: e.target.value })}
+                    />
+                  </label>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <label>
+                    Price ($)
+                    <input
+                      required
+                      type="number"
+                      step="0.01"
+                      value={newProd.price}
+                      onChange={(e) => setNewProd({ ...newProd, price: e.target.value })}
+                      placeholder="49.99"
+                    />
+                  </label>
+                  <label>
+                    Old Price ($) [Optional]
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newProd.oldPrice}
+                      onChange={(e) => setNewProd({ ...newProd, oldPrice: e.target.value })}
+                      placeholder="69.99"
+                    />
+                  </label>
+                </div>
+                <label>
+                  Image URL
+                  <input
+                    value={newProd.image}
+                    onChange={(e) => setNewProd({ ...newProd, image: e.target.value })}
+                  />
+                </label>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ width: "100%", marginTop: "16px" }}
+                >
+                  Save Product to Catalog
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Product Modal */}
+        {editingProduct && (
+          <div className="sslModalBackdrop" onClick={() => setEditingProduct(null)}>
+            <div
+              className="card"
+              style={{
+                maxWidth: "460px",
+                width: "100%",
+                padding: "24px",
+                position: "relative",
+                background: "#fff",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="sslCloseBtn"
+                onClick={() => setEditingProduct(null)}
+              >
+                ✕
+              </button>
+              <h2 style={{ fontSize: "18px", margin: "0 0 16px" }}>Edit Product</h2>
+              <form onSubmit={handleEditProduct} className="checkout-form">
+                <label>
+                  Name
+                  <input
+                    required
+                    value={editingProduct.name}
+                    onChange={(e) =>
+                      setEditingProduct({ ...editingProduct, name: e.target.value })
+                    }
+                  />
+                </label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <label>
+                    Price ($)
+                    <input
+                      required
+                      type="number"
+                      step="0.01"
+                      value={editingProduct.price}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          price: parseFloat(e.target.value) || 0,
+                        })
+                      }
+                    />
+                  </label>
+                  <label>
+                    Stock
+                    <input
+                      required
+                      type="number"
+                      value={editingProduct.stock}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          stock: parseInt(e.target.value) || 0,
+                        })
+                      }
+                    />
+                  </label>
+                </div>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ width: "100%", marginTop: "16px" }}
+                >
+                  Save Changes
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Orders Table with Payment Verification */}
         <div className="admin-grid" style={{ gridTemplateColumns: "1.4fr 1fr" }}>
@@ -80,7 +319,9 @@ export default function Admin() {
                   style={{ gridTemplateColumns: "1fr auto auto" }}
                 >
                   <span>
-                    <b>{o.id} — {o.customer.name}</b>
+                    <b>
+                      {o.id} — {o.customer.name}
+                    </b>
                     <small>
                       <b>Payment:</b> {o.payment}{" "}
                       {o.paymentDetails?.transactionId && (
@@ -92,7 +333,9 @@ export default function Admin() {
                         <span> | From: {o.paymentDetails.senderNumber}</span>
                       )}
                     </small>
-                    <small>Tel: {o.customer.phone} | {o.customer.city}</small>
+                    <small>
+                      Tel: {o.customer.phone} | {o.customer.city}
+                    </small>
                   </span>
                   <b>${o.total.toFixed(2)}</b>
                   <select
@@ -123,17 +366,25 @@ export default function Admin() {
           {/* Products Catalog Summary */}
           <section className="card admin-table">
             <div className="table-head">
-              <h2>Products</h2>
-              <span>{products.length} total</span>
+              <h2>Products Catalog</h2>
+              <span>{productList.length} total</span>
             </div>
-            {products.slice(0, 7).map((p) => (
+            {productList.slice(0, 8).map((p) => (
               <div className="table-row" key={p.id}>
                 <span className="prod-mini">
                   <img src={p.image} alt={p.name} />
-                  <b>{p.name}</b>
+                  <div>
+                    <b>{p.name}</b>
+                    <small style={{ color: "#64748b" }}>Stock: {p.stock}</small>
+                  </div>
                 </span>
-                <b>${p.price}</b>
-                <button className="btn btn-soft">Edit</button>
+                <b>${p.price.toFixed(2)}</b>
+                <button
+                  className="btn btn-soft"
+                  onClick={() => setEditingProduct(p)}
+                >
+                  Edit
+                </button>
               </div>
             ))}
           </section>

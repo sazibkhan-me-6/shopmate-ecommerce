@@ -18,28 +18,142 @@ import Contact from "./pages/Contact";
 import { getCart, getWishlist, saveCart, saveWishlist, clearUser } from "./services/storage";
 import type { CartItem, Product } from "./types";
 
-export default function App(){
- const [cart,setCart]=useState<CartItem[]>(getCart); const [wishlist,setWishlist]=useState<string[]>(getWishlist); const [coupon,setCoupon]=useState(""); const [discount,setDiscount]=useState(0);
- const [dark,setDark]=useState(localStorage.getItem("shopmate_dark")==="1"); const [user,setUser]=useState(localStorage.getItem("shopmate_user"));
- const nav=useNavigate();
- useEffect(()=>saveCart(cart),[cart]); useEffect(()=>saveWishlist(wishlist),[wishlist]); useEffect(()=>{localStorage.setItem("shopmate_dark",dark?"1":"0");document.documentElement.classList.toggle("dark",dark)},[dark]);
- const add=(p:Product,q=1,s="",c="")=>setCart(prev=>{const key=p.id+s+c; const found=prev.find(x=>x.id+s+c===key); return found?prev.map(x=>x===found?{...x,quantity:x.quantity+q}:x):[...prev,{...p,quantity:q,selectedSize:s||undefined,selectedColor:c||undefined}]});
- const remove=(id:string)=>setCart(c=>c.filter(x=>x.id!==id)); const qty=(id:string,q:number)=>setCart(c=>c.map(x=>x.id===id?{...x,quantity:q}:x));
- const wish=(id:string)=>setWishlist(w=>w.includes(id)?w.filter(x=>x!==id):[...w,id]);
- const login=(u:{name:string;email:string;role?:string})=>setUser(JSON.stringify(u)); const logout=()=>{clearUser();setUser(null);nav("/")};
- return <div className="app"><Header cartCount={cart.reduce((s,x)=>s+x.quantity,0)} wishlistCount={wishlist.length} dark={dark} setDark={setDark}/><Routes>
-  <Route path="/" element={<Home wishlist={wishlist} onWish={wish} onCart={add}/>}/>
-  <Route path="/shop" element={<Shop wishlist={wishlist} onWish={wish} onCart={add}/>}/>
-  <Route path="/product/:id" element={<ProductDetails wishlist={wishlist} onWish={wish} onCart={add}/>}/>
-  <Route path="/cart" element={<Cart cart={cart} onQty={qty} onRemove={remove} coupon={coupon} setCoupon={setCoupon} discount={discount} setDiscount={setDiscount}/>}/>
-  <Route path="/checkout" element={<Checkout cart={cart} onClear={()=>{setCart([]);setCoupon("");setDiscount(0)}}/>}/>
-  <Route path="/login" element={<Login onLogin={login}/>}/>
-  <Route path="/account" element={<Account onLogout={logout}/>}/>
-  <Route path="/orders" element={<Orders/>}/>
-  <Route path="/wishlist" element={<Wishlist wishlist={wishlist} onWish={wish} onCart={add}/>}/>
-  <Route path="/order-success/:id" element={<OrderSuccess/>}/>
-  <Route path="/admin" element={user&&JSON.parse(user).role==="admin"?<Admin/>:<Login onLogin={login}/>}/>
-  <Route path="/about" element={<StaticPage eyebrow="ABOUT SHOPMATE" title="Shopping made smarter"><p>ShopMate brings curated products, clear pricing and a friendly checkout experience together in one modern store.</p><p>Our goal is simple: quality products, transparent service and dependable delivery.</p></StaticPage>}/>
-  <Route path="/contact" element={<Contact/>}/>
- </Routes><Footer/></div>
+export default function App() {
+  const [cart, setCart] = useState<CartItem[]>(getCart);
+  const [wishlist, setWishlist] = useState<string[]>(getWishlist);
+  const [coupon, setCoupon] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [dark, setDark] = useState(localStorage.getItem("shopmate_dark") === "1");
+  const [user, setUser] = useState(localStorage.getItem("shopmate_user"));
+  const [toast, setToast] = useState<string | null>(null);
+  const nav = useNavigate();
+
+  const notify = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => {
+      setToast((curr) => (curr === msg ? null : curr));
+    }, 2500);
+  };
+
+  useEffect(() => saveCart(cart), [cart]);
+  useEffect(() => saveWishlist(wishlist), [wishlist]);
+  useEffect(() => {
+    localStorage.setItem("shopmate_dark", dark ? "1" : "0");
+    document.documentElement.classList.toggle("dark", dark);
+  }, [dark]);
+
+  const add = (p: Product, q = 1, s = "", c = "") => {
+    setCart((prev) => {
+      const key = p.id + s + c;
+      const found = prev.find((x) => x.id + (x.selectedSize || "") + (x.selectedColor || "") === key);
+      return found
+        ? prev.map((x) => (x === found ? { ...x, quantity: x.quantity + q } : x))
+        : [...prev, { ...p, quantity: q, selectedSize: s || undefined, selectedColor: c || undefined }];
+    });
+    notify(`🛍️ Added "${p.name.length > 25 ? p.name.slice(0, 25) + "..." : p.name}" to cart!`);
+  };
+
+  const remove = (id: string) => {
+    setCart((c) => c.filter((x) => x.id !== id));
+    notify("Item removed from cart");
+  };
+
+  const qty = (id: string, q: number) => {
+    setCart((c) => c.map((x) => (x.id === id ? { ...x, quantity: q } : x)));
+  };
+
+  const wish = (id: string) => {
+    setWishlist((w) => {
+      const exists = w.includes(id);
+      notify(exists ? "Removed from Wishlist" : "❤️ Added to Wishlist!");
+      return exists ? w.filter((x) => x !== id) : [...w, id];
+    });
+  };
+
+  const login = (u: { name: string; email: string; role?: string }) => {
+    const userStr = JSON.stringify(u);
+    setUser(userStr);
+    localStorage.setItem("shopmate_user", userStr);
+    notify(`Welcome back, ${u.name}! 👋`);
+  };
+
+  const logout = () => {
+    clearUser();
+    setUser(null);
+    notify("Logged out successfully");
+    nav("/");
+  };
+
+  const currentUser = user ? JSON.parse(user) : null;
+
+  return (
+    <div className="app">
+      <Header
+        cartCount={cart.reduce((s, x) => s + x.quantity, 0)}
+        wishlistCount={wishlist.length}
+        dark={dark}
+        setDark={setDark}
+        user={currentUser}
+      />
+      <Routes>
+        <Route path="/" element={<Home wishlist={wishlist} onWish={wish} onCart={add} />} />
+        <Route path="/shop" element={<Shop wishlist={wishlist} onWish={wish} onCart={add} />} />
+        <Route path="/product/:id" element={<ProductDetails wishlist={wishlist} onWish={wish} onCart={add} />} />
+        <Route
+          path="/cart"
+          element={
+            <Cart
+              cart={cart}
+              onQty={qty}
+              onRemove={remove}
+              coupon={coupon}
+              setCoupon={setCoupon}
+              discount={discount}
+              setDiscount={setDiscount}
+              notify={notify}
+            />
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <Checkout
+              cart={cart}
+              onClear={() => {
+                setCart([]);
+                setCoupon("");
+                setDiscount(0);
+              }}
+              notify={notify}
+            />
+          }
+        />
+        <Route path="/login" element={<Login onLogin={login} />} />
+        <Route path="/account" element={<Account onLogout={logout} />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/wishlist" element={<Wishlist wishlist={wishlist} onWish={wish} onCart={add} />} />
+        <Route path="/order-success/:id" element={<OrderSuccess />} />
+        <Route
+          path="/admin"
+          element={currentUser && currentUser.role === "admin" ? <Admin notify={notify} /> : <Login onLogin={login} />}
+        />
+        <Route
+          path="/about"
+          element={
+            <StaticPage eyebrow="ABOUT SHOPMATE" title="Shopping made smarter">
+              <p>ShopMate brings curated products, clear pricing and a friendly checkout experience together in one modern store.</p>
+              <p>Our goal is simple: quality products, transparent service and dependable delivery across Bangladesh and worldwide.</p>
+            </StaticPage>
+          }
+        />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+      <Footer />
+      {toast && (
+        <div className="toast-notification">
+          <span>{toast}</span>
+        </div>
+      )}
+    </div>
+  );
 }
