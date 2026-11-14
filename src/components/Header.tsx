@@ -102,15 +102,13 @@ export default function Header({
             <button aria-label="Search"><Search size={19} /></button>
           </form>
           <div className="nav-actions">
-            <button className="icon-action" onClick={() => navigate("/wishlist")} title="Wishlist">
+            <button className="icon-action" onClick={() => navigate("/wishlist")} title="Wishlist" aria-label="Wishlist">
               <Heart />
-              <span className="count">{wishlistCount}</span>
-              <em>Wishlist</em>
+              <span className="count" style={{ top: "-6px", right: "-6px" }}>{wishlistCount}</span>
             </button>
-            <button className="icon-action" onClick={() => navigate("/cart")} title="Cart">
+            <button className="icon-action" onClick={() => navigate("/cart")} title="Cart" aria-label="Cart">
               <ShoppingCart />
-              <span className="count">{cartCount}</span>
-              <em>Cart</em>
+              <span className="count" style={{ top: "-6px", right: "-6px" }}>{cartCount}</span>
             </button>
             <button
               className="icon-action login-btn"
