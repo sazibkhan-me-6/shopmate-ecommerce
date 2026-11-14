@@ -6,6 +6,17 @@
     <meta name="description" content="ShopMate — modern online shopping for electronics, fashion, home, beauty and more." />
     <meta name="theme-color" content="#6046e8" />
     <title>ShopMate — Smart Shopping, Better Living</title>
+    <script>
+      (function() {
+        try {
+          var navEntries = performance.getEntriesByType("navigation");
+          var isReload = (navEntries.length > 0 && navEntries[0].type === "reload") || (performance && performance.navigation && performance.navigation.type === 1);
+          if (isReload && (window.location.pathname !== "/" || window.location.search !== "")) {
+            window.location.replace("/");
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

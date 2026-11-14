@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import BottomNav from "./components/BottomNav";
 import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
@@ -45,6 +44,23 @@ export default function App() {
       setToast((curr) => (curr === msg ? null : curr));
     }, 2500);
   };
+
+  // Redirect to home page "/" whenever page is reloaded / refreshed
+  useEffect(() => {
+    let isReload = false;
+    try {
+      const navEntries = performance.getEntriesByType("navigation");
+      if (navEntries.length > 0) {
+        isReload = (navEntries[0] as PerformanceNavigationTiming).type === "reload";
+      } else if ((performance as any).navigation) {
+        isReload = (performance as any).navigation.type === 1;
+      }
+    } catch {}
+
+    if (isReload && (window.location.pathname !== "/" || window.location.search !== "")) {
+      nav("/", { replace: true });
+    }
+  }, [nav]);
 
   useEffect(() => saveCart(cart), [cart]);
   useEffect(() => saveWishlist(wishlist), [wishlist]);
@@ -162,11 +178,6 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
       </Routes>
       <Footer />
-      <BottomNav
-        cartCount={cart.reduce((s, x) => s + x.quantity, 0)}
-        wishlistCount={wishlist.length}
-        user={currentUser}
-      />
       {toast && (
         <div className="toast-notification">
           <span>{toast}</span>
