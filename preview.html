@@ -1211,20 +1211,193 @@ function Checkout({cart,total,discount,shipping,grand,user,setOrders,setCart,nav
 }
 
 function Auth({mode,setUser,nav}){
-  const [name,setName]=useState(""),[email,setEmail]=useState(""),[pass,setPass]=useState("");
-  return <main className="container" style={{maxWidth:"420px",margin:"auto"}}>
-    <form className="formCard" onSubmit={e=>{e.preventDefault();setUser({name:name||email.split("@")[0],email});nav("profile")}}>
-      <h1 style={{fontSize:"22px",margin:"0 0 8px"}}>{mode==="login"?"Welcome Back":"Create Account"}</h1>
-      <p style={{color:"var(--muted)",fontSize:"12px",margin:"0 0 16px"}}>Sign in to manage your orders</p>
-      {mode==="register"&&<input required placeholder="Full Name" value={name} onChange={e=>setName(e.target.value)} style={{marginBottom:"10px"}}/>}
-      <input required type="email" placeholder="Email Address" value={email} onChange={e=>setEmail(e.target.value)} style={{marginBottom:"10px"}}/>
-      <input required type="password" placeholder="Password" value={pass} onChange={e=>setPass(e.target.value)} style={{marginBottom:"16px"}}/>
-      <button className="primary full">Continue</button>
-      <button type="button" style={{color:"var(--primary)",fontSize:"12px",marginTop:"12px",display:"block",width:"100%",textAlign:"center"}} onClick={()=>nav(mode==="login"?"register":"login")}>
-        {mode==="login"?"Create an account":"Already have an account? Login"}
+  const [authMode, setAuthMode] = useState(mode || "login");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  
+  // Login State
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  
+  // Register State (Full information required)
+  const [regName, setRegName] = useState("");
+  const [regEmail, setRegEmail] = useState("");
+  const [regPhone, setRegPhone] = useState("");
+  const [regAddress, setRegAddress] = useState("");
+  const [regCity, setRegCity] = useState("Dhaka");
+  const [regPass, setRegPass] = useState("");
+  const [regConfirmPass, setRegConfirmPass] = useState("");
+
+  const getRegisteredUsers = () => {
+    try {
+      let users = JSON.parse(localStorage.getItem("shopmate_registered_users") || "[]");
+      if (!users.some(u => u.email === "admin@shopmate.com")) {
+        users.unshift({
+          id: "admin-1",
+          name: "ShopMate Admin",
+          email: "admin@shopmate.com",
+          phone: "+880 1614703406",
+          password: "admin123",
+          address: "Banani, Dhaka",
+          city: "Dhaka",
+          role: "admin"
+        });
+        localStorage.setItem("shopmate_registered_users", JSON.stringify(users));
+      }
+      return users;
+    } catch {
+      return [];
+    }
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    const users = getRegisteredUsers();
+    const userFound = users.find(u => u.email.toLowerCase() === email.trim().toLowerCase());
+    if (!userFound) {
+      setError("❌ Account not found! You must Sign Up with your full information first before signing in.");
+      return;
+    }
+    if (userFound.password !== pass) {
+      setError("❌ Incorrect password. Please check your credentials.");
+      return;
+    }
+    setUser(userFound);
+    nav(userFound.role === "admin" ? "admin" : "profile");
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    if (!regName.trim() || !regEmail.trim() || !regPhone.trim() || !regAddress.trim() || !regPass.trim()) {
+      setError("❌ Please fill out all required fields with complete information.");
+      return;
+    }
+    if (regPass.length < 6) {
+      setError("❌ Password must be at least 6 characters long.");
+      return;
+    }
+    if (regPass !== regConfirmPass) {
+      setError("❌ Passwords do not match. Please re-enter.");
+      return;
+    }
+    const users = getRegisteredUsers();
+    if (users.some(u => u.email.toLowerCase() === regEmail.trim().toLowerCase())) {
+      setError("⚠️ An account with this email already exists. Please Sign In.");
+      return;
+    }
+    const newUser = {
+      id: "usr-" + Date.now().toString().slice(-6),
+      name: regName.trim(),
+      email: regEmail.trim().toLowerCase(),
+      phone: regPhone.trim(),
+      address: regAddress.trim(),
+      city: regCity,
+      password: regPass,
+      role: regEmail.trim().toLowerCase() === "admin@shopmate.com" ? "admin" : "customer"
+    };
+    users.unshift(newUser);
+    localStorage.setItem("shopmate_registered_users", JSON.stringify(users));
+    setUser(newUser);
+    nav(newUser.role === "admin" ? "admin" : "profile");
+  };
+
+  return <main className="container" style={{maxWidth:"460px",margin:"40px auto"}}>
+    <div className="formCard" style={{borderRadius:"16px",boxShadow:"0 10px 30px rgba(0,0,0,0.08)",padding:"28px"}}>
+      <div style={{display:"flex",gap:"8px",marginBottom:"20px",background:"var(--soft)",padding:"4px",borderRadius:"10px"}}>
+        <button
+          type="button"
+          style={{flex:1,padding:"10px",border:"none",borderRadius:"8px",background:authMode==="login"?"var(--primary)":"transparent",color:authMode==="login"?"#fff":"var(--text)",fontWeight:700,cursor:"pointer",transition:"0.2s"}}
+          onClick={()=>{setAuthMode("login");setError("");setSuccess("");}}
+        >
+          Sign In
+        </button>
+        <button
+          type="button"
+          style={{flex:1,padding:"10px",border:"none",borderRadius:"8px",background:authMode==="register"?"var(--primary)":"transparent",color:authMode==="register"?"#fff":"var(--text)",fontWeight:700,cursor:"pointer",transition:"0.2s"}}
+          onClick={()=>{setAuthMode("register");setError("");setSuccess("");}}
+        >
+          Sign Up (Full Info)
+        </button>
+      </div>
+
+      <h1 style={{fontSize:"22px",margin:"0 0 6px",fontWeight:800}}>
+        {authMode==="login" ? "Sign in to ShopMate" : "Create Account (Full Info)"}
+      </h1>
+      <p style={{color:"var(--muted)",fontSize:"13px",margin:"0 0 16px"}}>
+        {authMode==="login" ? "Enter your registered email & password to sign in." : "Fill out full details to register your account."}
+      </p>
+
+      {error && (
+        <div style={{background:"#fef2f2",border:"1px solid #f87171",color:"#991b1b",padding:"12px",borderRadius:"8px",fontSize:"13px",marginBottom:"16px",lineHeight:1.4}}>
+          {error}
+          {error.includes("Account not found") && (
+            <button
+              type="button"
+              onClick={()=>{setAuthMode("register");setError("");}}
+              style={{display:"block",marginTop:"8px",background:"#dc2626",color:"#fff",border:"none",borderRadius:"6px",padding:"6px 12px",fontWeight:600,fontSize:"12px",cursor:"pointer"}}
+            >
+              Sign Up Now with Full Info →
+            </button>
+          )}
+        </div>
+      )}
+
+      {authMode === "login" ? (
+        <form onSubmit={handleLogin}>
+          <label style={{display:"block",fontSize:"12px",fontWeight:600,marginBottom:"6px"}}>Email Address *</label>
+          <input required type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} style={{width:"100%",padding:"11px",borderRadius:"8px",border:"1px solid var(--line)",marginBottom:"14px",boxSizing:"border-box"}}/>
+
+          <label style={{display:"block",fontSize:"12px",fontWeight:600,marginBottom:"6px"}}>Password *</label>
+          <input required type="password" placeholder="••••••••" value={pass} onChange={e=>setPass(e.target.value)} style={{width:"100%",padding:"11px",borderRadius:"8px",border:"1px solid var(--line)",marginBottom:"16px",boxSizing:"border-box"}}/>
+
+          <button className="primary full" style={{padding:"12px",fontSize:"14px",fontWeight:700}}>Sign In</button>
+        </form>
+      ) : (
+        <form onSubmit={handleRegister}>
+          <label style={{display:"block",fontSize:"12px",fontWeight:600,marginBottom:"4px"}}>Full Name *</label>
+          <input required placeholder="Your full name" value={regName} onChange={e=>setRegName(e.target.value)} style={{width:"100%",padding:"10px",borderRadius:"8px",border:"1px solid var(--line)",marginBottom:"12px",boxSizing:"border-box"}}/>
+
+          <label style={{display:"block",fontSize:"12px",fontWeight:600,marginBottom:"4px"}}>Email Address *</label>
+          <input required type="email" placeholder="you@example.com" value={regEmail} onChange={e=>setRegEmail(e.target.value)} style={{width:"100%",padding:"10px",borderRadius:"8px",border:"1px solid var(--line)",marginBottom:"12px",boxSizing:"border-box"}}/>
+
+          <label style={{display:"block",fontSize:"12px",fontWeight:600,marginBottom:"4px"}}>Phone Number (+880) *</label>
+          <input required type="tel" placeholder="+880 1XXXXXXXXX" value={regPhone} onChange={e=>setRegPhone(e.target.value)} style={{width:"100%",padding:"10px",borderRadius:"8px",border:"1px solid var(--line)",marginBottom:"12px",boxSizing:"border-box"}}/>
+
+          <label style={{display:"block",fontSize:"12px",fontWeight:600,marginBottom:"4px"}}>Delivery Address *</label>
+          <input required placeholder="House, Road, Area details" value={regAddress} onChange={e=>setRegAddress(e.target.value)} style={{width:"100%",padding:"10px",borderRadius:"8px",border:"1px solid var(--line)",marginBottom:"12px",boxSizing:"border-box"}}/>
+
+          <label style={{display:"block",fontSize:"12px",fontWeight:600,marginBottom:"4px"}}>City / District *</label>
+          <select value={regCity} onChange={e=>setRegCity(e.target.value)} style={{width:"100%",padding:"10px",borderRadius:"8px",border:"1px solid var(--line)",marginBottom:"12px",boxSizing:"border-box",background:"var(--bg)",color:"var(--text)"}}>
+            {["Dhaka","Chattogram","Sylhet","Rajshahi","Khulna","Barishal","Rangpur","Mymensingh","Cumilla","Gazipur"].map(c=>(
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+
+          <label style={{display:"block",fontSize:"12px",fontWeight:600,marginBottom:"4px"}}>Password (min 6 characters) *</label>
+          <input required minLength={6} type="password" placeholder="••••••••" value={regPass} onChange={e=>setRegPass(e.target.value)} style={{width:"100%",padding:"10px",borderRadius:"8px",border:"1px solid var(--line)",marginBottom:"12px",boxSizing:"border-box"}}/>
+
+          <label style={{display:"block",fontSize:"12px",fontWeight:600,marginBottom:"4px"}}>Confirm Password *</label>
+          <input required minLength={6} type="password" placeholder="••••••••" value={regConfirmPass} onChange={e=>setRegConfirmPass(e.target.value)} style={{width:"100%",padding:"10px",borderRadius:"8px",border:"1px solid var(--line)",marginBottom:"16px",boxSizing:"border-box"}}/>
+
+          <button className="primary full" style={{padding:"12px",fontSize:"14px",fontWeight:700}}>Complete Sign Up & Continue</button>
+        </form>
+      )}
+
+      <button type="button" style={{color:"var(--primary)",fontSize:"13px",fontWeight:600,marginTop:"16px",display:"block",width:"100%",textAlign:"center",background:"transparent",border:"none",cursor:"pointer"}} onClick={()=>{setAuthMode(authMode==="login"?"register":"login");setError("");}}>
+        {authMode==="login"?"Don't have an account? Sign up with full details":"Already registered? Sign in here"}
       </button>
-    </form>
-  </main>
+
+      {authMode==="login" && (
+        <p style={{fontSize:"11px",color:"var(--muted)",textAlign:"center",marginTop:"12px",padding:"8px",background:"var(--soft)",borderRadius:"6px"}}>
+          Admin Demo: <b>admin@shopmate.com</b> / <b>admin123</b>
+        </p>
+      )}
+    </div>
+  </main>;
 }
 
 function Profile({user,orders,setUser,nav}){

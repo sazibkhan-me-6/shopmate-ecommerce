@@ -148,14 +148,14 @@ export default function App() {
             />
           }
         />
-        <Route path="/login" element={<Login onLogin={login} />} />
+        <Route path="/login" element={<Login onLogin={login} notify={notify} />} />
         <Route path="/account" element={<Account onLogout={logout} />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/wishlist" element={<Wishlist wishlist={wishlist} onWish={wish} onCart={add} />} />
         <Route path="/order-success/:id" element={<OrderSuccess />} />
         <Route
           path="/admin"
-          element={currentUser && currentUser.role === "admin" ? <Admin notify={notify} /> : <Login onLogin={login} />}
+          element={currentUser && currentUser.role === "admin" ? <Admin notify={notify} /> : <Login onLogin={login} notify={notify} />}
         />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
