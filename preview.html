@@ -512,8 +512,6 @@ function App(){
           <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search..." onKeyDown={e=>e.key==="Enter"&&nav("shop")}/>
           <span>⌕</span>
         </div>
-        <button className="iconBtn" onClick={()=>nav("wishlist")} aria-label="Wishlist">♡<i>{wishlist.length}</i></button>
-        <button className="iconBtn" onClick={()=>nav("cart")} aria-label="Cart">🛒<i>{cart.reduce((s,x)=>s+x.qty,0)}</i></button>
         <button className="loginBtn" onClick={()=>nav(user?"profile":"login")}>♙ {user?user.name.split(" ")[0]:""}</button>
         <button className="themeBtn" onClick={()=>setDark(!dark)} aria-label="Toggle theme">{dark?"☀":"☾"}</button>
       </div>
@@ -1313,41 +1311,41 @@ function Auth({mode,setUser,nav}){
   };
 
   return <main className="container" style={{maxWidth:"460px",margin:"40px auto"}}>
-    <div className="formCard" style={{borderRadius:"16px",boxShadow:"0 10px 30px rgba(0,0,0,0.08)",padding:"28px"}}>
-      <div style={{display:"flex",gap:"8px",marginBottom:"20px",background:"var(--soft)",padding:"4px",borderRadius:"10px"}}>
+    <div className="formCard" style={{borderRadius:"16px",boxShadow:"0 10px 30px rgba(0,0,0,0.08)",padding:"24px",textAlign:"center"}}>
+      <div style={{display:"inline-flex",margin:"0 auto 16px",background:"var(--soft)",padding:"3px",borderRadius:"999px",border:"1px solid var(--line)",gap:"2px"}}>
         <button
           type="button"
-          style={{flex:1,padding:"10px",border:"none",borderRadius:"8px",background:authMode==="login"?"var(--primary)":"transparent",color:authMode==="login"?"#fff":"var(--text)",fontWeight:700,cursor:"pointer",transition:"0.2s"}}
+          style={{padding:"4px 16px",border:"none",borderRadius:"999px",background:authMode==="login"?"var(--primary)":"transparent",color:authMode==="login"?"#fff":"var(--text)",fontWeight:700,fontSize:"12px",cursor:"pointer",transition:"0.15s"}}
           onClick={()=>{setAuthMode("login");setError("");setSuccess("");}}
         >
           Sign In
         </button>
         <button
           type="button"
-          style={{flex:1,padding:"10px",border:"none",borderRadius:"8px",background:authMode==="register"?"var(--primary)":"transparent",color:authMode==="register"?"#fff":"var(--text)",fontWeight:700,cursor:"pointer",transition:"0.2s"}}
+          style={{padding:"4px 16px",border:"none",borderRadius:"999px",background:authMode==="register"?"var(--primary)":"transparent",color:authMode==="register"?"#fff":"var(--text)",fontWeight:700,fontSize:"12px",cursor:"pointer",transition:"0.15s"}}
           onClick={()=>{setAuthMode("register");setError("");setSuccess("");}}
         >
-          Sign Up (Full Info)
+          Sign Up
         </button>
       </div>
 
       <h1 style={{fontSize:"22px",margin:"0 0 6px",fontWeight:800}}>
-        {authMode==="login" ? "Sign in to ShopMate" : "Create Account (Full Info)"}
+        {authMode==="login" ? "Sign In to ShopMate" : "Sign Up"}
       </h1>
       <p style={{color:"var(--muted)",fontSize:"13px",margin:"0 0 16px"}}>
-        {authMode==="login" ? "Enter your registered email & password to sign in." : "Fill out full details to register your account."}
+        {authMode==="login" ? "Enter your registered email & password to sign in." : "Enter your details to create an account."}
       </p>
 
       {error && (
-        <div style={{background:"#fef2f2",border:"1px solid #f87171",color:"#991b1b",padding:"12px",borderRadius:"8px",fontSize:"13px",marginBottom:"16px",lineHeight:1.4}}>
+        <div style={{background:"#fef2f2",border:"1px solid #f87171",color:"#991b1b",padding:"12px",borderRadius:"8px",fontSize:"13px",marginBottom:"16px",lineHeight:1.4,textAlign:"left"}}>
           {error}
           {error.includes("Account not found") && (
             <button
               type="button"
               onClick={()=>{setAuthMode("register");setError("");}}
-              style={{display:"block",marginTop:"8px",background:"#dc2626",color:"#fff",border:"none",borderRadius:"6px",padding:"6px 12px",fontWeight:600,fontSize:"12px",cursor:"pointer"}}
+              style={{display:"block",marginTop:"8px",background:"#dc2626",color:"#fff",border:"none",borderRadius:"6px",padding:"5px 12px",fontWeight:600,fontSize:"12px",cursor:"pointer"}}
             >
-              Sign Up Now with Full Info →
+              Sign Up Now →
             </button>
           )}
         </div>
@@ -1390,12 +1388,12 @@ function Auth({mode,setUser,nav}){
           <label style={{display:"block",fontSize:"12px",fontWeight:600,marginBottom:"4px"}}>Confirm Password *</label>
           <input required minLength={6} type="password" placeholder="••••••••" value={regConfirmPass} onChange={e=>setRegConfirmPass(e.target.value)} style={{width:"100%",padding:"10px",borderRadius:"8px",border:"1px solid var(--line)",marginBottom:"16px",boxSizing:"border-box"}}/>
 
-          <button className="primary full" style={{padding:"12px",fontSize:"14px",fontWeight:700}}>Complete Sign Up & Continue</button>
+          <button className="primary full" style={{padding:"12px",fontSize:"14px",fontWeight:700}}>Sign Up</button>
         </form>
       )}
 
       <button type="button" style={{color:"var(--primary)",fontSize:"13px",fontWeight:600,marginTop:"16px",display:"block",width:"100%",textAlign:"center",background:"transparent",border:"none",cursor:"pointer"}} onClick={()=>{setAuthMode(authMode==="login"?"register":"login");setError("");}}>
-        {authMode==="login"?"Don't have an account? Sign up with full details":"Already registered? Sign in here"}
+        {authMode==="login"?"Don't have an account? Sign Up":"Already registered? Sign in here"}
       </button>
 
       {authMode==="login" && (
