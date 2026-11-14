@@ -1,4 +1,4 @@
-import { BarChart3, Box, ClipboardList, DollarSign, Plus, Smartphone, X, Check } from "lucide-react";
+import { BarChart3, Box, ClipboardList, DollarSign, Plus, Smartphone, X, Check, ExternalLink, ShieldCheck, Radio } from "lucide-react";
 import { useState } from "react";
 import { getOrders, saveOrders } from "../services/storage";
 import { products as initialProducts } from "../data";
@@ -91,12 +91,103 @@ export default function Admin({ notify }: { notify?: (msg: string) => void }) {
             <h1>Store Dashboard & Payment Verification</h1>
             <p>Manage store orders, view customer bKash/Nagad/Card payments and status.</p>
           </div>
-          <button
-            className="btn btn-primary"
-            onClick={() => setShowAddModal(true)}
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+            <a
+              href="https://shopmate-admin-panel.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              style={{
+                background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                textDecoration: "none",
+                color: "#fff",
+                fontWeight: 700,
+              }}
+            >
+              <ExternalLink size={16} /> Open Live Admin Panel (Vercel)
+            </a>
+            <button
+              className="btn btn-soft"
+              onClick={() => setShowAddModal(true)}
+            >
+              <Plus size={16} style={{ marginRight: "4px" }} /> Add Product
+            </button>
+          </div>
+        </div>
+
+        {/* Central Admin Hub Connection Banner */}
+        <div
+          style={{
+            background: "linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%)",
+            color: "#ffffff",
+            padding: "24px 28px",
+            borderRadius: "16px",
+            marginBottom: "28px",
+            boxShadow: "0 10px 25px -5px rgba(49, 46, 129, 0.35)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "18px",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+          }}
+        >
+          <div style={{ maxWidth: "680px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+              <span
+                style={{
+                  background: "#22c55e",
+                  color: "#052e16",
+                  fontSize: "11px",
+                  fontWeight: 800,
+                  padding: "3px 10px",
+                  borderRadius: "999px",
+                  letterSpacing: "0.5px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                <Radio size={12} /> LIVE SYNC ACTIVE
+              </span>
+              <span style={{ fontSize: "13px", opacity: 0.9, fontWeight: 500 }}>
+                Central Command Architecture
+              </span>
+            </div>
+            <h2 style={{ fontSize: "21px", fontWeight: 800, margin: "0 0 6px", color: "#ffffff", letterSpacing: "-0.3px" }}>
+              ShopMate Live Admin Control Panel
+            </h2>
+            <p style={{ margin: 0, fontSize: "14px", lineHeight: "1.5", opacity: 0.9, color: "#e0e7ff" }}>
+              This e-commerce store is controlled and synchronized in real-time with the central admin control dashboard at{" "}
+              <b style={{ color: "#ffffff", textDecoration: "underline" }}>https://shopmate-admin-panel.vercel.app/</b>. Manage catalog items, orders with customer phone & delivery address, bKash/Nagad verification, promo codes, and storefront announcements.
+            </p>
+          </div>
+          <a
+            href="https://shopmate-admin-panel.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              background: "#ffffff",
+              color: "#312e81",
+              padding: "13px 24px",
+              borderRadius: "10px",
+              fontWeight: 800,
+              fontSize: "14px",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              boxShadow: "0 4px 14px rgba(0,0,0,0.2)",
+              whiteSpace: "nowrap",
+              transition: "transform 0.2s, box-shadow 0.2s",
+            }}
           >
-            <Plus size={16} style={{ marginRight: "4px" }} /> Add Product
-          </button>
+            <ShieldCheck size={18} color="#4f46e5" />
+            Launch Central Admin Hub ↗
+          </a>
         </div>
 
         {/* Dashboard Stats */}
