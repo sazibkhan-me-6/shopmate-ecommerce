@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Search, Heart, ShoppingCart, UserRound, Moon, Sun, Menu, X, Truck, ChevronDown, ShieldCheck } from "lucide-react";
+import { Search, Heart, ShoppingCart, UserRound, Moon, Sun, Menu, X, Truck, ChevronDown } from "lucide-react";
 
 export default function Header({
   cartCount,
@@ -118,29 +118,6 @@ export default function Header({
               <UserRound />
               {user && <em>{user.name.split(" ")[0]}</em>}
             </button>
-            {user?.role === "admin" && (
-              <a
-                href="https://shopmate-admin-panel.vercel.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-                style={{
-                  padding: "6px 12px",
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "5px",
-                  background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
-                  color: "#fff",
-                }}
-                title="Open ShopMate Central Admin Control Panel"
-              >
-                <ShieldCheck size={14} /> Admin Hub ↗
-              </a>
-            )}
             <button className="theme-btn" onClick={() => setDark(!dark)} title="Toggle dark mode">
               {dark ? <Sun /> : <Moon />}
             </button>

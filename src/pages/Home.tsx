@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, Mail, Star } from "lucide-react";
+import { ArrowRight, CheckCircle2, Flame, Mail, Sparkles, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { categories, products, reviews } from "../data";
 import ProductCard from "../components/ProductCard";
@@ -14,8 +14,14 @@ export default function Home({
   onWish: (id: string) => void;
   onCart: (p: Product) => void;
 }) {
+  // New Arrivals showcase items (featuring MacBook Air M3, iPhone 15 Pro Max, Sony, Nike, Apple Watch)
+  const newArrivals = [products[5], products[0], products[1], products[2], products[3]];
+  // Best selling customer favorites
+  const bestSellers = [products[4], products[6], products[7], products[8], products[9]];
+
   return (
     <main>
+      {/* Animated Advertisement Billboard Showcase for NEW ARRIVALS */}
       <div className="container">
         <Hero />
       </div>
@@ -45,21 +51,51 @@ export default function Home({
         </div>
       </section>
 
+      {/* NEW ARRIVALS 2026 Showcase */}
+      <section className="container section">
+        <div className="section-head">
+          <div>
+            <div className="new-arrivals-badge-pulse">
+              <Sparkles size={13} /> NEW ARRIVALS 2026
+            </div>
+            <h2 className="section-title">Latest New Arrivals & Trending Gadgets</h2>
+            <p>Explore the freshest high-performance releases and designer picks just added to ShopMate.</p>
+          </div>
+          <Link className="link-purple" to="/shop?category=Electronics">
+            View All New Arrivals <ArrowRight size={14} />
+          </Link>
+        </div>
+        <div className="products-grid">
+          {newArrivals.map((p) => (
+            <ProductCard
+              key={`new-${p.id}`}
+              product={p}
+              wished={wishlist.includes(p.id)}
+              onWish={() => onWish(p.id)}
+              onCart={() => onCart(p)}
+            />
+          ))}
+        </div>
+      </section>
+
       {/* Best Selling Products */}
       <section className="container section">
         <div className="section-head">
           <div>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "5px", color: "#ea580c", fontSize: "11px", fontWeight: 700, marginBottom: "4px" }}>
+              <Flame size={14} /> MOST POPULAR
+            </div>
             <h2 className="section-title">Best Selling Products</h2>
-            <p>Our most popular products, loved by customers.</p>
+            <p>Our most popular products, loved and rated 5 stars by thousands of verified buyers.</p>
           </div>
           <Link className="link-purple" to="/shop">
             View All Products <ArrowRight size={14} />
           </Link>
         </div>
         <div className="products-grid">
-          {products.slice(0, 5).map((p) => (
+          {bestSellers.map((p) => (
             <ProductCard
-              key={p.id}
+              key={`best-${p.id}`}
               product={p}
               wished={wishlist.includes(p.id)}
               onWish={() => onWish(p.id)}
@@ -125,7 +161,7 @@ export default function Home({
                 </div>
               </div>
               <div className="stars">
-                {Array.from({length: 5}).map((_, i) => (
+                {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} size={14} fill="#ffb000" stroke="#ffb000" />
                 ))}
               </div>
