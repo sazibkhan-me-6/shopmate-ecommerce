@@ -37,6 +37,9 @@ export default function Footer() {
           <Link to="/terms">Terms & Conditions</Link>
           <Link to="/privacy">Privacy Policy</Link>
           <Link to="/profile">My Account & Profile</Link>
+          <a href="https://shopmate-admin-panel.vercel.app/" target="_blank" rel="noreferrer" style={{ color: "#818cf8", fontWeight: 600 }}>
+            Central Admin Panel ↗
+          </a>
         </div>
         <div>
           <h4>Contact Us</h4>
