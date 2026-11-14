@@ -119,69 +119,65 @@ export default function Login({
       <div className="auth-card card" style={{ maxWidth: isSignUp ? "520px" : "440px", transition: "max-width 0.25s ease" }}>
         <div className="auth-logo">🛍</div>
 
-        {/* Compact Tab Switcher */}
+        {/* Tab Switcher */}
         <div
           style={{
-            display: "inline-flex",
-            margin: "0 auto 16px",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
             background: "#f1f5f9",
-            borderRadius: "999px",
-            padding: "3px",
-            border: "1px solid #e2e8f0",
-            gap: "2px",
+            borderRadius: "8px",
+            padding: "4px",
+            marginBottom: "20px",
+            gap: "4px",
           }}
         >
           <button
             type="button"
+            className="btn"
             onClick={() => {
               setIsSignUp(false);
               setErrorMsg("");
               setSuccessMsg("");
             }}
             style={{
-              padding: "5px 18px",
+              padding: "9px 14px",
               fontSize: "12px",
               fontWeight: 700,
-              borderRadius: "999px",
-              border: "none",
-              background: !isSignUp ? "#6246e8" : "transparent",
-              color: !isSignUp ? "#fff" : "#64748b",
-              boxShadow: !isSignUp ? "0 2px 6px rgba(98, 70, 232, 0.25)" : "none",
-              cursor: "pointer",
-              transition: "all 0.15s ease",
+              borderRadius: "6px",
+              background: !isSignUp ? "#fff" : "transparent",
+              color: !isSignUp ? "#6246e8" : "#64748b",
+              boxShadow: !isSignUp ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
             }}
           >
             Sign In
           </button>
           <button
             type="button"
+            className="btn"
             onClick={() => {
               setIsSignUp(true);
               setErrorMsg("");
               setSuccessMsg("");
             }}
             style={{
-              padding: "5px 18px",
+              padding: "9px 14px",
               fontSize: "12px",
               fontWeight: 700,
-              borderRadius: "999px",
-              border: "none",
-              background: isSignUp ? "#6246e8" : "transparent",
-              color: isSignUp ? "#fff" : "#64748b",
-              boxShadow: isSignUp ? "0 2px 6px rgba(98, 70, 232, 0.25)" : "none",
-              cursor: "pointer",
-              transition: "all 0.15s ease",
+              borderRadius: "6px",
+              background: isSignUp ? "#fff" : "transparent",
+              color: isSignUp ? "#6246e8" : "#64748b",
+              boxShadow: isSignUp ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
             }}
           >
-            Sign Up
+            Sign Up (Full Details)
           </button>
         </div>
 
-        {!isSignUp && <span className="eyebrow">WELCOME BACK</span>}
-        <h1>{isSignUp ? "Sign Up" : "Sign In to ShopMate"}</h1>
+        <span className="eyebrow">{isSignUp ? "CREATE NEW ACCOUNT" : "WELCOME BACK"}</span>
+        <h1>{isSignUp ? "Register on ShopMate" : "Sign In to ShopMate"}</h1>
         <p className="muted" style={{ fontSize: "12px", marginBottom: "18px" }}>
           {isSignUp
-            ? "Enter your details to create your verified shopper account."
+            ? "Fill in your complete profile details to create a verified shopper account."
             : "Sign in with your registered email and password to access your account."}
         </p>
 
@@ -226,7 +222,7 @@ export default function Login({
                     textDecoration: "underline",
                   }}
                 >
-                  Click here to Sign Up →
+                  Click here to Sign Up with Full Information →
                 </button>
               )}
             </div>
@@ -413,7 +409,7 @@ export default function Login({
             </div>
 
             <button type="submit" className="btn btn-primary auth-submit" style={{ marginTop: "14px" }}>
-              Sign Up
+              Complete Sign Up & Continue
             </button>
           </form>
         )}
@@ -429,7 +425,7 @@ export default function Login({
         >
           {isSignUp
             ? "Already have an account? Sign in here"
-            : "Don't have an account? Sign Up"}
+            : "Don't have an account? Sign up with full details"}
         </button>
 
         {!isSignUp && (

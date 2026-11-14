@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Search, UserRound, Moon, Sun, Menu, X, Truck, ChevronDown, ShieldCheck } from "lucide-react";
+import { Search, Heart, ShoppingCart, UserRound, Moon, Sun, Menu, X, Truck, ChevronDown, ShieldCheck } from "lucide-react";
 
 export default function Header({
   cartCount,
@@ -102,6 +102,16 @@ export default function Header({
             <button aria-label="Search"><Search size={19} /></button>
           </form>
           <div className="nav-actions">
+            <button className="icon-action" onClick={() => navigate("/wishlist")} title="Wishlist">
+              <Heart />
+              <span className="count">{wishlistCount}</span>
+              <em>Wishlist</em>
+            </button>
+            <button className="icon-action" onClick={() => navigate("/cart")} title="Cart">
+              <ShoppingCart />
+              <span className="count">{cartCount}</span>
+              <em>Cart</em>
+            </button>
             <button
               className="icon-action login-btn"
               onClick={handleAccountClick}
