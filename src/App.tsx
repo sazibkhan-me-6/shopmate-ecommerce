@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import ProductDetails from "./pages/ProductDetails";
@@ -13,8 +14,17 @@ import Orders from "./pages/Orders";
 import Wishlist from "./pages/Wishlist";
 import OrderSuccess from "./pages/OrderSuccess";
 import Admin from "./pages/Admin";
-import StaticPage from "./pages/StaticPage";
+import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Categories from "./pages/Categories";
+import Offers from "./pages/Offers";
+import Shipping from "./pages/Shipping";
+import Returns from "./pages/Returns";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import FAQ from "./pages/FAQ";
+import Reviews from "./pages/Reviews";
+import Profile from "./pages/Profile";
 import { getCart, getWishlist, saveCart, saveWishlist, clearUser } from "./services/storage";
 import type { CartItem, Product } from "./types";
 
@@ -88,6 +98,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <ScrollToTop />
       <Header
         cartCount={cart.reduce((s, x) => s + x.quantity, 0)}
         wishlistCount={wishlist.length}
@@ -98,6 +109,15 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home wishlist={wishlist} onWish={wish} onCart={add} />} />
         <Route path="/shop" element={<Shop wishlist={wishlist} onWish={wish} onCart={add} />} />
+        <Route path="/categories" element={<Categories />} />
+        <Route path="/offers" element={<Offers wishlist={wishlist} onWish={wish} onCart={add} notify={notify} />} />
+        <Route path="/shipping" element={<Shipping />} />
+        <Route path="/returns" element={<Returns />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/reviews" element={<Reviews notify={notify} />} />
+        <Route path="/profile" element={<Profile notify={notify} />} />
         <Route path="/product/:id" element={<ProductDetails wishlist={wishlist} onWish={wish} onCart={add} />} />
         <Route
           path="/cart"
@@ -137,15 +157,7 @@ export default function App() {
           path="/admin"
           element={currentUser && currentUser.role === "admin" ? <Admin notify={notify} /> : <Login onLogin={login} />}
         />
-        <Route
-          path="/about"
-          element={
-            <StaticPage eyebrow="ABOUT SHOPMATE" title="Shopping made smarter">
-              <p>ShopMate brings curated products, clear pricing and a friendly checkout experience together in one modern store.</p>
-              <p>Our goal is simple: quality products, transparent service and dependable delivery across Bangladesh and worldwide.</p>
-            </StaticPage>
-          }
-        />
+        <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
       <Footer />

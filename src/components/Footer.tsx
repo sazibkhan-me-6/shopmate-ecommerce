@@ -22,19 +22,21 @@ export default function Footer() {
         <div>
           <h4>Quick Links</h4>
           <Link to="/">Home</Link>
-          <Link to="/shop">Shop</Link>
-          <Link to="/shop?category=Electronics">Categories</Link>
-          <Link to="/shop?offer=true">Offers & Discounts</Link>
+          <Link to="/shop">Shop All Products</Link>
+          <Link to="/categories">Product Categories</Link>
+          <Link to="/offers">Offers & Flash Deals</Link>
+          <Link to="/reviews">Customer Reviews</Link>
           <Link to="/about">About Us</Link>
-          <Link to="/contact">Contact</Link>
+          <Link to="/contact">Contact Us</Link>
         </div>
         <div>
           <h4>Customer Service</h4>
-          <Link to="/contact">Help Center & Support</Link>
-          <Link to="/about">Shipping Info</Link>
-          <Link to="/about">Returns & Refunds</Link>
-          <Link to="/about">Terms & Conditions</Link>
-          <Link to="/about">Privacy Policy</Link>
+          <Link to="/faq">Help Center & FAQ</Link>
+          <Link to="/shipping">Shipping Information</Link>
+          <Link to="/returns">Returns & Refunds</Link>
+          <Link to="/terms">Terms & Conditions</Link>
+          <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/profile">My Account & Profile</Link>
         </div>
         <div>
           <h4>Contact Us</h4>

@@ -47,8 +47,8 @@ export default function Header({
       <div className="announce">
         <div className="container">
           <span><Truck size={14} /> Free shipping on orders over $50</span>
-          <Link to="/shop?category=Electronics&offer=true" style={{ color: "inherit", textDecoration: "none" }}>
-            <b>30% Off on All Electronics — Shop Now!</b>
+          <Link to="/offers" style={{ color: "inherit", textDecoration: "none" }}>
+            <b>30% Off on All Electronics — Explore Offers!</b>
           </Link>
           <span className="announce-right">EN <ChevronDown size={12} /> &nbsp; USD <ChevronDown size={12} /></span>
         </div>
@@ -72,9 +72,9 @@ export default function Header({
                     : x === "Shop"
                     ? "/shop"
                     : x === "Categories"
-                    ? "/shop?category=Electronics"
+                    ? "/categories"
                     : x === "Offers"
-                    ? "/shop?offer=true"
+                    ? "/offers"
                     : `/${x.toLowerCase()}`
                 }
                 onClick={() => setMobile(false)}
