@@ -1,6 +1,21 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Search, Heart, ShoppingCart, UserRound, Moon, Sun, Menu, X, Truck, ChevronDown, ShieldCheck } from "lucide-react";
+import {
+  Search,
+  Heart,
+  ShoppingCart,
+  UserRound,
+  Moon,
+  Sun,
+  Menu,
+  X,
+  Truck,
+  ChevronDown,
+  Package,
+  HelpCircle,
+  LogOut,
+  Shield
+} from "lucide-react";
 
 export default function Header({
   cartCount,
@@ -8,16 +23,31 @@ export default function Header({
   dark,
   setDark,
   user,
+  onLogout,
 }: {
   cartCount: number;
   wishlistCount: number;
   dark: boolean;
   setDark: (v: boolean) => void;
   user?: { name: string; email: string; role?: string } | null;
+  onLogout?: () => void;
 }) {
   const [mobile, setMobile] = useState(false);
+  const [userDropdown, setUserDropdown] = useState(false);
   const [q, setQ] = useState("");
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setUserDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const search = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,17 +59,18 @@ export default function Header({
     setMobile(false);
   };
 
-  const handleAccountClick = () => {
+  const handleAccountToggle = () => {
     if (user) {
-      if (user.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/account");
-      }
+      setUserDropdown((prev) => !prev);
     } else {
       navigate("/login");
     }
+  };
+
+  const handleLogoutClick = () => {
+    setUserDropdown(false);
     setMobile(false);
+    if (onLogout) onLogout();
   };
 
   return (
@@ -82,15 +113,68 @@ export default function Header({
                 {x}
               </NavLink>
             ))}
+
+            {/* Mobile View Customer Profile Drawer with Logout */}
             {mobile && (
-              <button
-                className="btn btn-soft"
-                style={{ marginTop: "10px", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
-                onClick={handleAccountClick}
-              >
-                <UserRound size={16} />
-                {user ? `Account (${user.name})` : "Account"}
-              </button>
+              <div className="mobile-user-section">
+                {user ? (
+                  <div className="mobile-profile-card">
+                    <div className="mobile-profile-head">
+                      <div className="profile-dropdown-avatar">
+                        {user.name[0]?.toUpperCase() || "U"}
+                      </div>
+                      <div className="mobile-profile-info">
+                        <strong>{user.name}</strong>
+                        <small>{user.email || "customer@shopmate.com"}</small>
+                        <span className="profile-role-tag">{user.role || "Customer"}</span>
+                      </div>
+                    </div>
+                    <div className="mobile-profile-links">
+                      <Link to="/profile" onClick={() => setMobile(false)}>
+                        <UserRound size={15} /> My Profile & Details
+                      </Link>
+                      <Link to="/orders" onClick={() => setMobile(false)}>
+                        <Package size={15} /> My Orders & Tracking
+                      </Link>
+                      <Link to="/wishlist" onClick={() => setMobile(false)}>
+                        <Heart size={15} /> My Wishlist ({wishlistCount})
+                      </Link>
+                      <Link to="/shipping" onClick={() => setMobile(false)}>
+                        <Truck size={15} /> Shipping & Delivery
+                      </Link>
+                      <Link to="/faq" onClick={() => setMobile(false)}>
+                        <HelpCircle size={15} /> Help & Support
+                      </Link>
+                      {user.role === "admin" && (
+                        <Link to="/admin" onClick={() => setMobile(false)} style={{ color: "#818cf8" }}>
+                          <Shield size={15} /> Admin Dashboard
+                        </Link>
+                      )}
+                      <button className="mobile-profile-logout-btn" onClick={handleLogoutClick}>
+                        <LogOut size={15} /> Logout
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    className="btn btn-primary"
+                    style={{
+                      marginTop: "12px",
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px"
+                    }}
+                    onClick={() => {
+                      setMobile(false);
+                      navigate("/login");
+                    }}
+                  >
+                    <UserRound size={16} /> Sign In / Register
+                  </button>
+                )}
+              </div>
             )}
           </nav>
           <form className="search" onSubmit={search}>
@@ -110,37 +194,136 @@ export default function Header({
               <ShoppingCart />
               <span className="count" style={{ top: "-6px", right: "-6px" }}>{cartCount}</span>
             </button>
-            <button
-              className="icon-action login-btn"
-              onClick={handleAccountClick}
-              title={user ? `Signed in as ${user.name}` : "Account"}
-            >
-              <UserRound />
-              {user && <em>{user.name.split(" ")[0]}</em>}
-            </button>
-            {user?.role === "admin" && (
-              <a
-                href="https://shopmate-admin-panel.vercel.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-                style={{
-                  padding: "6px 12px",
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "5px",
-                  background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
-                  color: "#fff",
-                }}
-                title="Open ShopMate Central Admin Control Panel"
+
+            {/* Customer Account & Profile Dropdown Container */}
+            <div className="account-dropdown-wrapper" ref={dropdownRef}>
+              <button
+                className={`icon-action login-btn ${userDropdown ? "dropdown-open" : ""}`}
+                onClick={handleAccountToggle}
+                title={user ? `Signed in as ${user.name}` : "Account"}
+                aria-expanded={userDropdown}
               >
-                <ShieldCheck size={14} /> Admin Hub ↗
-              </a>
-            )}
+                <UserRound />
+                {user ? (
+                  <span className="user-btn-label">
+                    <em>{user.name.split(" ")[0]}</em>
+                    <ChevronDown size={12} className={`dropdown-chevron ${userDropdown ? "rotate" : ""}`} />
+                  </span>
+                ) : (
+                  <em>Sign In</em>
+                )}
+              </button>
+
+              {/* Profile Dropdown Menu when user is logged in */}
+              {user && userDropdown && (
+                <div className="profile-dropdown-menu">
+                  {/* Dropdown Header with Avatar & Details */}
+                  <div className="profile-dropdown-header">
+                    <div className="profile-dropdown-avatar">
+                      {user.name[0]?.toUpperCase() || "U"}
+                    </div>
+                    <div className="profile-dropdown-user-info">
+                      <strong className="profile-dropdown-name">{user.name}</strong>
+                      <span className="profile-dropdown-email">{user.email || "customer@shopmate.com"}</span>
+                      <span className="profile-role-tag">{user.role || "Customer"}</span>
+                    </div>
+                  </div>
+
+                  <div className="profile-dropdown-divider" />
+
+                  {/* Profile & Account Navigation Links */}
+                  <div className="profile-dropdown-links">
+                    <Link
+                      to="/profile"
+                      className="profile-dropdown-item"
+                      onClick={() => setUserDropdown(false)}
+                    >
+                      <UserRound size={16} />
+                      <div className="profile-item-text">
+                        <b>My Profile</b>
+                        <small>Name, contact & delivery address</small>
+                      </div>
+                    </Link>
+
+                    <Link
+                      to="/orders"
+                      className="profile-dropdown-item"
+                      onClick={() => setUserDropdown(false)}
+                    >
+                      <Package size={16} />
+                      <div className="profile-item-text">
+                        <b>My Orders</b>
+                        <small>Live tracking & order history</small>
+                      </div>
+                    </Link>
+
+                    <Link
+                      to="/wishlist"
+                      className="profile-dropdown-item"
+                      onClick={() => setUserDropdown(false)}
+                    >
+                      <Heart size={16} />
+                      <div className="profile-item-text">
+                        <b>Wishlist</b>
+                        <small>Saved favorite products ({wishlistCount})</small>
+                      </div>
+                    </Link>
+
+                    <Link
+                      to="/shipping"
+                      className="profile-dropdown-item"
+                      onClick={() => setUserDropdown(false)}
+                    >
+                      <Truck size={16} />
+                      <div className="profile-item-text">
+                        <b>Shipping Details</b>
+                        <small>Delivery timelines & courier info</small>
+                      </div>
+                    </Link>
+
+                    <Link
+                      to="/faq"
+                      className="profile-dropdown-item"
+                      onClick={() => setUserDropdown(false)}
+                    >
+                      <HelpCircle size={16} />
+                      <div className="profile-item-text">
+                        <b>Help & Support</b>
+                        <small>Customer care & returns policy</small>
+                      </div>
+                    </Link>
+
+                    {user.role === "admin" && (
+                      <Link
+                        to="/admin"
+                        className="profile-dropdown-item admin-dropdown-item"
+                        onClick={() => setUserDropdown(false)}
+                      >
+                        <Shield size={16} />
+                        <div className="profile-item-text">
+                          <b>Admin Dashboard</b>
+                          <small>Store management & live orders</small>
+                        </div>
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className="profile-dropdown-divider" />
+
+                  {/* Logout Button */}
+                  <div className="profile-dropdown-footer">
+                    <button
+                      className="profile-dropdown-logout-btn"
+                      onClick={handleLogoutClick}
+                    >
+                      <LogOut size={16} />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button className="theme-btn" onClick={() => setDark(!dark)} title="Toggle dark mode">
               {dark ? <Sun /> : <Moon />}
             </button>

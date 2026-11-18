@@ -123,6 +123,7 @@ export default function App() {
         dark={dark}
         setDark={setDark}
         user={currentUser}
+        onLogout={logout}
       />
       <Routes>
         <Route path="/" element={<Home wishlist={wishlist} onWish={wish} onCart={add} />} />
