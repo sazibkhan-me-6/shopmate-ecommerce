@@ -1,6 +1,7 @@
-import { ArrowLeft, Minus, Plus, Trash2, Tag } from "lucide-react";
+import { ArrowLeft, Minus, Plus, Trash2, Tag, Sparkles, LogIn } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import type { CartItem } from "../types";
+import { getUser } from "../services/storage";
 
 export default function Cart({
   cart,
@@ -25,6 +26,7 @@ export default function Cart({
   const subtotal = cart.reduce((s, x) => s + x.price * x.quantity, 0);
   const shipping = subtotal >= 50 || subtotal === 0 ? 0 : 7.99;
   const total = Math.max(0, subtotal + shipping - discount);
+  const user: any = getUser();
 
   const apply = () => {
     const code = coupon.trim().toUpperCase();
@@ -130,6 +132,23 @@ export default function Cart({
               <span>Total</span>
               <strong>${total.toFixed(2)}</strong>
             </div>
+
+            {user ? (
+              <div className="cart-autofill-hint">
+                <Sparkles size={15} style={{ flexShrink: 0 }} />
+                <span>
+                  Delivering to <b>{user.name}</b> ({user.city || "Dhaka"}). Your details are auto-filled at checkout!
+                </span>
+              </div>
+            ) : (
+              <div className="cart-autofill-hint not-signed">
+                <LogIn size={15} style={{ flexShrink: 0 }} />
+                <span>
+                  <Link to="/login">Sign in</Link> to auto-fill your saved address & checkout faster.
+                </span>
+              </div>
+            )}
+
             <button className="btn btn-primary checkout-btn" onClick={() => navigate("/checkout")}>
               Proceed to Checkout
             </button>

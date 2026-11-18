@@ -1,8 +1,24 @@
-import { CheckCircle2, CreditCard, MapPin, ShieldCheck, Smartphone, WalletCards, Truck } from "lucide-react";
+import {
+  CheckCircle2,
+  CreditCard,
+  MapPin,
+  ShieldCheck,
+  Smartphone,
+  WalletCards,
+  Truck,
+  Sparkles,
+  LogIn
+} from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { CartItem, Order } from "../types";
-import { saveOrders } from "../services/storage";
+import {
+  getUser,
+  saveOrders,
+  saveUser,
+  getRegisteredUsers,
+  saveRegisteredUsers
+} from "../services/storage";
 import { createOrderOnServer } from "../services/api";
 import {
   processBkashPayment,
@@ -347,15 +363,65 @@ export default function Checkout({
   const bdtRate = 120; // 1 USD approx 120 BDT
   const totalBDT = Math.round(total * bdtRate);
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "Dhaka",
-    country: "Bangladesh",
-    postalCode: "",
+  const loggedInUser: any = getUser();
+  const [saveToAccount, setSaveToAccount] = useState(true);
+
+  const [form, setForm] = useState(() => {
+    const u: any = getUser();
+    return {
+      name: u?.name || "",
+      email: u?.email || "",
+      phone: u?.phone || "",
+      address: u?.address || "",
+      city: u?.city || "Dhaka",
+      country: "Bangladesh",
+      postalCode: u?.postalCode || "1212",
+    };
   });
+
+  // Automatically pre-fill shipping information from user account registration/profile
+  useEffect(() => {
+    const u: any = getUser();
+    if (u) {
+      setForm((prev) => ({
+        ...prev,
+        name: prev.name || u.name || "",
+        email: prev.email || u.email || "",
+        phone: prev.phone || u.phone || "",
+        address: prev.address || u.address || "",
+        city: prev.city && prev.city !== "Dhaka" ? prev.city : (u.city || "Dhaka"),
+        postalCode: prev.postalCode || u.postalCode || "1212",
+      }));
+    }
+  }, []);
+
+  // Sync any updated contact/delivery details back to the user account profile
+  const syncAccountInfo = () => {
+    const u: any = getUser();
+    if (u && saveToAccount) {
+      const updatedUser = {
+        ...u,
+        name: form.name || u.name,
+        email: u.email,
+        phone: form.phone || u.phone,
+        address: form.address || u.address,
+        city: form.city || u.city,
+        postalCode: form.postalCode || u.postalCode,
+      };
+      saveUser(updatedUser);
+
+      try {
+        const users = getRegisteredUsers();
+        const idx = users.findIndex((user) => user.email.toLowerCase() === u.email.toLowerCase());
+        if (idx !== -1) {
+          users[idx] = { ...users[idx], ...updatedUser };
+          saveRegisteredUsers(users);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
 
   const [paymentMethod, setPaymentMethod] = useState<
     "Cash on Delivery" | "bKash" | "Nagad" | "SSLCommerz" | "Stripe Card"
@@ -391,6 +457,7 @@ export default function Checkout({
     await createOrderOnServer(order);
     const existingOrders = JSON.parse(localStorage.getItem("shopmate_orders") || "[]");
     saveOrders([order, ...existingOrders]);
+    syncAccountInfo();
     onClear();
     setBusy(false);
     if (notify) notify("🎉 SSLCOMMERZ Payment Successful! Order placed.");
@@ -508,6 +575,7 @@ export default function Checkout({
     await createOrderOnServer(order);
     const existingOrders = JSON.parse(localStorage.getItem("shopmate_orders") || "[]");
     saveOrders([order, ...existingOrders]);
+    syncAccountInfo();
     onClear();
     setBusy(false);
 
@@ -564,6 +632,26 @@ export default function Checkout({
               <h2>
                 <MapPin /> Shipping Information
               </h2>
+
+              {loggedInUser ? (
+                <div className="checkout-autofill-alert">
+                  <div className="autofill-badge">
+                    <Sparkles size={16} /> Auto-filled from your Account ({loggedInUser.name})
+                  </div>
+                  <p>
+                    Your registered phone, delivery address, and city have been automatically loaded.
+                    You can edit any field below or complete your order directly!
+                  </p>
+                </div>
+              ) : (
+                <div className="checkout-guest-alert">
+                  <span>Already have a ShopMate account?</span>
+                  <Link to="/login" className="link-purple" style={{ textDecoration: "underline" }}>
+                    Sign In to auto-fill your delivery info
+                  </Link>
+                </div>
+              )}
+
               <div className="form-grid">
                 <label>
                   Full Name
@@ -602,7 +690,7 @@ export default function Checkout({
                   />
                 </label>
                 <label className="full">
-                  Address
+                  Delivery Address
                   <input
                     required
                     value={form.address}
@@ -631,6 +719,17 @@ export default function Checkout({
                     placeholder="1212"
                   />
                 </label>
+
+                {loggedInUser && (
+                  <label className="full auto-save-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={saveToAccount}
+                      onChange={(e) => setSaveToAccount(e.target.checked)}
+                    />
+                    <span>Save updated address & phone to my account profile for future orders</span>
+                  </label>
+                )}
               </div>
             </div>
 
