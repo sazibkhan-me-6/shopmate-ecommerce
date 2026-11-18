@@ -26,11 +26,13 @@ import Privacy from "./pages/Privacy";
 import FAQ from "./pages/FAQ";
 import Reviews from "./pages/Reviews";
 import Profile from "./pages/Profile";
+import CartDrawer from "./components/CartDrawer";
 import { getCart, getWishlist, saveCart, saveWishlist, clearUser } from "./services/storage";
 import type { CartItem, Product } from "./types";
 
 export default function App() {
   const [cart, setCart] = useState<CartItem[]>(getCart);
+  const [cartOpen, setCartOpen] = useState(false);
   const [wishlist, setWishlist] = useState<string[]>(getWishlist);
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -79,6 +81,7 @@ export default function App() {
         : [...prev, { ...p, quantity: q, selectedSize: s || undefined, selectedColor: c || undefined }];
     });
     notify(`🛍️ Added "${p.name.length > 25 ? p.name.slice(0, 25) + "..." : p.name}" to cart!`);
+    setCartOpen(true);
   };
 
   const remove = (id: string) => {
@@ -124,6 +127,7 @@ export default function App() {
         setDark={setDark}
         user={currentUser}
         onLogout={logout}
+        onOpenCart={() => setCartOpen(true)}
       />
       <Routes>
         <Route path="/" element={<Home wishlist={wishlist} onWish={wish} onCart={add} />} />
@@ -150,6 +154,7 @@ export default function App() {
               discount={discount}
               setDiscount={setDiscount}
               notify={notify}
+              onAdd={add}
             />
           }
         />
@@ -181,6 +186,15 @@ export default function App() {
       </Routes>
       <Footer />
       <CustomerSupportChat />
+      <CartDrawer
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        cart={cart}
+        onQty={qty}
+        onRemove={remove}
+        onAdd={add}
+        user={currentUser}
+      />
       {toast && (
         <div className="toast-notification">
           <span>{toast}</span>

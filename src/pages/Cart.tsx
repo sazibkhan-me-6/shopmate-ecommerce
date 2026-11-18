@@ -1,7 +1,8 @@
-import { ArrowLeft, Minus, Plus, Trash2, Tag, Sparkles, LogIn } from "lucide-react";
+import { ArrowLeft, Minus, Plus, Trash2, Tag, Sparkles, LogIn, ShoppingCart, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import type { CartItem } from "../types";
+import type { CartItem, Product } from "../types";
 import { getUser } from "../services/storage";
+import { products } from "../data";
 
 export default function Cart({
   cart,
@@ -12,6 +13,7 @@ export default function Cart({
   discount,
   setDiscount,
   notify,
+  onAdd,
 }: {
   cart: CartItem[];
   onQty: (id: string, q: number) => void;
@@ -21,6 +23,7 @@ export default function Cart({
   discount: number;
   setDiscount: (v: number) => void;
   notify?: (msg: string) => void;
+  onAdd?: (p: Product) => void;
 }) {
   const navigate = useNavigate();
   const subtotal = cart.reduce((s, x) => s + x.price * x.quantity, 0);
@@ -49,13 +52,47 @@ export default function Cart({
   if (!cart.length)
     return (
       <main className="page">
-        <div className="container empty card">
-          <div className="empty-icon">🛒</div>
-          <h2>Your cart is empty</h2>
-          <p>Add something you love and it will appear here.</p>
-          <Link className="btn btn-primary" to="/shop">
-            Continue Shopping
-          </Link>
+        <div className="container" style={{ maxWidth: "800px" }}>
+          <div className="empty card" style={{ padding: "40px 20px" }}>
+            <div className="empty-icon" style={{ fontSize: "50px" }}>🛒</div>
+            <h2>Your cart is currently empty</h2>
+            <p style={{ color: "#64748b", maxWidth: "420px", margin: "6px auto 20px" }}>
+              Explore our best selling items below and add them directly to your cart!
+            </p>
+            <Link className="btn btn-primary" to="/shop" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+              Browse All Products <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          <div style={{ marginTop: "35px" }}>
+            <h3 style={{ fontSize: "18px", fontWeight: "800", marginBottom: "16px" }}>
+              Trending Recommendations
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "15px" }}>
+              {products.slice(0, 4).map((p) => (
+                <div key={p.id} className="card" style={{ padding: "12px", display: "flex", flexDirection: "column" }}>
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    style={{ width: "100%", height: "130px", objectFit: "cover", borderRadius: "8px", marginBottom: "10px" }}
+                  />
+                  <strong style={{ fontSize: "13px", lineHeight: "1.3", marginBottom: "6px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {p.name}
+                  </strong>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: "8px" }}>
+                    <span style={{ color: "#e22d3d", fontWeight: "800", fontSize: "14px" }}>${p.price.toFixed(2)}</span>
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => onAdd && onAdd(p)}
+                      style={{ padding: "6px 12px", fontSize: "11px", display: "flex", alignItems: "center", gap: "4px" }}
+                    >
+                      <ShoppingCart size={13} /> Add
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
     );

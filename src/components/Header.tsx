@@ -23,6 +23,7 @@ export default function Header({
   setDark,
   user,
   onLogout,
+  onOpenCart,
 }: {
   cartCount: number;
   wishlistCount: number;
@@ -30,6 +31,7 @@ export default function Header({
   setDark: (v: boolean) => void;
   user?: { name: string; email: string; role?: string } | null;
   onLogout?: () => void;
+  onOpenCart?: () => void;
 }) {
   const [mobile, setMobile] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
@@ -120,10 +122,10 @@ export default function Header({
                   <div className="mobile-profile-card">
                     <div className="mobile-profile-head">
                       <div className="profile-dropdown-avatar">
-                        {user.name[0]?.toUpperCase() || "U"}
+                        {user.name ? user.name[0]?.toUpperCase() : "U"}
                       </div>
                       <div className="mobile-profile-info">
-                        <strong>{user.name}</strong>
+                        <strong>{user.name || "Customer"}</strong>
                         <small>{user.email || "customer@shopmate.com"}</small>
                         <span className="profile-role-tag">{user.role || "Customer"}</span>
                       </div>
@@ -138,6 +140,16 @@ export default function Header({
                       <Link to="/shipping" onClick={() => setMobile(false)}>
                         <Truck size={15} /> Shipping & Delivery
                       </Link>
+                      <button
+                        className="mobile-cart-btn"
+                        onClick={() => {
+                          setMobile(false);
+                          if (onOpenCart) onOpenCart();
+                          else navigate("/cart");
+                        }}
+                      >
+                        <ShoppingCart size={15} /> View My Cart ({cartCount})
+                      </button>
                       {user.role === "admin" && (
                         <Link to="/admin" onClick={() => setMobile(false)} style={{ color: "#818cf8" }}>
                           <Shield size={15} /> Admin Dashboard
@@ -183,7 +195,15 @@ export default function Header({
               <Heart />
               <span className="count" style={{ top: "-6px", right: "-6px" }}>{wishlistCount}</span>
             </button>
-            <button className="icon-action" onClick={() => navigate("/cart")} title="Cart" aria-label="Cart">
+            <button
+              className="icon-action cart-action-btn"
+              onClick={() => {
+                if (onOpenCart) onOpenCart();
+                else navigate("/cart");
+              }}
+              title="Shopping Cart"
+              aria-label="Shopping Cart"
+            >
               <ShoppingCart />
               <span className="count" style={{ top: "-6px", right: "-6px" }}>{cartCount}</span>
             </button>
@@ -199,7 +219,7 @@ export default function Header({
                 <UserRound />
                 {user ? (
                   <span className="user-btn-label">
-                    <em>{user.name.split(" ")[0]}</em>
+                    <em>{(user.name || "User").split(" ")[0]}</em>
                     <ChevronDown size={12} className={`dropdown-chevron ${userDropdown ? "rotate" : ""}`} />
                   </span>
                 ) : (
@@ -213,10 +233,10 @@ export default function Header({
                   {/* Dropdown Header with Avatar & Details */}
                   <div className="profile-dropdown-header">
                     <div className="profile-dropdown-avatar">
-                      {user.name[0]?.toUpperCase() || "U"}
+                      {user.name ? user.name[0]?.toUpperCase() : "U"}
                     </div>
                     <div className="profile-dropdown-user-info">
-                      <strong className="profile-dropdown-name">{user.name}</strong>
+                      <strong className="profile-dropdown-name">{user.name || "Customer"}</strong>
                       <span className="profile-dropdown-email">{user.email || "customer@shopmate.com"}</span>
                       <span className="profile-role-tag">{user.role || "Customer"}</span>
                     </div>

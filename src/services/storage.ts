@@ -25,17 +25,32 @@ const defaultAdmin: RegisteredUser = {
 };
 
 const read = <T,>(key: string, fallback: T): T => {
-  try { return JSON.parse(localStorage.getItem(key) || "") as T; } catch { return fallback; }
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw || raw === "undefined" || raw === "null") return fallback;
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
 };
 
-export const getCart = (): CartItem[] => read<CartItem[]>("shopmate_cart", []);
-export const saveCart = (cart: CartItem[]) => localStorage.setItem("shopmate_cart", JSON.stringify(cart));
+export const getCart = (): CartItem[] => {
+  const c = read<CartItem[]>("shopmate_cart", []);
+  return Array.isArray(c) ? c : [];
+};
+export const saveCart = (cart: CartItem[]) => localStorage.setItem("shopmate_cart", JSON.stringify(cart || []));
 
-export const getWishlist = (): string[] => read<string[]>("shopmate_wishlist", []);
-export const saveWishlist = (ids: string[]) => localStorage.setItem("shopmate_wishlist", JSON.stringify(ids));
+export const getWishlist = (): string[] => {
+  const w = read<string[]>("shopmate_wishlist", []);
+  return Array.isArray(w) ? w : [];
+};
+export const saveWishlist = (ids: string[]) => localStorage.setItem("shopmate_wishlist", JSON.stringify(ids || []));
 
-export const getOrders = (): Order[] => read<Order[]>("shopmate_orders", []);
-export const saveOrders = (orders: Order[]) => localStorage.setItem("shopmate_orders", JSON.stringify(orders));
+export const getOrders = (): Order[] => {
+  const o = read<Order[]>("shopmate_orders", []);
+  return Array.isArray(o) ? o : [];
+};
+export const saveOrders = (orders: Order[]) => localStorage.setItem("shopmate_orders", JSON.stringify(orders || []));
 
 export const getUser = () => read<RegisteredUser | {name: string; email: string; role?: string} | null>("shopmate_user", null);
 export const saveUser = (user: any) => localStorage.setItem("shopmate_user", JSON.stringify(user));
