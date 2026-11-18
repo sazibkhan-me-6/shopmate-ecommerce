@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Mail, Phone, MapPin, Package, Heart, Shield, Save, ArrowLeft } from "lucide-react";
+import { Package, Truck, Save, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getUser } from "../services/storage";
 
@@ -161,21 +161,16 @@ export default function Profile({ notify }: { notify?: (msg: string) => void }) 
           </div>
 
           {/* Quick Shortcuts */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "15px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "15px" }}>
             <Link to="/orders" className="card account-card">
               <Package size={22} style={{ color: "#6246e8" }} />
               <h3>My Orders</h3>
               <p>Track shipments & review order history.</p>
             </Link>
-            <Link to="/wishlist" className="card account-card">
-              <Heart size={22} style={{ color: "#e22d3d" }} />
-              <h3>Saved Wishlist</h3>
-              <p>Your favorite saved items.</p>
-            </Link>
-            <Link to="/faq" className="card account-card">
-              <Shield size={22} style={{ color: "#10b981" }} />
-              <h3>Help & Support</h3>
-              <p>Returns, FAQs and policies.</p>
+            <Link to="/shipping" className="card account-card">
+              <Truck size={22} style={{ color: "#6246e8" }} />
+              <h3>Shipping Details</h3>
+              <p>Delivery timelines, rates & courier tracking.</p>
             </Link>
           </div>
         </div>

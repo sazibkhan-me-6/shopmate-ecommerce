@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { getOrders, getUser } from "../services/storage";
-import { Package, Heart, UserRound, LogOut, HelpCircle, Truck } from "lucide-react";
+import { Package, UserRound, LogOut, Truck } from "lucide-react";
 
 export default function Account({ onLogout }: { onLogout: () => void }) {
   const u = getUser() || { name: "ShopMate User", email: "" };
@@ -33,22 +33,10 @@ export default function Account({ onLogout }: { onLogout: () => void }) {
             <p>{orders.length} order(s) placed with live status.</p>
           </Link>
 
-          <Link to="/wishlist" className="account-card card">
-            <Heart />
-            <h3>Wishlist</h3>
-            <p>Saved products you love and want to purchase.</p>
-          </Link>
-
           <Link to="/shipping" className="account-card card">
             <Truck />
             <h3>Shipping Details</h3>
             <p>Courier tracking, delivery times & rates.</p>
-          </Link>
-
-          <Link to="/faq" className="account-card card">
-            <HelpCircle />
-            <h3>Help & Support</h3>
-            <p>Frequently asked questions & return policy.</p>
           </Link>
         </div>
       </div>

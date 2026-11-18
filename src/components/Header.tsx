@@ -12,7 +12,6 @@ import {
   Truck,
   ChevronDown,
   Package,
-  HelpCircle,
   LogOut,
   Shield
 } from "lucide-react";
@@ -136,14 +135,8 @@ export default function Header({
                       <Link to="/orders" onClick={() => setMobile(false)}>
                         <Package size={15} /> My Orders & Tracking
                       </Link>
-                      <Link to="/wishlist" onClick={() => setMobile(false)}>
-                        <Heart size={15} /> My Wishlist ({wishlistCount})
-                      </Link>
                       <Link to="/shipping" onClick={() => setMobile(false)}>
                         <Truck size={15} /> Shipping & Delivery
-                      </Link>
-                      <Link to="/faq" onClick={() => setMobile(false)}>
-                        <HelpCircle size={15} /> Help & Support
                       </Link>
                       {user.role === "admin" && (
                         <Link to="/admin" onClick={() => setMobile(false)} style={{ color: "#818cf8" }}>
@@ -258,18 +251,6 @@ export default function Header({
                     </Link>
 
                     <Link
-                      to="/wishlist"
-                      className="profile-dropdown-item"
-                      onClick={() => setUserDropdown(false)}
-                    >
-                      <Heart size={16} />
-                      <div className="profile-item-text">
-                        <b>Wishlist</b>
-                        <small>Saved favorite products ({wishlistCount})</small>
-                      </div>
-                    </Link>
-
-                    <Link
                       to="/shipping"
                       className="profile-dropdown-item"
                       onClick={() => setUserDropdown(false)}
@@ -278,18 +259,6 @@ export default function Header({
                       <div className="profile-item-text">
                         <b>Shipping Details</b>
                         <small>Delivery timelines & courier info</small>
-                      </div>
-                    </Link>
-
-                    <Link
-                      to="/faq"
-                      className="profile-dropdown-item"
-                      onClick={() => setUserDropdown(false)}
-                    >
-                      <HelpCircle size={16} />
-                      <div className="profile-item-text">
-                        <b>Help & Support</b>
-                        <small>Customer care & returns policy</small>
                       </div>
                     </Link>
 
