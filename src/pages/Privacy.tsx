@@ -58,7 +58,7 @@ export default function Privacy() {
           <p>Your information is used strictly for:</p>
           <ul style={{ paddingLeft: "20px" }}>
             <li>Processing, dispatching, and delivering your ordered goods.</li>
-            <li>Sending SMS and email tracking updates regarding your order status.</li>
+            <li>Sending SMS and email updates regarding your order status.</li>
             <li>Providing customer support and processing returns/refunds.</li>
             <li>Detecting and preventing fraudulent transactions.</li>
           </ul>

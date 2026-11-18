@@ -133,7 +133,7 @@ export default function Header({
                         <UserRound size={15} /> My Profile & Details
                       </Link>
                       <Link to="/orders" onClick={() => setMobile(false)}>
-                        <Package size={15} /> My Orders & Tracking
+                        <Package size={15} /> My Orders
                       </Link>
                       <Link to="/shipping" onClick={() => setMobile(false)}>
                         <Truck size={15} /> Shipping & Delivery
@@ -273,7 +273,7 @@ export default function Header({
                       <Package size={16} />
                       <div className="profile-item-text">
                         <b>My Orders</b>
-                        <small>Live tracking & order history</small>
+                        <small>View order history</small>
                       </div>
                     </Link>
 

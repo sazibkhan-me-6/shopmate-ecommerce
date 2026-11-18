@@ -93,8 +93,8 @@ export default function Shipping() {
           </div>
         </section>
 
-        {/* Courier Partners & Tracking Guide */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "25px", marginBottom: "35px" }}>
+        {/* Courier Partners */}
+        <div style={{ marginBottom: "35px" }}>
           <div className="card" style={{ padding: "26px" }}>
             <h3 style={{ fontSize: "16px", margin: "0 0 12px" }}>Trusted Delivery Partners</h3>
             <p style={{ fontSize: "13px", color: "#667085", lineHeight: "1.6", margin: "0 0 16px" }}>
@@ -114,16 +114,6 @@ export default function Shipping() {
                 ✈️ DHL Express
               </span>
             </div>
-          </div>
-
-          <div className="card" style={{ padding: "26px" }}>
-            <h3 style={{ fontSize: "16px", margin: "0 0 12px" }}>Real-Time Order Tracking</h3>
-            <p style={{ fontSize: "13px", color: "#667085", lineHeight: "1.6", margin: "0 0 16px" }}>
-              Once your parcel is dispatched, you will receive an SMS and email notification with your Consignment Tracking ID. You can also view live delivery status in your ShopMate account.
-            </p>
-            <Link to="/orders" className="btn btn-soft" style={{ fontSize: "12px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
-              Track My Order
-            </Link>
           </div>
         </div>
 

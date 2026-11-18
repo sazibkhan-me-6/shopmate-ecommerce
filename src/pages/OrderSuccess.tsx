@@ -71,7 +71,7 @@ export default function OrderSuccess() {
 
         <div style={{ marginTop: "24px", display: "flex", gap: "10px", justifyContent: "center" }}>
           <Link className="btn btn-primary" to="/orders">
-            Track Order <ArrowRight size={16} />
+            View My Orders <ArrowRight size={16} />
           </Link>
           <Link className="btn btn-outline" to="/shop">
             Continue Shopping

@@ -52,9 +52,9 @@ export default function CustomerSupportChat() {
   const getBotResponse = (query: string): { text: string; actionLink?: { label: string; url: string; external?: boolean } } => {
     const q = query.toLowerCase();
 
-    if (q.includes("order") || q.includes("track") || q.includes("where is")) {
+    if (q.includes("order") || q.includes("where is") || q.includes("status")) {
       return {
-        text: "You can track your order status anytime from your Account > Orders page. We dispatch all confirmed orders within 24 hours!",
+        text: "You can view your order history anytime from your Account > Orders page. We dispatch all confirmed orders within 24 hours!",
         actionLink: { label: "View My Orders", url: "/orders" }
       };
     }

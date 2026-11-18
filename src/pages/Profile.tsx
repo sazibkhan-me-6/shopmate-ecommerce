@@ -165,12 +165,12 @@ export default function Profile({ notify }: { notify?: (msg: string) => void }) 
             <Link to="/orders" className="card account-card">
               <Package size={22} style={{ color: "#6246e8" }} />
               <h3>My Orders</h3>
-              <p>Track shipments & review order history.</p>
+              <p>Review past order history.</p>
             </Link>
             <Link to="/shipping" className="card account-card">
               <Truck size={22} style={{ color: "#6246e8" }} />
               <h3>Shipping Details</h3>
-              <p>Delivery timelines, rates & courier tracking.</p>
+              <p>Delivery timelines and shipping rates.</p>
             </Link>
           </div>
         </div>

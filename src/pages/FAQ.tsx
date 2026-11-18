@@ -15,8 +15,8 @@ export default function FAQ() {
     },
     {
       category: "orders",
-      q: "How can I track the status of my order?",
-      a: "Once your order is confirmed, you will receive an Order ID (e.g. SM-12345678). You can track your order status anytime by clicking 'My Orders' in your account menu, or contacting our support team via WhatsApp.",
+      q: "How can I check the status of my order?",
+      a: "Once your order is confirmed, you will receive an Order ID (e.g. SM-12345678). You can check your order status anytime by clicking 'My Orders' in your account menu, or contacting our support team via WhatsApp.",
     },
     {
       category: "orders",
@@ -84,7 +84,7 @@ export default function FAQ() {
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search questions (e.g. delivery, bKash, return, tracking)..."
+              placeholder="Search questions (e.g. delivery, bKash, return, orders)..."
               style={{
                 width: "100%",
                 padding: "14px 44px 14px 18px",

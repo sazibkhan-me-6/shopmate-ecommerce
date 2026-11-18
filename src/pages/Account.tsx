@@ -36,7 +36,7 @@ export default function Account({ onLogout }: { onLogout: () => void }) {
           <Link to="/shipping" className="account-card card">
             <Truck />
             <h3>Shipping Details</h3>
-            <p>Courier tracking, delivery times & rates.</p>
+            <p>Delivery times and shipping rates.</p>
           </Link>
         </div>
       </div>
