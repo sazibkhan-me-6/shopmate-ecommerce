@@ -1,6 +1,30 @@
-import { BarChart3, Box, ClipboardList, DollarSign, Plus, Smartphone, X, Check, ExternalLink, ShieldCheck, Radio } from "lucide-react";
-import { useState } from "react";
+import {
+  BarChart3,
+  Box,
+  ClipboardList,
+  DollarSign,
+  Plus,
+  Smartphone,
+  X,
+  Check,
+  ExternalLink,
+  ShieldCheck,
+  Radio,
+  Headphones,
+  MessageCircle,
+  Send,
+  Trash2,
+  RefreshCw,
+} from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { getOrders, saveOrders } from "../services/storage";
+import {
+  getSupportThreads,
+  sendAdminReply,
+  deleteSupportThread,
+  subscribeToSupportBus,
+  type SupportThread,
+} from "../services/support";
 import { products as initialProducts } from "../data";
 import type { Product } from "../types";
 
@@ -11,6 +35,61 @@ export default function Admin({ notify }: { notify?: (msg: string) => void }) {
     const saved = localStorage.getItem("shopmate_custom_products");
     return saved ? JSON.parse(saved) : initialProducts;
   });
+
+  const [supportThreads, setSupportThreads] = useState<SupportThread[]>(getSupportThreads);
+  const [activeThreadId, setActiveThreadId] = useState<string>(() => {
+    const list = getSupportThreads();
+    return list.length > 0 ? list[0].id : "";
+  });
+  const [adminReplyText, setAdminReplyText] = useState("");
+  const adminChatEndRef = useRef<HTMLDivElement>(null);
+
+  // Subscribe to live events from customer support chat
+  useEffect(() => {
+    const unsubscribe = subscribeToSupportBus((event) => {
+      const updated = getSupportThreads();
+      setSupportThreads(updated);
+
+      if (event.type === "CUSTOMER_MESSAGE") {
+        const { threadId, message, customerInfo } = event.payload;
+        setActiveThreadId((prev) => prev || threadId);
+        if (notify) {
+          notify(`💬 New support message from ${customerInfo?.name || "Customer"}: "${message.text}"`);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, [notify]);
+
+  // Auto-scroll admin chat
+  useEffect(() => {
+    adminChatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [supportThreads, activeThreadId]);
+
+  const activeThread = supportThreads.find((t) => t.id === activeThreadId) || supportThreads[0];
+
+  const handleSendReply = (textToSend?: string) => {
+    const text = (textToSend || adminReplyText).trim();
+    if (!text || !activeThread) return;
+
+    sendAdminReply(activeThread.id, text, "Admin Support");
+    setAdminReplyText("");
+    const updated = getSupportThreads();
+    setSupportThreads(updated);
+    if (notify) notify(`✅ Reply sent to ${activeThread.customerName}!`);
+  };
+
+  const handleDeleteThread = (threadId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    deleteSupportThread(threadId);
+    const updated = getSupportThreads();
+    setSupportThreads(updated);
+    if (activeThreadId === threadId) {
+      setActiveThreadId(updated.length > 0 ? updated[0].id : "");
+    }
+    if (notify) notify("🗑️ Support conversation cleared.");
+  };
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -222,6 +301,12 @@ export default function Admin({ notify }: { notify?: (msg: string) => void }) {
             <b>{productList.length}</b>
             <span>Active catalog</span>
           </div>
+          <div className="stat card" style={{ borderLeft: "3px solid #6246e8" }}>
+            <Headphones style={{ color: "#6246e8" }} />
+            <small>Live Support Inquiries</small>
+            <b>{supportThreads.length}</b>
+            <span>{supportThreads.filter(t => t.unreadByAdmin > 0).length} unread</span>
+          </div>
         </div>
 
         {/* Add Product Modal */}
@@ -394,6 +479,188 @@ export default function Admin({ notify }: { notify?: (msg: string) => void }) {
             </div>
           </div>
         )}
+
+        {/* Live Customer Support Desk */}
+        <section className="admin-support-desk">
+          <div className="admin-support-header">
+            <div className="admin-support-title">
+              <Headphones size={22} color="#a5b4fc" />
+              <div>
+                <h2>Live Customer Support Desk</h2>
+                <small style={{ color: "#c7d2fe", fontSize: "11px" }}>
+                  Direct Real-Time Connection with Storefront Customer Support
+                </small>
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <span className="admin-support-badge">
+                <span className="live-status-dot" style={{ background: "#052e16", width: "6px", height: "6px" }}></span>
+                LIVE SYNC ACTIVE
+              </span>
+              <button
+                className="btn btn-soft"
+                onClick={() => {
+                  const updated = getSupportThreads();
+                  setSupportThreads(updated);
+                  if (notify) notify("🔄 Support inquiries refreshed");
+                }}
+                title="Refresh Support Inquiries"
+                style={{ padding: "4px 10px", fontSize: "11px", background: "rgba(255,255,255,0.15)", color: "#fff", border: "0" }}
+              >
+                <RefreshCw size={12} style={{ marginRight: "4px" }} /> Refresh
+              </button>
+            </div>
+          </div>
+
+          <div className="admin-support-layout">
+            {/* Left Sidebar: Customer Threads */}
+            <div className="admin-threads-sidebar">
+              <div style={{ padding: "12px 16px", borderBottom: "1px solid #edf0f5", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", color: "#64748b" }}>
+                  Active Inquiries ({supportThreads.length})
+                </span>
+              </div>
+
+              {!supportThreads.length ? (
+                <div style={{ padding: "40px 20px", textAlign: "center", color: "#94a3b8" }}>
+                  <MessageCircle size={32} style={{ margin: "0 auto 10px", opacity: 0.5 }} />
+                  <p style={{ fontSize: "12px", margin: "0 0 4px", fontWeight: 600 }}>No Inquiries Right Now</p>
+                  <small style={{ fontSize: "10px", lineHeight: "1.4", display: "block" }}>
+                    When visitors send questions from the Customer Support chat, they will show up here immediately.
+                  </small>
+                </div>
+              ) : (
+                supportThreads.map((thread) => {
+                  const lastMsg = thread.messages[thread.messages.length - 1];
+                  const isSelected = activeThread?.id === thread.id;
+                  return (
+                    <div
+                      key={thread.id}
+                      className={`admin-thread-item ${isSelected ? "active" : ""}`}
+                      onClick={() => setActiveThreadId(thread.id)}
+                    >
+                      <div className="admin-thread-top">
+                        <span className="admin-thread-name">
+                          {thread.customerName}
+                          {thread.unreadByAdmin > 0 && (
+                            <span className="admin-thread-unread">{thread.unreadByAdmin} new</span>
+                          )}
+                        </span>
+                        <span className="admin-thread-time">{lastMsg?.time || ""}</span>
+                      </div>
+                      <p className="admin-thread-snippet">
+                        {lastMsg?.sender === "admin" ? "You: " : ""}{lastMsg?.text || "Started conversation"}
+                      </p>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Right Panel: Live Chat Messages & Reply */}
+            <div className="admin-chat-main">
+              {activeThread ? (
+                <>
+                  <div className="admin-chat-topbar">
+                    <div>
+                      <b style={{ fontSize: "13px" }}>{activeThread.customerName}</b>
+                      {activeThread.customerEmail && (
+                        <small style={{ display: "block", color: "#64748b", fontSize: "10px" }}>
+                          {activeThread.customerEmail}
+                        </small>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ fontSize: "11px", color: "#22c55e", fontWeight: 700, display: "flex", alignItems: "center", gap: "4px" }}>
+                        <span className="live-status-dot"></span> Live
+                      </span>
+                      <button
+                        className="btn btn-soft"
+                        onClick={(e) => handleDeleteThread(activeThread.id, e)}
+                        title="Clear Conversation"
+                        style={{ padding: "4px 8px", fontSize: "11px", color: "#ef4444" }}
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="admin-chat-messages-area">
+                    {activeThread.messages.map((m) => (
+                      <div
+                        key={m.id}
+                        className={`support-msg-row ${m.sender === "admin" ? "user-row" : "bot-row"}`}
+                        style={{ maxWidth: "80%" }}
+                      >
+                        <div className="support-msg-content">
+                          <span style={{ fontSize: "9px", fontWeight: 700, color: m.sender === "admin" ? "#6246e8" : "#0f172a", marginBottom: "2px" }}>
+                            {m.sender === "admin" ? "You (Admin Support)" : activeThread.customerName}
+                          </span>
+                          <div className={`support-bubble ${m.sender === "admin" ? "user-bubble" : "bot-bubble"}`}>
+                            <p>{m.text}</p>
+                          </div>
+                          <span className="support-msg-time">{m.time}</span>
+                        </div>
+                      </div>
+                    ))}
+                    <div ref={adminChatEndRef} />
+                  </div>
+
+                  {/* Canned Quick Response Chips */}
+                  <div className="admin-canned-chips">
+                    {[
+                      "Hello! How can I assist you today?",
+                      "Your order is verified and on its way!",
+                      "We have received your payment via bKash/Nagad.",
+                      "Thank you for reaching out to ShopMate Support!"
+                    ].map((chip, idx) => (
+                      <button
+                        key={idx}
+                        className="admin-chip-btn"
+                        onClick={() => handleSendReply(chip)}
+                      >
+                        {chip}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Reply Form */}
+                  <form
+                    className="admin-chat-bottom-form"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleSendReply();
+                    }}
+                  >
+                    <input
+                      type="text"
+                      className="admin-reply-box"
+                      placeholder={`Reply to ${activeThread.customerName}...`}
+                      value={adminReplyText}
+                      onChange={(e) => setAdminReplyText(e.target.value)}
+                    />
+                    <button
+                      type="submit"
+                      disabled={!adminReplyText.trim()}
+                      className="btn btn-primary"
+                      style={{ padding: "8px 16px", display: "inline-flex", alignItems: "center", gap: "6px" }}
+                    >
+                      <Send size={14} /> Send Reply
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <div style={{ padding: "80px 20px", textAlign: "center", color: "#94a3b8", margin: "auto" }}>
+                  <Headphones size={42} style={{ margin: "0 auto 12px", opacity: 0.4 }} />
+                  <h3 style={{ fontSize: "15px", margin: "0 0 6px" }}>Admin Live Support Desk</h3>
+                  <p style={{ fontSize: "12px", margin: 0, maxWidth: "340px" }}>
+                    Select a conversation from the sidebar or wait for a customer to send an inquiry from the storefront chat.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
 
         {/* Orders Table with Payment Verification */}
         <div className="admin-grid" style={{ gridTemplateColumns: "1.4fr 1fr" }}>
