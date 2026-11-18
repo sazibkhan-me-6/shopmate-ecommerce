@@ -186,9 +186,9 @@ export default function Cart({
               </div>
             )}
 
-            <button className="btn btn-primary checkout-btn" onClick={() => navigate("/checkout")}>
+            <Link to="/checkout" className="btn btn-primary checkout-btn" style={{ textDecoration: "none", textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center" }}>
               Proceed to Checkout
-            </button>
+            </Link>
             <p className="secure-note">🔒 Secure checkout • Easy returns</p>
           </aside>
         </div>

@@ -23,7 +23,6 @@ export default function Header({
   setDark,
   user,
   onLogout,
-  onOpenCart,
 }: {
   cartCount: number;
   wishlistCount: number;
@@ -31,7 +30,6 @@ export default function Header({
   setDark: (v: boolean) => void;
   user?: { name: string; email: string; role?: string } | null;
   onLogout?: () => void;
-  onOpenCart?: () => void;
 }) {
   const [mobile, setMobile] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
@@ -140,16 +138,13 @@ export default function Header({
                       <Link to="/shipping" onClick={() => setMobile(false)}>
                         <Truck size={15} /> Shipping & Delivery
                       </Link>
-                      <button
+                      <Link
+                        to="/cart"
                         className="mobile-cart-btn"
-                        onClick={() => {
-                          setMobile(false);
-                          if (onOpenCart) onOpenCart();
-                          else navigate("/cart");
-                        }}
+                        onClick={() => setMobile(false)}
                       >
                         <ShoppingCart size={15} /> View My Cart ({cartCount})
-                      </button>
+                      </Link>
                       {user.role === "admin" && (
                         <Link to="/admin" onClick={() => setMobile(false)} style={{ color: "#818cf8" }}>
                           <Shield size={15} /> Admin Dashboard
@@ -161,23 +156,33 @@ export default function Header({
                     </div>
                   </div>
                 ) : (
-                  <button
-                    className="btn btn-primary"
-                    style={{
-                      marginTop: "12px",
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "6px"
-                    }}
-                    onClick={() => {
-                      setMobile(false);
-                      navigate("/login");
-                    }}
-                  >
-                    <UserRound size={16} /> Sign In / Register
-                  </button>
+                  <div>
+                    <button
+                      className="btn btn-primary"
+                      style={{
+                        marginTop: "12px",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px"
+                      }}
+                      onClick={() => {
+                        setMobile(false);
+                        navigate("/login");
+                      }}
+                    >
+                      <UserRound size={16} /> Sign In / Register
+                    </button>
+                    <Link
+                      to="/cart"
+                      className="mobile-cart-btn"
+                      onClick={() => setMobile(false)}
+                      style={{ marginTop: "10px" }}
+                    >
+                      <ShoppingCart size={15} /> View My Cart ({cartCount})
+                    </Link>
+                  </div>
                 )}
               </div>
             )}
@@ -191,22 +196,24 @@ export default function Header({
             <button aria-label="Search"><Search size={19} /></button>
           </form>
           <div className="nav-actions">
-            <button className="icon-action" onClick={() => navigate("/wishlist")} title="Wishlist" aria-label="Wishlist">
+            <Link
+              to="/wishlist"
+              className="icon-action"
+              title="Wishlist"
+              aria-label="Wishlist"
+            >
               <Heart />
-              <span className="count" style={{ top: "-6px", right: "-6px" }}>{wishlistCount}</span>
-            </button>
-            <button
+              <span className="count" style={{ top: "-6px", right: "-6px", pointerEvents: "none" }}>{wishlistCount}</span>
+            </Link>
+            <Link
+              to="/cart"
               className="icon-action cart-action-btn"
-              onClick={() => {
-                if (onOpenCart) onOpenCart();
-                else navigate("/cart");
-              }}
               title="Shopping Cart"
               aria-label="Shopping Cart"
             >
               <ShoppingCart />
-              <span className="count" style={{ top: "-6px", right: "-6px" }}>{cartCount}</span>
-            </button>
+              <span className="count" style={{ top: "-6px", right: "-6px", pointerEvents: "none" }}>{cartCount}</span>
+            </Link>
 
             {/* Customer Account & Profile Dropdown Container */}
             <div className="account-dropdown-wrapper" ref={dropdownRef}>

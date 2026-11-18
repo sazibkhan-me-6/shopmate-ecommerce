@@ -589,6 +589,25 @@ export default function Checkout({
     navigate(`/order-success/${order.id}`);
   };
 
+  if (!cart.length) {
+    return (
+      <main className="page">
+        <div className="container" style={{ maxWidth: "600px", textAlign: "center", padding: "60px 20px" }}>
+          <div className="card empty" style={{ padding: "40px 20px" }}>
+            <div className="empty-icon" style={{ fontSize: "50px" }}>🛒</div>
+            <h2>Your Cart is Empty</h2>
+            <p style={{ color: "#64748b", margin: "10px auto 25px", maxWidth: "380px" }}>
+              There are no items in your cart to checkout. Please add products to your cart before proceeding!
+            </p>
+            <Link className="btn btn-primary" to="/shop" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+              Browse Shop
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="page">
       <div className="container">
