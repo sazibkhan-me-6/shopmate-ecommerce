@@ -90,11 +90,12 @@ export async function createOrderOnServer(orderPayload: any): Promise<{ ok: bool
  */
 export async function fetchStoreConfig(): Promise<AdminStoreConfig | null> {
   try {
-    const res = await fetch(`${ADMIN_API_BASE}/store`, {
+    const res = await fetch(`${ADMIN_API_BASE}/store?t=${Date.now()}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
+      cache: "no-store",
     });
 
     if (res.ok) {

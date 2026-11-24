@@ -91,3 +91,91 @@ export const reviews = [
   { name: "Sarah Khan", text: "Great customer service and easy return process. Will definitely shop again!", days: "4 days ago" },
   { name: "Imran Hossain", text: "The website is very user-friendly and the products are original. Love it!", days: "1 week ago" }
 ];
+
+const FALLBACK_IMAGES: Record<string, string> = {
+  Electronics: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=500&q=80",
+  Fashion: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=500&q=80",
+  "Home & Living": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=500&q=80",
+  "Beauty & Health": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=500&q=80",
+  "Sports & Fitness": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=500&q=80",
+  Books: "https://images.unsplash.com/photo-1526243741027-444d633d7365?auto=format&fit=crop&w=500&q=80",
+  "Toys & Games": "https://images.unsplash.com/photo-1560969184-10fe8719e047?auto=format&fit=crop&w=500&q=80",
+  Accessories: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=80",
+};
+
+let lastSyncSignature = "";
+
+/**
+ * Syncs live products & categories pushed from https://shopmate-admin-panel.vercel.app/api/store
+ * directly into the storefront's in-memory catalog arrays so every page reflects Admin Panel changes immediately.
+ */
+export function syncLiveCatalogFromAdmin(remoteProducts?: any[], remoteCategories?: any[]): boolean {
+  const sig = JSON.stringify({
+    p: (remoteProducts || []).map((x: any) => [x.id, x.name, x.price, x.discountedPrice, x.discountPercent, x.stock, x.status, x.category, x.image]),
+    c: (remoteCategories || []).map((x: any) => [x.name, x.image, x.featured]),
+  });
+
+  if (sig === lastSyncSignature) return false;
+  lastSyncSignature = sig;
+
+  if (Array.isArray(remoteProducts) && remoteProducts.length > 0) {
+    const existingById = new Map<string, Product>();
+    for (const p of products) existingById.set(p.id, p);
+
+    const mapped: Product[] = remoteProducts
+      .filter((p: any) => p.status !== "Draft")
+      .map((p: any, idx: number) => {
+        const id = String(p.id).startsWith("p") ? String(p.id) : `p${p.id}`;
+        const existing = existingById.get(id);
+        const regularPrice = Number(p.price ?? 0);
+        const salePrice =
+          p.discountedPrice !== undefined && Number(p.discountedPrice) > 0
+            ? Number(p.discountedPrice)
+            : p.discountPercent && Number(p.discountPercent) > 0
+              ? Math.round(regularPrice * (1 - Number(p.discountPercent) / 100))
+              : regularPrice;
+        const hasDiscount = regularPrice > salePrice;
+        const badge =
+          p.badge ||
+          (p.discountPercent && Number(p.discountPercent) > 0 ? `-${p.discountPercent}%` : existing?.badge);
+
+        return {
+          id,
+          name: p.name || existing?.name || `Product ${idx + 1}`,
+          category: p.category || existing?.category || "Electronics",
+          brand: p.brand || existing?.brand || p.category || "ShopMate",
+          price: salePrice,
+          oldPrice: hasDiscount ? regularPrice : existing?.oldPrice,
+          rating: p.rating ?? existing?.rating ?? 4.7,
+          reviews: p.reviews ?? existing?.reviews ?? 24 + (idx % 60),
+          image: p.image || existing?.image || FALLBACK_IMAGES[p.category] || FALLBACK_IMAGES.Electronics,
+          description:
+            p.description ||
+            existing?.description ||
+            `Official ${p.name} in ${p.category} — 100% authentic with ShopMate quality guarantee.`,
+          colors: p.colors || existing?.colors,
+          sizes: p.sizes || existing?.sizes,
+          stock: Number(p.stock ?? existing?.stock ?? 20),
+          badge,
+        };
+      });
+
+    if (mapped.length > 0) {
+      products.splice(0, products.length, ...mapped);
+    }
+  }
+
+  if (Array.isArray(remoteCategories) && remoteCategories.length > 0) {
+    const mappedCats = remoteCategories
+      .filter((c: any) => c.featured !== false)
+      .map((c: any) => ({
+        name: c.name,
+        image: c.image || FALLBACK_IMAGES[c.name] || FALLBACK_IMAGES.Electronics,
+      }));
+    if (mappedCats.length > 0) {
+      categories.splice(0, categories.length, ...mappedCats);
+    }
+  }
+
+  return true;
+}

@@ -27,6 +27,8 @@ import FAQ from "./pages/FAQ";
 import Reviews from "./pages/Reviews";
 import Profile from "./pages/Profile";
 import { getCart, getWishlist, saveCart, saveWishlist, clearUser } from "./services/storage";
+import { fetchStoreConfig } from "./services/api";
+import { syncLiveCatalogFromAdmin } from "./data";
 import type { CartItem, Product } from "./types";
 
 export default function App() {
@@ -37,7 +39,45 @@ export default function App() {
   const [dark, setDark] = useState(localStorage.getItem("shopmate_dark") === "1");
   const [user, setUser] = useState(localStorage.getItem("shopmate_user"));
   const [toast, setToast] = useState<string | null>(null);
+  const [storeSyncVersion, setStoreSyncVersion] = useState(0);
+  const [liveAnnouncement, setLiveAnnouncement] = useState<string | undefined>(undefined);
   const nav = useNavigate();
+
+  // Real-time auto-sync from Admin Panel (https://shopmate-admin-panel.vercel.app/api/store)
+  // Any product, price, discount, category, or announcement update in Admin Panel updates the website immediately!
+  useEffect(() => {
+    let active = true;
+
+    const syncFromAdmin = async () => {
+      const cfg = await fetchStoreConfig();
+      if (!active || !cfg) return;
+
+      let changed = syncLiveCatalogFromAdmin(cfg.products, cfg.categories);
+      if (cfg.announcement?.active && cfg.announcement.text) {
+        setLiveAnnouncement((prev) => {
+          if (prev !== cfg.announcement?.text) {
+            changed = true;
+            return cfg.announcement?.text;
+          }
+          return prev;
+        });
+      }
+      if (changed) {
+        setStoreSyncVersion((v) => v + 1);
+      }
+    };
+
+    syncFromAdmin();
+    const interval = setInterval(syncFromAdmin, 5000);
+    const onFocus = () => syncFromAdmin();
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, []);
 
   const notify = (msg: string) => {
     setToast(msg);
@@ -124,7 +164,9 @@ export default function App() {
         setDark={setDark}
         user={currentUser}
         onLogout={logout}
+        announcementText={liveAnnouncement}
       />
+      <div key={storeSyncVersion}>
       <Routes>
         <Route path="/" element={<Home wishlist={wishlist} onWish={wish} onCart={add} />} />
         <Route path="/shop" element={<Shop wishlist={wishlist} onWish={wish} onCart={add} />} />
@@ -180,6 +222,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
+      </div>
       <Footer />
       <CustomerSupportChat />
       {toast && (
