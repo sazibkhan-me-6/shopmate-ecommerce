@@ -1,13 +1,24 @@
 import { useState } from "react";
 import { Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle2, Facebook, Instagram, Youtube, Twitter, Linkedin } from "lucide-react";
+import { createRemoteSupportTicket } from "../services/api";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) return;
+    await createRemoteSupportTicket({
+      customerName: form.name,
+      customerEmail: form.email,
+      customerPhone: form.phone || "Not provided",
+      subject: form.subject || "Contact Form Inquiry",
+      category: "Contact Form",
+      urgency: "Normal",
+      source: "Contact Form",
+      message: form.message,
+    });
     setSubmitted(true);
     setForm({ name: "", email: "", phone: "", subject: "", message: "" });
   };

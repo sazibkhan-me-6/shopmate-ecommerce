@@ -115,3 +115,138 @@ export async function fetchStoreConfig(): Promise<AdminStoreConfig | null> {
 export async function createPaymentIntent(payload: unknown) {
   return { ok: true, clientSecret: null, payload };
 }
+
+/* ========================================================
+   LIVE ADMIN CUSTOMER SUPPORT API
+   Directly connected to https://shopmate-admin-panel.vercel.app/api/support
+   ======================================================== */
+
+export interface RemoteSupportMessage {
+  id: string;
+  sender: "customer" | "admin";
+  senderName: string;
+  text: string;
+  timestamp: string;
+}
+
+export interface RemoteSupportTicket {
+  id: string;
+  customerName: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  subject: string;
+  category: string;
+  urgency: string;
+  status: string;
+  source: string;
+  createdAt: string;
+  unread: boolean;
+  messages: RemoteSupportMessage[];
+}
+
+export interface RemoteSupportConfig {
+  hotline?: string;
+  whatsapp?: string;
+  email?: string;
+  address?: string;
+  operatingHours?: string;
+  chatStatus?: "online" | "offline";
+  autoWelcomeMessage?: string;
+}
+
+/**
+ * Fetch live support tickets & admin chat configuration
+ */
+export async function fetchRemoteSupportData(): Promise<{
+  ok: boolean;
+  tickets: RemoteSupportTicket[];
+  config: RemoteSupportConfig | null;
+}> {
+  try {
+    const res = await fetch(`${ADMIN_API_BASE}/support`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+    });
+    if (res.ok) {
+      const json = await res.json();
+      return {
+        ok: true,
+        tickets: Array.isArray(json.tickets) ? json.tickets : [],
+        config: json.config || null,
+      };
+    }
+  } catch (error: any) {
+    console.warn("Could not fetch remote support data:", error?.message);
+  }
+  return { ok: false, tickets: [], config: null };
+}
+
+/**
+ * Submit a new customer inquiry / live chat message directly to Admin Panel
+ */
+export async function createRemoteSupportTicket(payload: {
+  customerName: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  subject: string;
+  category?: string;
+  urgency?: string;
+  source?: string;
+  message: string;
+}): Promise<{ ok: boolean; ticket?: RemoteSupportTicket; ticketId?: string }> {
+  try {
+    const res = await fetch(`${ADMIN_API_BASE}/support`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customerName: payload.customerName || "Storefront Customer",
+        customerEmail: payload.customerEmail || "customer@shopmate.com",
+        customerPhone: payload.customerPhone || "Not provided",
+        subject: payload.subject || "Live Chat Inquiry",
+        category: payload.category || "Storefront Live Chat",
+        urgency: payload.urgency || "Normal",
+        source: payload.source || "Storefront Live Chat",
+        message: payload.message,
+      }),
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+      const ticket: RemoteSupportTicket | undefined = json.ticket || json.data;
+      const ticketId = ticket?.id || json.ticketId || json.id;
+      return { ok: true, ticket, ticketId };
+    }
+  } catch (error: any) {
+    console.warn("Could not send support ticket to Admin Panel:", error?.message);
+  }
+  return { ok: false };
+}
+
+/**
+ * Send a follow-up customer message on an existing support ticket
+ */
+export async function sendRemoteSupportFollowUp(
+  ticketId: string,
+  message: string,
+  customerName: string
+): Promise<{ ok: boolean }> {
+  try {
+    const res = await fetch(`${ADMIN_API_BASE}/support`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ticketId,
+        replyMessage: message,
+        sender: "customer",
+        senderName: customerName || "Storefront Customer",
+        status: "New",
+        unread: true,
+      }),
+    });
+    return { ok: res.ok };
+  } catch (error: any) {
+    console.warn("Could not send follow-up message to Admin Panel:", error?.message);
+  }
+  return { ok: false };
+}

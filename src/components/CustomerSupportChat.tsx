@@ -7,16 +7,24 @@ import {
   subscribeToSupportBus,
   type SupportMessage,
 } from "../services/support";
+import {
+  fetchRemoteSupportData,
+  createRemoteSupportTicket,
+  sendRemoteSupportFollowUp,
+} from "../services/api";
 import { getUser } from "../services/storage";
 
 const generateThreadId = () =>
   `th-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
 
-const createInitialMessage = (): SupportMessage => ({
+const DEFAULT_WELCOME =
+  "👋 Hi there! Welcome to ShopMate Live Support. You are directly connected with our Admin Support team. Ask your question below and an admin will reply shortly!";
+
+const createInitialMessage = (welcomeText?: string): SupportMessage => ({
   id: "welcome-1",
   sender: "admin",
   senderName: "ShopMate Admin Support",
-  text: "👋 Hi there! Welcome to ShopMate Live Support. You are directly connected with our Admin Panel. Ask your question below and an admin will reply shortly!",
+  text: welcomeText || DEFAULT_WELCOME,
   time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   timestamp: Date.now(),
 });
@@ -25,38 +33,72 @@ export default function CustomerSupportChat() {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [threadId, setThreadId] = useState<string>(generateThreadId);
+  const [remoteTicketId, setRemoteTicketId] = useState<string | null>(null);
+  const [chatStatus, setChatStatus] = useState<"online" | "offline">("online");
+  const [welcomeText, setWelcomeText] = useState<string>(DEFAULT_WELCOME);
+  const [ticketStatus, setTicketStatus] = useState<string>("");
   const [input, setInput] = useState("");
   const [unreadCount, setUnreadCount] = useState(0);
   const [messages, setMessages] = useState<SupportMessage[]>([createInitialMessage()]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const threadIdRef = useRef<string>(threadId);
+  const remoteTicketIdRef = useRef<string | null>(null);
+  const seenRemoteMsgIdsRef = useRef<Set<string>>(new Set());
+  const sentCustomerTextsRef = useRef<Set<string>>(new Set());
 
-  // Keep threadIdRef in sync
+  // Keep refs in sync
   useEffect(() => {
     threadIdRef.current = threadId;
   }, [threadId]);
 
-  // Hide floating chat button when browsing the Admin page itself
+  useEffect(() => {
+    remoteTicketIdRef.current = remoteTicketId;
+  }, [remoteTicketId]);
+
+  // Hide floating chat button when browsing the in-app Admin page itself
   const isAdminPage = location.pathname.startsWith("/admin");
+
+  // Fetch live Admin Support configuration (online status & welcome message) when chat opens
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+    (async () => {
+      const res = await fetchRemoteSupportData();
+      if (cancelled || !res.ok || !res.config) return;
+      if (res.config.chatStatus) {
+        setChatStatus(res.config.chatStatus);
+      }
+      if (res.config.autoWelcomeMessage) {
+        const cleanWelcome = res.config.autoWelcomeMessage;
+        setWelcomeText(cleanWelcome);
+        setMessages((prev) =>
+          prev.length === 1 && prev[0].id === "welcome-1"
+            ? [createInitialMessage(cleanWelcome)]
+            : prev
+        );
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
 
   // Auto-scroll messages to bottom
   useEffect(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, isTyping, isOpen]);
+  }, [messages, isSending, isOpen]);
 
-  // Subscribe to real-time events from Admin Panel
+  // Subscribe to local same-origin Admin Panel events (for in-app /admin dashboard)
   useEffect(() => {
     const unsubscribe = subscribeToSupportBus((event) => {
       if (event.type === "ADMIN_MESSAGE") {
         const { threadId: targetThreadId, message } = event.payload;
         if (targetThreadId === threadIdRef.current && message) {
-          setIsTyping(false);
           setMessages((prev) => {
-            // Avoid duplicate message appending
             if (prev.some((m) => m.id === message.id)) return prev;
             return [...prev, message];
           });
@@ -72,18 +114,75 @@ export default function CustomerSupportChat() {
     };
   }, [isOpen]);
 
-  // Clean conversation when user closes the chat
+  // Real-time polling against live Central Admin Panel (https://shopmate-admin-panel.vercel.app/api/support)
+  useEffect(() => {
+    if (!isOpen || !remoteTicketId) return;
+
+    const pollReplies = async () => {
+      const currentTicketId = remoteTicketIdRef.current;
+      if (!currentTicketId) return;
+
+      const res = await fetchRemoteSupportData();
+      if (!res.ok) return;
+
+      if (res.config?.chatStatus) {
+        setChatStatus(res.config.chatStatus);
+      }
+
+      const ticket = res.tickets.find((t) => t.id === currentTicketId);
+      if (!ticket) return;
+
+      if (ticket.status) {
+        setTicketStatus(ticket.status);
+      }
+
+      if (Array.isArray(ticket.messages)) {
+        const newAdminReplies: SupportMessage[] = [];
+        for (const rm of ticket.messages) {
+          const isFromAdmin = rm.sender === "admin";
+          const isOurOwnFollowUp = sentCustomerTextsRef.current.has(rm.text.trim());
+          if (isFromAdmin && !isOurOwnFollowUp && !seenRemoteMsgIdsRef.current.has(rm.id)) {
+            seenRemoteMsgIdsRef.current.add(rm.id);
+            newAdminReplies.push({
+              id: rm.id,
+              sender: "admin",
+              senderName: rm.senderName || "ShopMate Admin Support",
+              text: rm.text,
+              time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              timestamp: Date.now(),
+            });
+          }
+        }
+
+        if (newAdminReplies.length > 0) {
+          setMessages((prev) => {
+            const existingIds = new Set(prev.map((m) => m.id));
+            const uniqueNew = newAdminReplies.filter((m) => !existingIds.has(m.id));
+            return uniqueNew.length > 0 ? [...prev, ...uniqueNew] : prev;
+          });
+        }
+      }
+    };
+
+    const interval = setInterval(pollReplies, 3000);
+    return () => clearInterval(interval);
+  }, [isOpen, remoteTicketId]);
+
+  // Clean conversation completely when user closes the chat
   const handleCloseChat = () => {
-    // Notify admin panel that thread is closed
     closeSupportThread(threadIdRef.current);
 
-    // Completely wipe conversation clean
     const freshId = generateThreadId();
     setThreadId(freshId);
     threadIdRef.current = freshId;
-    setMessages([createInitialMessage()]);
+    setRemoteTicketId(null);
+    remoteTicketIdRef.current = null;
+    seenRemoteMsgIdsRef.current.clear();
+    sentCustomerTextsRef.current.clear();
+    setTicketStatus("");
+    setMessages([createInitialMessage(welcomeText)]);
     setInput("");
-    setIsTyping(false);
+    setIsSending(false);
     setIsOpen(false);
   };
 
@@ -97,27 +196,57 @@ export default function CustomerSupportChat() {
     }
   };
 
-  // Send message to Admin Panel
-  const handleSendMessage = () => {
+  // Send message directly to Central Admin Panel + Local Admin Desk
+  const handleSendMessage = async () => {
     const text = input.trim();
     if (!text) return;
 
     const currentUser: any = getUser();
-    const customerInfo = currentUser
-      ? { name: currentUser.name || "Customer", email: currentUser.email || "" }
-      : { name: `Customer #${threadId.slice(-4)}` };
+    const customerName = currentUser?.name || `Customer #${threadId.slice(-4)}`;
+    const customerEmail = currentUser?.email || "customer@shopmate.com";
+    const customerPhone = currentUser?.phone || "Not provided";
 
-    // Dispatch message to Admin Panel
-    const sentMsg = sendCustomerMessage(threadId, text, customerInfo);
+    // Track our sent message text to avoid echo during polling
+    sentCustomerTextsRef.current.add(text);
 
+    // Dispatch to local admin desk & show immediately in UI
+    const sentMsg = sendCustomerMessage(threadId, text, {
+      name: customerName,
+      email: customerEmail,
+    });
     setMessages((prev) => [...prev, sentMsg]);
     setInput("");
-    setIsTyping(true);
+    setIsSending(true);
 
-    // Brief simulated status indication that admin was alerted
-    setTimeout(() => {
-      setIsTyping(false);
-    }, 1500);
+    try {
+      if (!remoteTicketIdRef.current) {
+        // First message: create live support ticket in Central Admin Panel
+        const res = await createRemoteSupportTicket({
+          customerName,
+          customerEmail,
+          customerPhone,
+          subject: text.length > 60 ? text.slice(0, 57) + "..." : text,
+          category: "Storefront Live Chat",
+          urgency: "Normal",
+          source: "Storefront Live Chat",
+          message: text,
+        });
+
+        if (res.ok && res.ticketId) {
+          setRemoteTicketId(res.ticketId);
+          remoteTicketIdRef.current = res.ticketId;
+          setTicketStatus("New");
+          if (res.ticket?.messages) {
+            res.ticket.messages.forEach((m) => seenRemoteMsgIdsRef.current.add(m.id));
+          }
+        }
+      } else {
+        // Follow-up message on the active ticket
+        await sendRemoteSupportFollowUp(remoteTicketIdRef.current, text, customerName);
+      }
+    } finally {
+      setIsSending(false);
+    }
   };
 
   if (isAdminPage) {
@@ -139,7 +268,10 @@ export default function CustomerSupportChat() {
         ) : (
           <>
             <MessageCircle size={28} className="support-icon-chat" />
-            <span className="support-online-badge"></span>
+            <span
+              className="support-online-badge"
+              style={{ background: chatStatus === "online" ? "#22c55e" : "#94a3b8" }}
+            ></span>
             {unreadCount > 0 && <span className="support-unread-badge">{unreadCount}</span>}
           </>
         )}
@@ -153,12 +285,19 @@ export default function CustomerSupportChat() {
             <div className="support-header-agent">
               <div className="support-avatar-wrap">
                 <Headphones size={20} className="support-avatar-icon" />
-                <span className="support-avatar-status"></span>
+                <span
+                  className="support-avatar-status"
+                  style={{ background: chatStatus === "online" ? "#22c55e" : "#94a3b8" }}
+                ></span>
               </div>
               <div className="support-agent-meta">
                 <h4>ShopMate Admin Support</h4>
                 <p>
-                  <span className="live-status-dot"></span> Admin Online • Live Desk
+                  <span
+                    className="live-status-dot"
+                    style={{ background: chatStatus === "online" ? "#4ade80" : "#cbd5e1" }}
+                  ></span>{" "}
+                  {chatStatus === "online" ? "Admin Online • Live Desk" : "Leave a Message"}
                 </p>
               </div>
             </div>
@@ -178,13 +317,20 @@ export default function CustomerSupportChat() {
           {/* Clean Notice Bar (No WhatsApp or Phone numbers) */}
           <div className="support-notice-bar">
             <ShieldCheck size={14} style={{ color: "#22c55e", flexShrink: 0 }} />
-            <span>Connected to Store Admin Panel • Live Instant Response</span>
+            <span>
+              {remoteTicketId
+                ? `Connected to Admin Support • Ticket ${remoteTicketId}${ticketStatus ? ` (${ticketStatus})` : ""}`
+                : "Directly Connected to Admin Customer Support"}
+            </span>
           </div>
 
           {/* Messages Body */}
           <div className="support-body">
             {messages.map((m) => (
-              <div key={m.id} className={`support-msg-row ${m.sender === "user" ? "user-row" : "bot-row"}`}>
+              <div
+                key={m.id}
+                className={`support-msg-row ${m.sender === "user" ? "user-row" : "bot-row"}`}
+              >
                 {m.sender === "admin" && (
                   <div className="support-bot-icon-circle">
                     <ShieldCheck size={14} />
@@ -192,17 +338,31 @@ export default function CustomerSupportChat() {
                 )}
                 <div className="support-msg-content">
                   {m.sender === "admin" && m.senderName && (
-                    <span style={{ fontSize: "10px", fontWeight: 700, color: "#6246e8", marginBottom: "2px" }}>
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: 700,
+                        color: "#6246e8",
+                        marginBottom: "2px",
+                      }}
+                    >
                       {m.senderName}
                     </span>
                   )}
-                  <div className={`support-bubble ${m.sender === "user" ? "user-bubble" : "bot-bubble"}`}>
+                  <div
+                    className={`support-bubble ${
+                      m.sender === "user" ? "user-bubble" : "bot-bubble"
+                    }`}
+                  >
                     <p>{m.text}</p>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                     <span className="support-msg-time">{m.time}</span>
                     {m.sender === "user" && (
-                      <span title="Delivered to Admin" style={{ display: "inline-flex", alignItems: "center" }}>
+                      <span
+                        title="Sent to Admin Support"
+                        style={{ display: "inline-flex", alignItems: "center" }}
+                      >
                         <CheckCheck size={12} style={{ color: "#6246e8", opacity: 0.8 }} />
                       </span>
                     )}
@@ -211,12 +371,12 @@ export default function CustomerSupportChat() {
               </div>
             ))}
 
-            {isTyping && (
+            {isSending && (
               <div className="support-msg-row bot-row">
                 <div className="support-bot-icon-circle">
                   <Headphones size={14} />
                 </div>
-                <div className="support-typing-indicator" title="Admin is notified">
+                <div className="support-typing-indicator" title="Sending to Admin Support...">
                   <span></span>
                   <span></span>
                   <span></span>
@@ -236,7 +396,7 @@ export default function CustomerSupportChat() {
           >
             <input
               type="text"
-              placeholder="Ask admin support anything..."
+              placeholder="Write your message to Admin Support..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               className="support-input"
@@ -244,7 +404,7 @@ export default function CustomerSupportChat() {
             />
             <button
               type="submit"
-              disabled={!input.trim()}
+              disabled={!input.trim() || isSending}
               className="support-send-btn"
               title="Send Message to Admin"
               aria-label="Send"
