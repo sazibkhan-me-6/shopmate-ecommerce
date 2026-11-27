@@ -84,7 +84,8 @@ export default function FAQ() {
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search questions (e.g. delivery, bKash, return, orders)..."
+              placeholder=""
+              aria-label="Search FAQ"
               style={{
                 width: "100%",
                 padding: "14px 44px 14px 18px",

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, CheckCircle2, MessageSquarePlus, ThumbsUp, ArrowRight } from "lucide-react";
+import { Star, CheckCircle2, MessageSquarePlus, ThumbsUp, ArrowRight, UserRound, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import { reviews as initialReviews } from "../data";
 
@@ -106,19 +106,21 @@ export default function Reviews({ notify }: { notify?: (msg: string) => void }) 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
                 <label style={{ fontSize: "12px", fontWeight: 700 }}>
                   Your Full Name
-                  <input
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="e.g. Tanvir Ahmed"
-                    style={{
-                      width: "100%",
-                      padding: "10px",
-                      borderRadius: "6px",
-                      border: "1px solid #dce1ea",
-                      marginTop: "6px",
-                    }}
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><UserRound size={15} /></span>
+                    <input
+                      required
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      placeholder=""
+                      style={{
+                        width: "100%",
+                        padding: "10px",
+                        borderRadius: "6px",
+                        border: "1px solid #dce1ea",
+                      }}
+                    />
+                  </div>
                 </label>
                 <label style={{ fontSize: "12px", fontWeight: 700 }}>
                   Rating (1 to 5 Stars)
@@ -144,20 +146,22 @@ export default function Reviews({ notify }: { notify?: (msg: string) => void }) 
 
               <label style={{ fontSize: "12px", fontWeight: 700 }}>
                 Your Feedback
-                <textarea
-                  required
-                  rows={3}
-                  value={form.text}
-                  onChange={(e) => setForm({ ...form, text: e.target.value })}
-                  placeholder="Tell us what you loved about the product, delivery speed, or customer service..."
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    borderRadius: "6px",
-                    border: "1px solid #dce1ea",
-                    marginTop: "6px",
-                  }}
-                />
+                <div className="icon-field icon-field-top" style={{ marginTop: "6px" }}>
+                  <span className="icon-field-icon"><MessageSquare size={15} /></span>
+                  <textarea
+                    required
+                    rows={3}
+                    value={form.text}
+                    onChange={(e) => setForm({ ...form, text: e.target.value })}
+                    placeholder=""
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      borderRadius: "6px",
+                      border: "1px solid #dce1ea",
+                    }}
+                  />
+                </div>
               </label>
 
               <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>

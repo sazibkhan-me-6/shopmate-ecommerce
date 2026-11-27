@@ -268,26 +268,31 @@ export default function Login({
         {!isSignUp ? (
           <form onSubmit={handleSignIn}>
             <label>
-              <Mail size={14} style={{ verticalAlign: "-2px", marginRight: "4px" }} /> Email Address
-              <input
-                required
-                type="email"
-                value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="you@example.com"
-              />
+              Email Address
+              <div className="icon-field" style={{ marginTop: "6px" }}>
+                <span className="icon-field-icon"><Mail size={15} /></span>
+                <input
+                  required
+                  type="email"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  placeholder=""
+                  style={{ marginTop: 0 }}
+                />
+              </div>
             </label>
 
             <label>
-              <LockKeyhole size={14} style={{ verticalAlign: "-2px", marginRight: "4px" }} /> Password
-              <div style={{ position: "relative" }}>
+              Password
+              <div className="icon-field" style={{ marginTop: "6px" }}>
+                <span className="icon-field-icon"><LockKeyhole size={15} /></span>
                 <input
                   required
                   type={showPass ? "text" : "password"}
                   value={loginPass}
                   onChange={(e) => setLoginPass(e.target.value)}
-                  placeholder="Enter your password"
-                  style={{ paddingRight: "36px" }}
+                  placeholder=""
+                  style={{ paddingRight: "36px", marginTop: 0 }}
                 />
                 <button
                   type="button"
@@ -319,46 +324,62 @@ export default function Login({
              ======================================================== */
           <form onSubmit={handleSignUp}>
             <label>
-              <UserRound size={14} style={{ verticalAlign: "-2px", marginRight: "4px" }} /> Full Name
-              <input
-                required
-                value={signUpForm.name}
-                onChange={(e) => setSignUpForm({ ...signUpForm, name: e.target.value })}
-                placeholder="e.g. Sazib Khan"
-              />
+              Full Name
+              <div className="icon-field" style={{ marginTop: "6px" }}>
+                <span className="icon-field-icon"><UserRound size={15} /></span>
+                <input
+                  required
+                  value={signUpForm.name}
+                  onChange={(e) => setSignUpForm({ ...signUpForm, name: e.target.value })}
+                  placeholder=""
+                  style={{ marginTop: 0 }}
+                />
+              </div>
             </label>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <label>
-                <Mail size={14} style={{ verticalAlign: "-2px", marginRight: "4px" }} /> Email Address
-                <input
-                  required
-                  type="email"
-                  value={signUpForm.email}
-                  onChange={(e) => setSignUpForm({ ...signUpForm, email: e.target.value })}
-                  placeholder="name@example.com"
-                />
+                Email Address
+                <div className="icon-field" style={{ marginTop: "6px" }}>
+                  <span className="icon-field-icon"><Mail size={15} /></span>
+                  <input
+                    required
+                    type="email"
+                    value={signUpForm.email}
+                    onChange={(e) => setSignUpForm({ ...signUpForm, email: e.target.value })}
+                    placeholder=""
+                    style={{ marginTop: 0 }}
+                  />
+                </div>
               </label>
 
               <label>
-                <Phone size={14} style={{ verticalAlign: "-2px", marginRight: "4px" }} /> Phone Number
-                <input
-                  required
-                  value={signUpForm.phone}
-                  onChange={(e) => setSignUpForm({ ...signUpForm, phone: e.target.value })}
-                  placeholder="+880 1XXXXXXXXX"
-                />
+                Phone Number
+                <div className="icon-field" style={{ marginTop: "6px" }}>
+                  <span className="icon-field-icon"><Phone size={15} /></span>
+                  <input
+                    required
+                    value={signUpForm.phone}
+                    onChange={(e) => setSignUpForm({ ...signUpForm, phone: e.target.value })}
+                    placeholder=""
+                    style={{ marginTop: 0 }}
+                  />
+                </div>
               </label>
             </div>
 
             <label>
-              <MapPin size={14} style={{ verticalAlign: "-2px", marginRight: "4px" }} /> Full Delivery Address
-              <input
-                required
-                value={signUpForm.address}
-                onChange={(e) => setSignUpForm({ ...signUpForm, address: e.target.value })}
-                placeholder="House, Road, Area (e.g. Banani, Block C)"
-              />
+              Full Delivery Address
+              <div className="icon-field" style={{ marginTop: "6px" }}>
+                <span className="icon-field-icon"><MapPin size={15} /></span>
+                <input
+                  required
+                  value={signUpForm.address}
+                  onChange={(e) => setSignUpForm({ ...signUpForm, address: e.target.value })}
+                  placeholder=""
+                  style={{ marginTop: 0 }}
+                />
+              </div>
             </label>
 
             <label>
@@ -394,27 +415,35 @@ export default function Login({
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <label>
-                <LockKeyhole size={14} style={{ verticalAlign: "-2px", marginRight: "4px" }} /> Password (min 6)
-                <input
-                  required
-                  type="password"
-                  minLength={6}
-                  value={signUpForm.password}
-                  onChange={(e) => setSignUpForm({ ...signUpForm, password: e.target.value })}
-                  placeholder="••••••••"
-                />
+                Password (min 6)
+                <div className="icon-field" style={{ marginTop: "6px" }}>
+                  <span className="icon-field-icon"><LockKeyhole size={15} /></span>
+                  <input
+                    required
+                    type="password"
+                    minLength={6}
+                    value={signUpForm.password}
+                    onChange={(e) => setSignUpForm({ ...signUpForm, password: e.target.value })}
+                    placeholder=""
+                    style={{ marginTop: 0 }}
+                  />
+                </div>
               </label>
 
               <label>
-                <CheckCircle2 size={14} style={{ verticalAlign: "-2px", marginRight: "4px" }} /> Confirm Password
-                <input
-                  required
-                  type="password"
-                  minLength={6}
-                  value={signUpForm.confirmPassword}
-                  onChange={(e) => setSignUpForm({ ...signUpForm, confirmPassword: e.target.value })}
-                  placeholder="••••••••"
-                />
+                Confirm Password
+                <div className="icon-field" style={{ marginTop: "6px" }}>
+                  <span className="icon-field-icon"><CheckCircle2 size={15} /></span>
+                  <input
+                    required
+                    type="password"
+                    minLength={6}
+                    value={signUpForm.confirmPassword}
+                    onChange={(e) => setSignUpForm({ ...signUpForm, confirmPassword: e.target.value })}
+                    placeholder=""
+                    style={{ marginTop: 0 }}
+                  />
+                </div>
               </label>
             </div>
 
@@ -437,12 +466,6 @@ export default function Login({
             ? "Already have an account? Sign in here"
             : "Don't have an account? Sign up with full details"}
         </button>
-
-        {!isSignUp && (
-          <p className="demo-hint" style={{ marginTop: "16px" }}>
-            Admin Access: <b>admin@shopmate.com</b> / <b>admin123</b>
-          </p>
-        )}
 
         <Link to="/" className="back" style={{ marginTop: "18px" }}>
           ← Back to ShopMate Store

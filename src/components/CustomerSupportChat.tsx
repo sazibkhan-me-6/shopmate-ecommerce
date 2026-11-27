@@ -394,14 +394,18 @@ export default function CustomerSupportChat() {
               handleSendMessage();
             }}
           >
-            <input
-              type="text"
-              placeholder="Write your message to Admin Support..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="support-input"
-              autoFocus
-            />
+            <div className="icon-field" style={{ flex: 1 }}>
+              <span className="icon-field-icon"><MessageCircle size={15} /></span>
+              <input
+                type="text"
+                placeholder=""
+                aria-label="Message"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="support-input"
+                autoFocus
+              />
+            </div>
             <button
               type="submit"
               disabled={!input.trim() || isSending}

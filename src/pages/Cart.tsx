@@ -155,11 +155,15 @@ export default function Cart({
               </div>
             )}
             <div className="coupon">
-              <input
-                value={coupon}
-                onChange={(e) => setCoupon(e.target.value)}
-                placeholder="Coupon code (SAVE10 / WELCOME20)"
-              />
+              <div className="icon-field" style={{ flex: 1 }}>
+                <span className="icon-field-icon"><Tag size={15} /></span>
+                <input
+                  value={coupon}
+                  onChange={(e) => setCoupon(e.target.value)}
+                  placeholder=""
+                  aria-label="Coupon code"
+                />
+              </div>
               <button onClick={apply}>
                 <Tag size={16} /> Apply
               </button>

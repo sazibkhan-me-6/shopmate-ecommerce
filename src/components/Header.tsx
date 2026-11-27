@@ -193,7 +193,8 @@ export default function Header({
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search for products..."
+              placeholder=""
+              aria-label="Search"
             />
             <button aria-label="Search"><Search size={19} /></button>
           </form>

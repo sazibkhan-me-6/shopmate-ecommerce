@@ -1,25 +1,25 @@
 import { useState } from "react";
-import { Package, Truck, Save, ArrowLeft } from "lucide-react";
+import { Package, Truck, Save, ArrowLeft, UserRound, Mail, Phone, Building, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getUser } from "../services/storage";
 import { syncCustomerToAdminPanel } from "../services/api";
 
 export default function Profile({ notify }: { notify?: (msg: string) => void }) {
   const initial: any = getUser() || {
-    name: "ShopMate User",
-    email: "customer@example.com",
-    phone: "+880 1614703406",
-    address: "Banani, Block C, House 24",
-    city: "Dhaka",
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
     role: "customer",
   };
 
   const [form, setForm] = useState({
-    name: initial.name || "ShopMate User",
+    name: initial.name || "",
     email: initial.email || "",
-    phone: initial.phone || "+880 1614703406",
-    address: initial.address || "Banani, Dhaka",
-    city: initial.city || "Dhaka",
+    phone: initial.phone || "",
+    address: initial.address || "",
+    city: initial.city || "",
     role: initial.role || "customer",
   });
 
@@ -106,49 +106,74 @@ export default function Profile({ notify }: { notify?: (msg: string) => void }) 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 <label>
                   Full Name
-                  <input
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><UserRound size={15} /></span>
+                    <input
+                      required
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      placeholder=""
+                      style={{ marginTop: 0 }}
+                    />
+                  </div>
                 </label>
                 <label>
                   Email Address
-                  <input
-                    required
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><Mail size={15} /></span>
+                    <input
+                      required
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder=""
+                      style={{ marginTop: 0 }}
+                    />
+                  </div>
                 </label>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 <label>
                   Phone Number
-                  <input
-                    required
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><Phone size={15} /></span>
+                    <input
+                      required
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      placeholder=""
+                      style={{ marginTop: 0 }}
+                    />
+                  </div>
                 </label>
                 <label>
                   City
-                  <input
-                    required
-                    value={form.city}
-                    onChange={(e) => setForm({ ...form, city: e.target.value })}
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><Building size={15} /></span>
+                    <input
+                      required
+                      value={form.city}
+                      onChange={(e) => setForm({ ...form, city: e.target.value })}
+                      placeholder=""
+                      style={{ marginTop: 0 }}
+                    />
+                  </div>
                 </label>
               </div>
 
               <label>
                 Default Delivery Address
-                <input
-                  required
-                  value={form.address}
-                  onChange={(e) => setForm({ ...form, address: e.target.value })}
-                />
+                <div className="icon-field" style={{ marginTop: "6px" }}>
+                  <span className="icon-field-icon"><MapPin size={15} /></span>
+                  <input
+                    required
+                    value={form.address}
+                    onChange={(e) => setForm({ ...form, address: e.target.value })}
+                    placeholder=""
+                    style={{ marginTop: 0 }}
+                  />
+                </div>
               </label>
 
               <button

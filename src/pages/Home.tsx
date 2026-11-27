@@ -151,7 +151,10 @@ export default function Home({
             alert("Thanks! You're subscribed to ShopMate.");
           }}
         >
-          <input type="email" required placeholder="Enter your email address" />
+          <div className="icon-field" style={{ flex: 1 }}>
+            <span className="icon-field-icon"><Mail size={15} /></span>
+            <input type="email" required placeholder="" aria-label="Email" />
+          </div>
           <button className="btn btn-primary">Subscribe</button>
         </form>
       </section>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle2, Facebook, Instagram, Youtube, Twitter, Linkedin } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle2, Facebook, Instagram, Youtube, Twitter, Linkedin, UserRound, FileText } from "lucide-react";
 import { createRemoteSupportTicket } from "../services/api";
 
 export default function Contact() {
@@ -123,27 +123,42 @@ export default function Contact() {
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: "12px" }}>
                 <label style={{ fontSize: "12px", fontWeight: 700, display: "block", marginBottom: "4px" }}>Your Name *</label>
-                <input required style={{ width: "100%", height: "38px", border: "1px solid #dfe3ea", borderRadius: "6px", padding: "0 10px", fontSize: "12px" }} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Tanvir Ahmed" />
+                <div className="icon-field">
+                  <span className="icon-field-icon"><UserRound size={15} /></span>
+                  <input required style={{ width: "100%", height: "38px", border: "1px solid #dfe3ea", borderRadius: "6px", padding: "0 10px", fontSize: "12px" }} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="" />
+                </div>
               </div>
 
               <div style={{ marginBottom: "12px" }}>
                 <label style={{ fontSize: "12px", fontWeight: 700, display: "block", marginBottom: "4px" }}>Email Address *</label>
-                <input required type="email" style={{ width: "100%", height: "38px", border: "1px solid #dfe3ea", borderRadius: "6px", padding: "0 10px", fontSize: "12px" }} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="e.g. tanvir@example.com" />
+                <div className="icon-field">
+                  <span className="icon-field-icon"><Mail size={15} /></span>
+                  <input required type="email" style={{ width: "100%", height: "38px", border: "1px solid #dfe3ea", borderRadius: "6px", padding: "0 10px", fontSize: "12px" }} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="" />
+                </div>
               </div>
 
               <div style={{ marginBottom: "12px" }}>
                 <label style={{ fontSize: "12px", fontWeight: 700, display: "block", marginBottom: "4px" }}>Phone Number</label>
-                <input style={{ width: "100%", height: "38px", border: "1px solid #dfe3ea", borderRadius: "6px", padding: "0 10px", fontSize: "12px" }} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="017XXXXXXXX" />
+                <div className="icon-field">
+                  <span className="icon-field-icon"><Phone size={15} /></span>
+                  <input style={{ width: "100%", height: "38px", border: "1px solid #dfe3ea", borderRadius: "6px", padding: "0 10px", fontSize: "12px" }} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="" />
+                </div>
               </div>
 
               <div style={{ marginBottom: "12px" }}>
                 <label style={{ fontSize: "12px", fontWeight: 700, display: "block", marginBottom: "4px" }}>Subject</label>
-                <input style={{ width: "100%", height: "38px", border: "1px solid #dfe3ea", borderRadius: "6px", padding: "0 10px", fontSize: "12px" }} value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="Order query / Product question" />
+                <div className="icon-field">
+                  <span className="icon-field-icon"><FileText size={15} /></span>
+                  <input style={{ width: "100%", height: "38px", border: "1px solid #dfe3ea", borderRadius: "6px", padding: "0 10px", fontSize: "12px" }} value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="" />
+                </div>
               </div>
 
               <div style={{ marginBottom: "16px" }}>
                 <label style={{ fontSize: "12px", fontWeight: 700, display: "block", marginBottom: "4px" }}>Message *</label>
-                <textarea required rows={4} style={{ width: "100%", border: "1px solid #dfe3ea", borderRadius: "6px", padding: "10px", fontSize: "12px", fontFamily: "inherit" }} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Type your message here..."></textarea>
+                <div className="icon-field icon-field-top">
+                  <span className="icon-field-icon"><MessageSquare size={15} /></span>
+                  <textarea required rows={4} style={{ width: "100%", border: "1px solid #dfe3ea", borderRadius: "6px", padding: "10px", fontSize: "12px", fontFamily: "inherit" }} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder=""></textarea>
+                </div>
               </div>
 
               <button type="submit" className="btn btn-primary" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>

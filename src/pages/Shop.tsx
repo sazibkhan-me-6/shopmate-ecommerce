@@ -165,7 +165,8 @@ export default function Shop({
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search product name..."
+                  placeholder=""
+                  aria-label="Search products"
                   style={{ paddingRight: "34px", margin: 0 }}
                 />
                 <button

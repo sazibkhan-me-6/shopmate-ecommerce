@@ -1,0 +1,31 @@
+
+
+/* Blank input boxes with clean left icon only (no placeholder clutter) */
+.icon-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.icon-field-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.icon-field.icon-field-top .icon-field-icon {
+  top: 13px;
+  transform: none;
+}
+
+.icon-field input,
+.icon-field textarea {
+  padding-left: 34px !important;
+  width: 100%;
+}

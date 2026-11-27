@@ -11,7 +11,13 @@ import {
   Lock,
   Copy,
   Check,
-  Globe
+  Globe,
+  UserRound,
+  Mail,
+  Phone,
+  Building,
+  Hash,
+  Calendar
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -229,34 +235,48 @@ function SSLCommerzModal({
                   VISA / MasterCard / Amex
                 </span>
               </div>
-              <div>
+              <div className="icon-field">
+                <span className="icon-field-icon"><CreditCard size={15} /></span>
                 <input
-                  placeholder="Card Number (e.g. 4242 4242 4242 4242)"
+                  placeholder=""
+                  aria-label="Card Number"
                   value={cardData.num}
                   onChange={(e) => setCardData({ ...cardData, num: e.target.value })}
                   maxLength={19}
                 />
               </div>
               <div className="sslCardRow">
+                <div className="icon-field">
+                  <span className="icon-field-icon"><Calendar size={14} /></span>
+                  <input
+                    placeholder=""
+                    aria-label="Expiry"
+                    value={cardData.exp}
+                    onChange={(e) => setCardData({ ...cardData, exp: e.target.value })}
+                    maxLength={5}
+                  />
+                </div>
+                <div className="icon-field">
+                  <span className="icon-field-icon"><Lock size={14} /></span>
+                  <input
+                    placeholder=""
+                    aria-label="CVC"
+                    type="password"
+                    value={cardData.cvc}
+                    onChange={(e) => setCardData({ ...cardData, cvc: e.target.value })}
+                    maxLength={4}
+                  />
+                </div>
+              </div>
+              <div className="icon-field">
+                <span className="icon-field-icon"><UserRound size={15} /></span>
                 <input
-                  placeholder="MM/YY"
-                  value={cardData.exp}
-                  onChange={(e) => setCardData({ ...cardData, exp: e.target.value })}
-                  maxLength={5}
-                />
-                <input
-                  placeholder="CVC/CVV"
-                  type="password"
-                  value={cardData.cvc}
-                  onChange={(e) => setCardData({ ...cardData, cvc: e.target.value })}
-                  maxLength={4}
+                  placeholder=""
+                  aria-label="Card Holder Name"
+                  value={cardData.name}
+                  onChange={(e) => setCardData({ ...cardData, name: e.target.value })}
                 />
               </div>
-              <input
-                placeholder="Card Holder Name"
-                value={cardData.name}
-                onChange={(e) => setCardData({ ...cardData, name: e.target.value })}
-              />
               <label
                 style={{
                   display: "flex",
@@ -685,48 +705,69 @@ export default function Checkout({
               <div className="form-grid">
                 <label>
                   Full Name
-                  <input
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Your name"
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><UserRound size={15} /></span>
+                    <input
+                      required
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      placeholder=""
+                      style={{ marginTop: 0 }}
+                    />
+                  </div>
                 </label>
                 <label>
                   Email
-                  <input
-                    required
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="you@example.com"
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><Mail size={15} /></span>
+                    <input
+                      required
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder=""
+                      style={{ marginTop: 0 }}
+                    />
+                  </div>
                 </label>
                 <label>
                   Phone
-                  <input
-                    required
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    placeholder="+880 1XXXXXXXXX"
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><Phone size={15} /></span>
+                    <input
+                      required
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      placeholder=""
+                      style={{ marginTop: 0 }}
+                    />
+                  </div>
                 </label>
                 <label>
                   City
-                  <input
-                    required
-                    value={form.city}
-                    onChange={(e) => setForm({ ...form, city: e.target.value })}
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><Building size={15} /></span>
+                    <input
+                      required
+                      value={form.city}
+                      onChange={(e) => setForm({ ...form, city: e.target.value })}
+                      placeholder=""
+                      style={{ marginTop: 0 }}
+                    />
+                  </div>
                 </label>
                 <label className="full">
                   Delivery Address
-                  <input
-                    required
-                    value={form.address}
-                    onChange={(e) => setForm({ ...form, address: e.target.value })}
-                    placeholder="Street, house number, area"
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><MapPin size={15} /></span>
+                    <input
+                      required
+                      value={form.address}
+                      onChange={(e) => setForm({ ...form, address: e.target.value })}
+                      placeholder=""
+                      style={{ marginTop: 0 }}
+                    />
+                  </div>
                 </label>
                 <label>
                   Country
@@ -742,12 +783,16 @@ export default function Checkout({
                 </label>
                 <label>
                   Postal Code
-                  <input
-                    required
-                    value={form.postalCode}
-                    onChange={(e) => setForm({ ...form, postalCode: e.target.value })}
-                    placeholder="1212"
-                  />
+                  <div className="icon-field" style={{ marginTop: "6px" }}>
+                    <span className="icon-field-icon"><Hash size={15} /></span>
+                    <input
+                      required
+                      value={form.postalCode}
+                      onChange={(e) => setForm({ ...form, postalCode: e.target.value })}
+                      placeholder=""
+                      style={{ marginTop: 0 }}
+                    />
+                  </div>
                 </label>
 
                 {loggedInUser && (
@@ -1010,21 +1055,29 @@ export default function Checkout({
                   <div className="pay-inputs-grid">
                     <label>
                       আপনার bKash নম্বর
-                      <input
-                        required
-                        value={senderNumber}
-                        onChange={(e) => setSenderNumber(e.target.value)}
-                        placeholder="017XXXXXXXX"
-                      />
+                      <div className="icon-field" style={{ marginTop: "6px" }}>
+                        <span className="icon-field-icon"><Phone size={14} /></span>
+                        <input
+                          required
+                          value={senderNumber}
+                          onChange={(e) => setSenderNumber(e.target.value)}
+                          placeholder=""
+                          style={{ marginTop: 0 }}
+                        />
+                      </div>
                     </label>
                     <label>
                       Transaction ID (TrxID)
-                      <input
-                        required
-                        value={trxId}
-                        onChange={(e) => setTrxId(e.target.value)}
-                        placeholder="e.g. BL9A8BC76D"
-                      />
+                      <div className="icon-field" style={{ marginTop: "6px" }}>
+                        <span className="icon-field-icon"><Hash size={14} /></span>
+                        <input
+                          required
+                          value={trxId}
+                          onChange={(e) => setTrxId(e.target.value)}
+                          placeholder=""
+                          style={{ marginTop: 0 }}
+                        />
+                      </div>
                     </label>
                   </div>
                 </div>
@@ -1062,21 +1115,29 @@ export default function Checkout({
                   <div className="pay-inputs-grid">
                     <label>
                       আপনার Nagad নম্বর
-                      <input
-                        required
-                        value={senderNumber}
-                        onChange={(e) => setSenderNumber(e.target.value)}
-                        placeholder="018XXXXXXXX"
-                      />
+                      <div className="icon-field" style={{ marginTop: "6px" }}>
+                        <span className="icon-field-icon"><Phone size={14} /></span>
+                        <input
+                          required
+                          value={senderNumber}
+                          onChange={(e) => setSenderNumber(e.target.value)}
+                          placeholder=""
+                          style={{ marginTop: 0 }}
+                        />
+                      </div>
                     </label>
                     <label>
                       Transaction ID (TrxID)
-                      <input
-                        required
-                        value={trxId}
-                        onChange={(e) => setTrxId(e.target.value)}
-                        placeholder="e.g. 7N8B9C01"
-                      />
+                      <div className="icon-field" style={{ marginTop: "6px" }}>
+                        <span className="icon-field-icon"><Hash size={14} /></span>
+                        <input
+                          required
+                          value={trxId}
+                          onChange={(e) => setTrxId(e.target.value)}
+                          placeholder=""
+                          style={{ marginTop: 0 }}
+                        />
+                      </div>
                     </label>
                   </div>
                 </div>
@@ -1092,31 +1153,43 @@ export default function Checkout({
                   </div>
                   <label className="pay-full-input-label">
                     Card Number
-                    <input
-                      required
-                      value={card.number}
-                      onChange={(e) => setCard({ ...card, number: e.target.value })}
-                      placeholder="4242 •••• •••• 4242"
-                    />
+                    <div className="icon-field" style={{ marginTop: "6px" }}>
+                      <span className="icon-field-icon"><CreditCard size={14} /></span>
+                      <input
+                        required
+                        value={card.number}
+                        onChange={(e) => setCard({ ...card, number: e.target.value })}
+                        placeholder=""
+                        style={{ marginTop: 0 }}
+                      />
+                    </div>
                   </label>
                   <div className="pay-inputs-grid">
                     <label>
                       Expiry (MM/YY)
-                      <input
-                        required
-                        value={card.expiry}
-                        onChange={(e) => setCard({ ...card, expiry: e.target.value })}
-                        placeholder="12/28"
-                      />
+                      <div className="icon-field" style={{ marginTop: "6px" }}>
+                        <span className="icon-field-icon"><Calendar size={14} /></span>
+                        <input
+                          required
+                          value={card.expiry}
+                          onChange={(e) => setCard({ ...card, expiry: e.target.value })}
+                          placeholder=""
+                          style={{ marginTop: 0 }}
+                        />
+                      </div>
                     </label>
                     <label>
                       CVC / CVV
-                      <input
-                        required
-                        value={card.cvc}
-                        onChange={(e) => setCard({ ...card, cvc: e.target.value })}
-                        placeholder="123"
-                      />
+                      <div className="icon-field" style={{ marginTop: "6px" }}>
+                        <span className="icon-field-icon"><Lock size={14} /></span>
+                        <input
+                          required
+                          value={card.cvc}
+                          onChange={(e) => setCard({ ...card, cvc: e.target.value })}
+                          placeholder=""
+                          style={{ marginTop: 0 }}
+                        />
+                      </div>
                     </label>
                   </div>
                 </div>
