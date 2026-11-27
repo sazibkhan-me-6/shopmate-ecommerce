@@ -7,7 +7,11 @@ import {
   WalletCards,
   Truck,
   Sparkles,
-  LogIn
+  LogIn,
+  Lock,
+  Copy,
+  Check,
+  Globe
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -432,6 +436,13 @@ export default function Checkout({
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showSSLModal, setShowSSLModal] = useState(false);
+  const [copiedNum, setCopiedNum] = useState(false);
+
+  const handleCopyNumber = () => {
+    navigator.clipboard?.writeText("01614703406");
+    setCopiedNum(true);
+    setTimeout(() => setCopiedNum(false), 2000);
+  };
 
   // Complete order after SSLCommerz modal verification
   const handleSSLSuccess = async (details: { method: string; trxId: string }) => {
@@ -753,177 +764,251 @@ export default function Checkout({
             </div>
 
             {/* Payment Method Section */}
-            <div className="card checkout-card">
-              <h2>
-                <WalletCards /> Payment Method
-              </h2>
-              <div className="payment-options">
+            <div className="card checkout-card pay-section-card">
+              <div className="pay-section-head">
+                <div className="pay-section-title-group">
+                  <div className="pay-section-icon-badge">
+                    <WalletCards size={18} />
+                  </div>
+                  <div>
+                    <h2 style={{ margin: 0 }}>Payment Method</h2>
+                    <p className="pay-section-sub">Choose your preferred secure payment option</p>
+                  </div>
+                </div>
+                <span className="pay-secure-pill">
+                  <Lock size={11} /> 100% Secure
+                </span>
+              </div>
+
+              <div className="pay-card-list">
                 {/* SSLCommerz */}
                 <label
-                  className={paymentMethod === "SSLCommerz" ? "pay-option active" : "pay-option"}
-                  style={{ cursor: "pointer" }}
+                  className={`pay-card pay-card-ssl ${paymentMethod === "SSLCommerz" ? "active" : ""}`}
                 >
                   <input
                     type="radio"
                     name="payment"
+                    className="pay-radio-hidden"
                     checked={paymentMethod === "SSLCommerz"}
                     onChange={() => setPaymentMethod("SSLCommerz")}
                   />
-                  <span>
-                    <b style={{ color: "#0066b2" }}>💳 SSLCommerz Easy Checkout Gateway</b>
-                    <small>Cards, Internet Banking, Rocket, Upay & Mobile Wallets</small>
+                  <span className="pay-custom-radio" aria-hidden="true">
+                    <span className="pay-custom-radio-dot" />
                   </span>
+                  <div className="pay-brand-tile tile-ssl">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div className="pay-card-body">
+                    <div className="pay-card-title-row">
+                      <strong>SSLCommerz Easy Checkout</strong>
+                      <span className="pay-tag tag-recommended">Recommended</span>
+                    </div>
+                    <span className="pay-card-desc">
+                      Cards, Internet Banking, Rocket, Upay & Mobile Wallets
+                    </span>
+                  </div>
+                  <div className="pay-mini-badges">
+                    <span>VISA</span>
+                    <span>MC</span>
+                    <span>MFS</span>
+                  </div>
                 </label>
 
                 {/* Cash on Delivery */}
                 <label
-                  className={paymentMethod === "Cash on Delivery" ? "pay-option active" : "pay-option"}
-                  style={{ cursor: "pointer" }}
+                  className={`pay-card pay-card-cod ${paymentMethod === "Cash on Delivery" ? "active" : ""}`}
                 >
                   <input
                     type="radio"
                     name="payment"
+                    className="pay-radio-hidden"
                     checked={paymentMethod === "Cash on Delivery"}
                     onChange={() => setPaymentMethod("Cash on Delivery")}
                   />
-                  <Truck size={24} style={{ color: "#059669", marginRight: "6px" }} />
-                  <span>
-                    <b style={{ color: "#059669" }}>Cash on Delivery</b>
-                    <small>Pay in cash when order arrives at your doorstep</small>
+                  <span className="pay-custom-radio" aria-hidden="true">
+                    <span className="pay-custom-radio-dot" />
                   </span>
+                  <div className="pay-brand-tile tile-cod">
+                    <Truck size={20} />
+                  </div>
+                  <div className="pay-card-body">
+                    <div className="pay-card-title-row">
+                      <strong>Cash on Delivery</strong>
+                      <span className="pay-tag tag-cod">No Advance</span>
+                    </div>
+                    <span className="pay-card-desc">
+                      Pay in cash when your order arrives at your doorstep
+                    </span>
+                  </div>
+                  <div className="pay-mini-badges">
+                    <span>৳ CASH</span>
+                  </div>
                 </label>
 
                 {/* bKash */}
                 <label
-                  className={paymentMethod === "bKash" ? "pay-option active" : "pay-option"}
-                  style={{ cursor: "pointer" }}
+                  className={`pay-card pay-card-bkash ${paymentMethod === "bKash" ? "active" : ""}`}
                 >
                   <input
                     type="radio"
                     name="payment"
+                    className="pay-radio-hidden"
                     checked={paymentMethod === "bKash"}
                     onChange={() => setPaymentMethod("bKash")}
                   />
-                  <span>
-                    <b style={{ color: "#e2136e" }}>📱 bKash (বিকাশ ম্যানুয়াল পেমেন্ট)</b>
-                    <small>Pay instantly via bKash Personal/Merchant Account</small>
+                  <span className="pay-custom-radio" aria-hidden="true">
+                    <span className="pay-custom-radio-dot" />
                   </span>
+                  <div className="pay-brand-tile tile-bkash">
+                    <span className="pay-tile-text">bKash</span>
+                  </div>
+                  <div className="pay-card-body">
+                    <div className="pay-card-title-row">
+                      <strong>bKash (বিকাশ ম্যানুয়াল পেমেন্ট)</strong>
+                      <span className="pay-tag tag-bkash">Instant</span>
+                    </div>
+                    <span className="pay-card-desc">
+                      Pay instantly via bKash Personal / Merchant Account
+                    </span>
+                  </div>
+                  <div className="pay-mini-badges">
+                    <span style={{ color: "#e2136e", borderColor: "#fbcfe8" }}>*247#</span>
+                  </div>
                 </label>
 
                 {/* Nagad */}
                 <label
-                  className={paymentMethod === "Nagad" ? "pay-option active" : "pay-option"}
-                  style={{ cursor: "pointer" }}
+                  className={`pay-card pay-card-nagad ${paymentMethod === "Nagad" ? "active" : ""}`}
                 >
                   <input
                     type="radio"
                     name="payment"
+                    className="pay-radio-hidden"
                     checked={paymentMethod === "Nagad"}
                     onChange={() => setPaymentMethod("Nagad")}
                   />
-                  <span>
-                    <b style={{ color: "#f7941d" }}>📲 Nagad (নগদ ম্যানুয়াল পেমেন্ট)</b>
-                    <small>Pay instantly via Nagad Send Money / Payment</small>
+                  <span className="pay-custom-radio" aria-hidden="true">
+                    <span className="pay-custom-radio-dot" />
                   </span>
+                  <div className="pay-brand-tile tile-nagad">
+                    <span className="pay-tile-text">নগদ</span>
+                  </div>
+                  <div className="pay-card-body">
+                    <div className="pay-card-title-row">
+                      <strong>Nagad (নগদ ম্যানুয়াল পেমেন্ট)</strong>
+                      <span className="pay-tag tag-nagad">Fast Pay</span>
+                    </div>
+                    <span className="pay-card-desc">
+                      Pay instantly via Nagad Send Money / Merchant Pay
+                    </span>
+                  </div>
+                  <div className="pay-mini-badges">
+                    <span style={{ color: "#ea580c", borderColor: "#fed7aa" }}>*167#</span>
+                  </div>
                 </label>
 
                 {/* Stripe Card */}
                 <label
-                  className={paymentMethod === "Stripe Card" ? "pay-option active" : "pay-option"}
-                  style={{ cursor: "pointer" }}
+                  className={`pay-card pay-card-stripe ${paymentMethod === "Stripe Card" ? "active" : ""}`}
                 >
                   <input
                     type="radio"
                     name="payment"
+                    className="pay-radio-hidden"
                     checked={paymentMethod === "Stripe Card"}
                     onChange={() => setPaymentMethod("Stripe Card")}
                   />
-                  <span>
-                    <b>🌐 International Card (Stripe)</b>
-                    <small>Visa, Mastercard, American Express</small>
+                  <span className="pay-custom-radio" aria-hidden="true">
+                    <span className="pay-custom-radio-dot" />
                   </span>
+                  <div className="pay-brand-tile tile-stripe">
+                    <Globe size={20} />
+                  </div>
+                  <div className="pay-card-body">
+                    <div className="pay-card-title-row">
+                      <strong>International Card (Stripe)</strong>
+                      <span className="pay-tag tag-stripe">Global</span>
+                    </div>
+                    <span className="pay-card-desc">
+                      Visa, Mastercard, American Express Credit & Debit Cards
+                    </span>
+                  </div>
+                  <div className="pay-mini-badges">
+                    <span>VISA</span>
+                    <span>AMEX</span>
+                  </div>
                 </label>
               </div>
 
               {/* SSLCommerz Info Box */}
               {paymentMethod === "SSLCommerz" && (
-                <div
-                  className="notice"
-                  style={{
-                    background: "#eff6ff",
-                    color: "#1e40af",
-                    borderColor: "#bfdbfe",
-                    padding: "14px",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <ShieldCheck size={24} style={{ flexShrink: 0 }} />
-                  <div>
-                    <b style={{ display: "block", marginBottom: "4px" }}>
-                      💳 SSLCOMMERZ Easy Checkout Gateway:
-                    </b>
-                    <p style={{ margin: 0, fontSize: "12px", lineHeight: "1.6" }}>
-                      অর্ডার বাটনে ক্লিক করার পর সরাসরি <b>SSLCOMMERZ পপআপ গেটওয়ে</b> ওপেন হবে। আপনি{" "}
-                      <b>Visa, Mastercard, bKash, Nagad, Rocket, CellFin</b> অথবা যেকোনো ব্যাংক কার্ড দিয়ে সিকিউর পেমেন্ট সম্পন্ন করতে পারবেন।
-                    </p>
+                <div className="pay-detail-panel panel-ssl">
+                  <div className="pay-detail-head">
+                    <ShieldCheck size={20} />
+                    <strong>SSLCOMMERZ Easy Checkout Gateway</strong>
+                  </div>
+                  <p className="pay-detail-text">
+                    অর্ডার বাটনে ক্লিক করার পর সরাসরি <b>SSLCOMMERZ পপআপ গেটওয়ে</b> ওপেন হবে। আপনি{" "}
+                    <b>Visa, Mastercard, bKash, Nagad, Rocket, CellFin</b> অথবা যেকোনো ব্যাংক কার্ড দিয়ে ১০০% সিকিউর পেমেন্ট সম্পন্ন করতে পারবেন।
+                  </p>
+                  <div className="pay-gateway-chips">
+                    <span>Visa</span>
+                    <span>Mastercard</span>
+                    <span>bKash</span>
+                    <span>Nagad</span>
+                    <span>Rocket</span>
+                    <span>CellFin</span>
+                    <span>Net Banking</span>
                   </div>
                 </div>
               )}
 
               {/* Cash on Delivery Instructions Box */}
               {paymentMethod === "Cash on Delivery" && (
-                <div
-                  style={{
-                    marginTop: "16px",
-                    padding: "16px",
-                    background: "#ecfdf5",
-                    border: "1px solid #a7f3d0",
-                    borderRadius: "8px",
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: "12px",
-                  }}
-                >
-                  <Truck size={28} style={{ color: "#059669", flexShrink: 0 }} />
-                  <div>
-                    <h4 style={{ color: "#065f46", fontSize: "13px", margin: "0 0 4px" }}>
-                      Cash on Delivery (ক্যাশ অন ডেলিভারি):
-                    </h4>
-                    <p style={{ fontSize: "12px", color: "#047857", margin: 0, lineHeight: "1.6" }}>
-                      পণ্য হাতে পেয়ে ডেলিভারি ম্যানকে <b>৳{totalBDT.toLocaleString()} BDT</b> ক্যাশ টাকা পরিশোধ করুন। কোনো অগ্রিম পেমেন্টের প্রয়োজন নেই।
-                    </p>
+                <div className="pay-detail-panel panel-cod">
+                  <div className="pay-detail-head">
+                    <Truck size={20} />
+                    <strong>Cash on Delivery (ক্যাশ অন ডেলিভারি)</strong>
                   </div>
+                  <p className="pay-detail-text">
+                    পণ্য হাতে পেয়ে ডেলিভারি ম্যানকে{" "}
+                    <span className="pay-amount-pill pill-cod">৳{totalBDT.toLocaleString()} BDT</span>{" "}
+                    ক্যাশ টাকা পরিশোধ করুন। কোনো অগ্রিম পেমেন্টের প্রয়োজন নেই।
+                  </p>
                 </div>
               )}
 
               {/* bKash Instructions Box */}
               {paymentMethod === "bKash" && (
-                <div
-                  style={{
-                    marginTop: "16px",
-                    padding: "16px",
-                    background: "#fdf2f8",
-                    border: "1px solid #fbcfe8",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <h4 style={{ color: "#be185d", fontSize: "13px", marginBottom: "8px" }}>
-                    bKash পেমেন্ট নির্দেশাবলী:
-                  </h4>
-                  <ol style={{ fontSize: "11px", color: "#4b5563", paddingLeft: "18px", lineHeight: "1.7" }}>
+                <div className="pay-detail-panel panel-bkash">
+                  <div className="pay-detail-head">
+                    <Smartphone size={18} />
+                    <strong>bKash পেমেন্ট নির্দেশাবলী</strong>
+                    <span className="pay-amount-pill pill-bkash">
+                      ৳{totalBDT.toLocaleString()} BDT
+                    </span>
+                  </div>
+                  <div className="pay-number-bar bar-bkash">
+                    <div>
+                      <small>আমাদের bKash Personal / Merchant নম্বর</small>
+                      <b>01614703406</b>
+                    </div>
+                    <button
+                      type="button"
+                      className="pay-copy-btn"
+                      onClick={handleCopyNumber}
+                    >
+                      {copiedNum ? <Check size={13} /> : <Copy size={13} />}
+                      {copiedNum ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                  <ol className="pay-steps-list">
                     <li>আপনার bKash App ওপেন করুন অথবা <b>*247#</b> ডায়াল করুন।</li>
-                    <li><b>Send Money</b> অথবা <b>Payment</b> সিলেক্ট করুন।</li>
-                    <li>
-                      আমাদের বিকাশ নম্বর দিন: <b style={{ color: "#be185d", fontSize: "12px" }}>01614703406</b>
-                    </li>
-                    <li>
-                      মোট টাকার পরিমাণ দিন: <b>৳{totalBDT.toLocaleString()} BDT</b> (${total.toFixed(2)})
-                    </li>
-                    <li>রেফারেন্স হিসেবে আপনার নাম লিখুন এবং পিন দিয়ে সম্পন্ন করুন।</li>
+                    <li><b>Send Money</b> অথবা <b>Payment</b> সিলেক্ট করে উপরের নম্বরে <b>৳{totalBDT.toLocaleString()}</b> (${total.toFixed(2)}) পাঠান।</li>
                     <li>মেসেজে প্রাপ্ত <b>TrxID (Transaction ID)</b> নিচে লিখে অর্ডার কনফার্ম করুন।</li>
                   </ol>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "14px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: "bold" }}>
+                  <div className="pay-inputs-grid">
+                    <label>
                       আপনার bKash নম্বর
                       <input
                         required
@@ -932,7 +1017,7 @@ export default function Checkout({
                         placeholder="017XXXXXXXX"
                       />
                     </label>
-                    <label style={{ fontSize: "11px", fontWeight: "bold" }}>
+                    <label>
                       Transaction ID (TrxID)
                       <input
                         required
@@ -947,31 +1032,35 @@ export default function Checkout({
 
               {/* Nagad Instructions Box */}
               {paymentMethod === "Nagad" && (
-                <div
-                  style={{
-                    marginTop: "16px",
-                    padding: "16px",
-                    background: "#fff7ed",
-                    border: "1px solid #fed7aa",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <h4 style={{ color: "#c2410c", fontSize: "13px", marginBottom: "8px" }}>
-                    Nagad পেমেন্ট নির্দেশাবলী:
-                  </h4>
-                  <ol style={{ fontSize: "11px", color: "#4b5563", paddingLeft: "18px", lineHeight: "1.7" }}>
-                    <li>আপনার Nagad App অথবা <b>*167#</b> ডায়াল করুন।</li>
-                    <li><b>Send Money</b> অথবা <b>Merchant Pay</b> সিলেক্ট করুন।</li>
-                    <li>
-                      আমাদের নগদ নম্বর দিন: <b style={{ color: "#c2410c", fontSize: "12px" }}>01614703406</b>
-                    </li>
-                    <li>
-                      মোট টাকার পরিমাণ দিন: <b>৳{totalBDT.toLocaleString()} BDT</b>
-                    </li>
-                    <li>লেনদেন সম্পন্ন করার পর প্রাপ্ত <b>TrxID</b> নিচে লিখুন।</li>
+                <div className="pay-detail-panel panel-nagad">
+                  <div className="pay-detail-head">
+                    <Smartphone size={18} />
+                    <strong>Nagad পেমেন্ট নির্দেশাবলী</strong>
+                    <span className="pay-amount-pill pill-nagad">
+                      ৳{totalBDT.toLocaleString()} BDT
+                    </span>
+                  </div>
+                  <div className="pay-number-bar bar-nagad">
+                    <div>
+                      <small>আমাদের Nagad Personal / Merchant নম্বর</small>
+                      <b>01614703406</b>
+                    </div>
+                    <button
+                      type="button"
+                      className="pay-copy-btn"
+                      onClick={handleCopyNumber}
+                    >
+                      {copiedNum ? <Check size={13} /> : <Copy size={13} />}
+                      {copiedNum ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                  <ol className="pay-steps-list">
+                    <li>আপনার Nagad App ওপেন করুন অথবা <b>*167#</b> ডায়াল করুন।</li>
+                    <li><b>Send Money</b> অথবা <b>Merchant Pay</b> সিলেক্ট করে উপরের নম্বরে <b>৳{totalBDT.toLocaleString()}</b> পাঠান।</li>
+                    <li>লেনদেন সম্পন্ন করার পর প্রাপ্ত <b>TrxID</b> নিচে লিখে অর্ডার কনফার্ম করুন।</li>
                   </ol>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "14px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: "bold" }}>
+                  <div className="pay-inputs-grid">
+                    <label>
                       আপনার Nagad নম্বর
                       <input
                         required
@@ -980,7 +1069,7 @@ export default function Checkout({
                         placeholder="018XXXXXXXX"
                       />
                     </label>
-                    <label style={{ fontSize: "11px", fontWeight: "bold" }}>
+                    <label>
                       Transaction ID (TrxID)
                       <input
                         required
@@ -995,19 +1084,13 @@ export default function Checkout({
 
               {/* Stripe Card Box */}
               {paymentMethod === "Stripe Card" && (
-                <div
-                  style={{
-                    marginTop: "16px",
-                    padding: "16px",
-                    background: "#f8fafc",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <h4 style={{ fontSize: "13px", marginBottom: "10px" }}>
-                    <CreditCard size={15} style={{ verticalAlign: "-2px", marginRight: "4px" }} /> Card Details
-                  </h4>
-                  <label style={{ fontSize: "11px", fontWeight: "bold", display: "block", marginBottom: "8px" }}>
+                <div className="pay-detail-panel panel-stripe">
+                  <div className="pay-detail-head">
+                    <CreditCard size={18} />
+                    <strong>International Card Details</strong>
+                    <span className="pay-amount-pill pill-stripe">${total.toFixed(2)} USD</span>
+                  </div>
+                  <label className="pay-full-input-label">
                     Card Number
                     <input
                       required
@@ -1016,8 +1099,8 @@ export default function Checkout({
                       placeholder="4242 •••• •••• 4242"
                     />
                   </label>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: "bold" }}>
+                  <div className="pay-inputs-grid">
+                    <label>
                       Expiry (MM/YY)
                       <input
                         required
@@ -1026,7 +1109,7 @@ export default function Checkout({
                         placeholder="12/28"
                       />
                     </label>
-                    <label style={{ fontSize: "11px", fontWeight: "bold" }}>
+                    <label>
                       CVC / CVV
                       <input
                         required
