@@ -29,6 +29,12 @@ export interface AdminStoreConfig {
     phone: string;
     whatsapp: string;
   };
+  socialLinks?: {
+    id: string;
+    platform: string;
+    url: string;
+    active: boolean;
+  }[];
   paymentGateways?: {
     id: string;
     name: string;

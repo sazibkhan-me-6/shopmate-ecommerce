@@ -41,6 +41,9 @@ export default function App() {
   const [toast, setToast] = useState<string | null>(null);
   const [storeSyncVersion, setStoreSyncVersion] = useState(0);
   const [liveAnnouncement, setLiveAnnouncement] = useState<string | undefined>(undefined);
+  const [liveSocialLinks, setLiveSocialLinks] = useState<
+    { id: string; platform: string; url: string; active: boolean }[] | undefined
+  >(undefined);
   const nav = useNavigate();
 
   // Real-time auto-sync from Admin Panel (https://shopmate-admin-panel.vercel.app/api/store)
@@ -61,6 +64,9 @@ export default function App() {
           }
           return prev;
         });
+      }
+      if (Array.isArray(cfg.socialLinks)) {
+        setLiveSocialLinks(cfg.socialLinks);
       }
       if (changed) {
         setStoreSyncVersion((v) => v + 1);
@@ -223,7 +229,7 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
       </Routes>
       </div>
-      <Footer />
+      <Footer socialLinks={liveSocialLinks} />
       <CustomerSupportChat />
       {toast && (
         <div className="toast-notification">
