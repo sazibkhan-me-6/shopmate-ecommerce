@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Package, Truck, Save, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getUser } from "../services/storage";
+import { syncCustomerToAdminPanel } from "../services/api";
 
 export default function Profile({ notify }: { notify?: (msg: string) => void }) {
   const initial: any = getUser() || {
@@ -25,6 +26,14 @@ export default function Profile({ notify }: { notify?: (msg: string) => void }) 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem("shopmate_user", JSON.stringify(form));
+    syncCustomerToAdminPanel({
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      address: form.address,
+      city: form.city,
+      source: "Storefront Profile Update",
+    });
     if (notify) notify("✅ Your profile information has been saved successfully!");
   };
 

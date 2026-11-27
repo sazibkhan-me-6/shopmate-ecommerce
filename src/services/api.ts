@@ -117,6 +117,47 @@ export async function fetchStoreConfig(): Promise<AdminStoreConfig | null> {
 }
 
 /**
+ * Sync newly registered customer account or profile updates directly to
+ * https://shopmate-admin-panel.vercel.app/api/customers so Admin Panel Customers page updates immediately.
+ */
+export async function syncCustomerToAdminPanel(customerPayload: {
+  name: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  registeredAt?: string;
+  source?: string;
+}): Promise<{ ok: boolean; data?: any }> {
+  try {
+    const res = await fetch(`${ADMIN_API_BASE}/customers`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: customerPayload.name,
+        email: customerPayload.email,
+        phone: customerPayload.phone || "+880 1700-000000",
+        address: customerPayload.address || "",
+        city: customerPayload.city || "Dhaka",
+        registeredAt: customerPayload.registeredAt || new Date().toISOString(),
+        source: customerPayload.source || "Storefront Sign Up",
+      }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log("✅ Customer synced with ShopMate Admin Panel:", data);
+      return { ok: true, data };
+    }
+  } catch (error: any) {
+    console.warn("Could not sync customer to ShopMate Admin Panel:", error?.message);
+  }
+  return { ok: false };
+}
+
+/**
  * Payment intent helper
  */
 export async function createPaymentIntent(payload: unknown) {

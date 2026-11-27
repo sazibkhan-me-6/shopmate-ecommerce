@@ -2,6 +2,7 @@ import { useState } from "react";
 import { LockKeyhole, Mail, UserRound, Phone, MapPin, Building, Eye, EyeOff, AlertCircle, CheckCircle2, ShieldCheck, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { saveUser, registerUser, loginUser } from "../services/storage";
+import { syncCustomerToAdminPanel } from "../services/api";
 
 export default function Login({
   onLogin,
@@ -107,7 +108,16 @@ export default function Login({
       return;
     }
 
-    // Registration succeeded - save session & notify
+    // Registration succeeded - sync immediately to Admin Panel Customers page, save session & notify
+    syncCustomerToAdminPanel({
+      name: res.user.name,
+      email: res.user.email,
+      phone: res.user.phone,
+      address: res.user.address,
+      city: res.user.city,
+      registeredAt: res.user.registeredAt,
+      source: "Storefront Sign Up",
+    });
     saveUser(res.user);
     onLogin(res.user);
     if (notify) notify(`🎉 Account created successfully! Welcome to ShopMate, ${res.user.name}.`);
