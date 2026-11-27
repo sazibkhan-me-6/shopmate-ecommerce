@@ -383,21 +383,23 @@ export default function Login({
             </label>
 
             <label>
-              <Building size={14} style={{ verticalAlign: "-2px", marginRight: "4px" }} /> City / District
-              <select
-                value={signUpForm.city}
-                onChange={(e) => setSignUpForm({ ...signUpForm, city: e.target.value })}
-                style={{
-                  width: "100%",
-                  height: "35px",
-                  borderRadius: "6px",
-                  border: "1px solid #dfe3ea",
-                  padding: "0 9px",
-                  marginTop: "6px",
-                  fontSize: "11px",
-                  background: "#fff",
-                }}
-              >
+              City / District
+              <div className="icon-field" style={{ marginTop: "6px" }}>
+                <span className="icon-field-icon"><Building size={15} /></span>
+                <select
+                  value={signUpForm.city}
+                  onChange={(e) => setSignUpForm({ ...signUpForm, city: e.target.value })}
+                  style={{
+                    width: "100%",
+                    height: "35px",
+                    borderRadius: "6px",
+                    border: "1px solid #dfe3ea",
+                    padding: "0 9px",
+                    marginTop: 0,
+                    fontSize: "11px",
+                    background: "#fff",
+                  }}
+                >
                 <option>Dhaka</option>
                 <option>Chittagong</option>
                 <option>Sylhet</option>
@@ -410,7 +412,8 @@ export default function Login({
                 <option>Gazipur</option>
                 <option>Narayanganj</option>
                 <option>Other District</option>
-              </select>
+                </select>
+              </div>
             </label>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>

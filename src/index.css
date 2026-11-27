@@ -2852,3 +2852,38 @@ button:active, .btn:active, .add-btn:active, .wish:active {
 }
 
 
+
+
+/* Clean icons placed strictly INSIDE every blank input, textarea, and select box */
+.icon-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.icon-field-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.icon-field.icon-field-top .icon-field-icon {
+  top: 13px;
+  transform: none;
+}
+
+.icon-field input,
+.icon-field textarea,
+.icon-field select {
+  padding-left: 36px !important;
+  width: 100%;
+  box-sizing: border-box;
+}
